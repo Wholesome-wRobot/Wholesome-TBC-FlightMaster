@@ -58,10 +58,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FlightMaster.cs" />
+    <Compile Include="FlightMasterDB.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="Main.cs" />
+    <Compile Include="OldMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="States\DiscoverFlightMasterState.cs" />
+    <Compile Include="States\DiscoverContinentFlightsState.cs" />
+    <Compile Include="States\TakeTaxiState.cs" />
+    <Compile Include="States\WaitOnTaxiState.cs" />
     <Compile Include="WholesomeTBCFlightMasterSettings.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

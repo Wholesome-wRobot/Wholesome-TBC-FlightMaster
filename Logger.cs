@@ -7,4 +7,8 @@ public class Logger
     {
         Logging.Write($"[Wholesome TBC FlightMaster] {s}", Logging.LogType.Normal, Color.DarkCyan);
     }
+    public static void LogError(string s)
+    {
+        Logging.WriteError($"[Wholesome TBC FlightMaster] {s}");
+    }
 }

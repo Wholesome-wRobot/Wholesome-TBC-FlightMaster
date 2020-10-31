@@ -7,14 +7,19 @@ public class FlightMaster
     public Vector3 Position { get; set; }
     public string Name { get; set; }
     public ContinentId Continent { get; set; }
-    public bool AlreadyDiscovered { get; set; }
 
-    public FlightMaster(string name, int npcId, Vector3 position, ContinentId continent, bool alreadyDiscovered)
+    public FlightMaster(string name, int npcId, Vector3 position, ContinentId continent)
     {
         Name = name;
         NPCId = npcId;
         Position = position;
         Continent = continent;
-        AlreadyDiscovered = alreadyDiscovered;
+    }
+
+    public bool IsDiscovered()
+    {
+        if (WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(Name))
+            return true;
+        return false;
     }
 }
