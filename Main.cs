@@ -62,7 +62,7 @@ public class Main : IPlugin
         {
             Logger.Log($"{s.Priority} : {s.DisplayName}");
         }
-        Logger.Log($"****************************");
+        Logger.Log($"****************************"); 
         */
         
     }
