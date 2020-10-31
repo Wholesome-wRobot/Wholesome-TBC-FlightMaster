@@ -7,8 +7,7 @@ using wManager.Wow.Helpers;
 
 public class DiscoverFlightMasterState : State
 {
-    public override string DisplayName => "Discovering FlightMaster";
-    public static bool StateAddedToFSM { get; set; }
+    public override string DisplayName => "WFM Discovering Flight Master";
 
     public DiscoverFlightMasterState() { }
 
@@ -17,7 +16,7 @@ public class DiscoverFlightMasterState : State
         get
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
-                && Main._isLaunched
+                && Main.isLaunched
                 && Main.nearestFlightMaster != null
                 && !WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
             {
@@ -48,7 +47,8 @@ public class DiscoverFlightMasterState : State
 
     public static void AddState(Engine engine, State state)
     {
-        if (!StateAddedToFSM && engine != null && engine.States.Count > 5)
+        bool statedAdded = engine.States.Exists(s => s.DisplayName == "WFM Discovering Flight Master");
+        if (!statedAdded && engine != null && engine.States.Count > 5)
         {
             try
             {
@@ -57,14 +57,12 @@ public class DiscoverFlightMasterState : State
                 if (taxiState == null)
                 {
                     Logger.LogError("Couldn't find taxi state");
-                    StateAddedToFSM = true;
                     return;
                 }
 
                 DiscoverFlightMasterState discoverContinentFlightsState = new DiscoverFlightMasterState { Priority = taxiState.Priority };
                 engine.AddState(discoverContinentFlightsState);
                 engine.States.Sort();
-                StateAddedToFSM = true;
             }
             catch (Exception ex)
             {

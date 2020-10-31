@@ -8,8 +8,7 @@ using wManager.Wow.ObjectManager;
 
 public class TakeTaxiState : State
 {
-    public override string DisplayName => "Taking Taxi";
-    public static bool StateAddedToFSM { get; set; }
+    public override string DisplayName => "WFM Taking Taxi";
 
     public TakeTaxiState() { }
 
@@ -18,7 +17,7 @@ public class TakeTaxiState : State
         get
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
-                && Main._isLaunched
+                && Main.isLaunched
                 && Main.shouldTakeFlight
                 && Main.to != null
                 && Main.from != null
@@ -36,6 +35,7 @@ public class TakeTaxiState : State
     public override void Run()
     {
         MovementManager.StopMoveNewThread();
+        MovementManager.StopMoveToNewThread();
         if (GoToTask.ToPositionAndIntecractWithNpc(Main.from.Position, Main.from.NPCId, (int)GossipOptionsType.taxi))
         {
             Lua.LuaDoString("TakeTaxiNode(" + (Lua.LuaDoString<int>("for i=0,20 do if string.find(TaxiNodeName(i),'" + Main.to.Name.Replace("'", "\\'") + "') then return i end end", "")).ToString() + ")", false);
@@ -47,7 +47,8 @@ public class TakeTaxiState : State
 
     public static void AddState(Engine engine, State state)
     {
-        if (!StateAddedToFSM && engine != null && engine.States.Count > 5)
+        bool statedAdded = engine.States.Exists(s => s.DisplayName == "WFM Taking Taxi");
+        if (!statedAdded && engine != null && engine.States.Count > 5)
         {
             try
             {
@@ -56,14 +57,12 @@ public class TakeTaxiState : State
                 if (taxiState == null)
                 {
                     Logger.LogError("Couldn't find taxi state");
-                    StateAddedToFSM = true;
                     return;
                 }
 
-                TakeTaxiState discoverContinentFlightsState = new TakeTaxiState { Priority = taxiState.Priority };
+                TakeTaxiState discoverContinentFlightsState = new TakeTaxiState { Priority = taxiState.Priority + 20 };
                 engine.AddState(discoverContinentFlightsState);
                 engine.States.Sort();
-                StateAddedToFSM = true;
             }
             catch (Exception ex)
             {

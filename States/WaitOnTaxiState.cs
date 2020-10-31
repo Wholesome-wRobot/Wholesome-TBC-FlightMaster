@@ -6,8 +6,7 @@ using wManager.Wow.ObjectManager;
 
 public class WaitOnTaxiState : State
 {
-    public override string DisplayName => "Waiting on Taxi";
-    public static bool StateAddedToFSM { get; set; }
+    public override string DisplayName => "WFM Waiting on Taxi";
     public WaitOnTaxiState() { }
 
     public override bool NeedToRun
@@ -15,7 +14,7 @@ public class WaitOnTaxiState : State
         get
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
-                && Main._isLaunched
+                && Main.isLaunched
                 && ObjectManager.Me.IsOnTaxi)
             {
                 return true;
@@ -36,7 +35,8 @@ public class WaitOnTaxiState : State
 
     public static void AddState(Engine engine, State state)
     {
-        if (!StateAddedToFSM && engine != null && engine.States.Count > 5)
+        bool statedAdded = engine.States.Exists(s => s.DisplayName == "WFM Waiting on Taxi");
+        if (!statedAdded && engine != null && engine.States.Count > 5)
         {
             try
             {
@@ -45,14 +45,12 @@ public class WaitOnTaxiState : State
                 if (taxiState == null)
                 {
                     Logger.LogError("Couldn't find taxi state");
-                    StateAddedToFSM = true;
                     return;
                 }
 
                 WaitOnTaxiState waitOnTaxiState = new WaitOnTaxiState { Priority = taxiState.Priority + 1 };
                 engine.AddState(waitOnTaxiState);
                 engine.States.Sort();
-                StateAddedToFSM = true;
             }
             catch (Exception ex)
             {

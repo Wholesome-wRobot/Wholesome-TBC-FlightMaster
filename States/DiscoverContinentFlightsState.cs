@@ -7,8 +7,7 @@ using wManager.Wow.Helpers;
 
 public class DiscoverContinentFlightsState : State
 {
-    public override string DisplayName => "Discovering Continent Flights";
-    public static bool StateAddedToFSM { get; set; }
+    public override string DisplayName => "WFM Discovering Continent Flights";
 
     public DiscoverContinentFlightsState() { }
 
@@ -17,7 +16,7 @@ public class DiscoverContinentFlightsState : State
         get
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
-                && Main._isLaunched
+                && Main.isLaunched
                 && Main.nearestFlightMaster != null
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WholesomeTBCFlightMasterSettings.CurrentSettings.EKDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WholesomeTBCFlightMasterSettings.CurrentSettings.KalimdorDiscoveredFlights
@@ -84,7 +83,8 @@ public class DiscoverContinentFlightsState : State
 
     public static void AddState(Engine engine, State state)
     {
-        if (!StateAddedToFSM && engine != null && engine.States.Count > 5)
+        bool statedAdded = engine.States.Exists(s => s.DisplayName == "WFM Discovering Continent Flights");
+        if (!statedAdded && engine != null && engine.States.Count > 5)
         {
             try
             {
@@ -93,14 +93,12 @@ public class DiscoverContinentFlightsState : State
                 if (taxiState == null)
                 {
                     Logger.LogError("Couldn't find taxi state");
-                    StateAddedToFSM = true;
                     return;
                 }
 
                 DiscoverContinentFlightsState discoverContinentFlightsState = new DiscoverContinentFlightsState { Priority = taxiState.Priority };
                 engine.AddState(discoverContinentFlightsState);
                 engine.States.Sort();
-                StateAddedToFSM = true;
             }
             catch (Exception ex)
             {

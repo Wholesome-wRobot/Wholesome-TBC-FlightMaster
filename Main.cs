@@ -15,8 +15,8 @@ using wManager.Wow.ObjectManager;
 
 public class Main : IPlugin
 {
-    public static bool _isLaunched;
-    private readonly BackgroundWorker _detectionPulse = new BackgroundWorker();
+    public static bool isLaunched;
+    private readonly BackgroundWorker detectionPulse = new BackgroundWorker();
     public static FlightMaster nearestFlightMaster = null;
     public static Vector3 destinationVector = null;
 
@@ -27,14 +27,15 @@ public class Main : IPlugin
     public void Initialize()
     {
         Logger.Log("Initialization");
-        _isLaunched = true;
+        isLaunched = true;
 
         WholesomeTBCFlightMasterSettings.Load();
         FlightMasterDB.Initialize();
         SetWRobotSettings();
+        DiscoverDefaultNodes();
 
-        _detectionPulse.DoWork += DetectionPulse;
-        _detectionPulse.RunWorkerAsync();
+        detectionPulse.DoWork += DetectionPulse;
+        detectionPulse.RunWorkerAsync();
 
         FiniteStateMachineEvents.OnAfterRunState += AddStates;
         MovementEvents.OnMovementPulse += MovementEventsOnOnMovementPulse;
@@ -43,10 +44,10 @@ public class Main : IPlugin
     public void Dispose()
     {
         MovementEvents.OnMovementPulse -= MovementEventsOnOnMovementPulse;
-        _detectionPulse.DoWork -= DetectionPulse;
-        _detectionPulse.Dispose();
+        detectionPulse.DoWork -= DetectionPulse;
+        detectionPulse.Dispose();
         Logger.Log("Disposed");
-        _isLaunched = false;
+        isLaunched = false;
     }
 
     private void AddStates(Engine engine, State state)
@@ -55,6 +56,15 @@ public class Main : IPlugin
         DiscoverFlightMasterState.AddState(engine, state);
         TakeTaxiState.AddState(engine, state);
         WaitOnTaxiState.AddState(engine, state);
+        /*
+        Logger.Log($"****************************");
+        foreach (State s in engine.States)
+        {
+            Logger.Log($"{s.Priority} : {s.DisplayName}");
+        }
+        Logger.Log($"****************************");
+        */
+        
     }
 
     private void DiscoverDefaultNodes()
@@ -88,7 +98,7 @@ public class Main : IPlugin
     // Detection pulse
     private void DetectionPulse(object sender, DoWorkEventArgs args)
     {
-        while (_isLaunched)
+        while (isLaunched)
         {
             try
             {
@@ -104,7 +114,7 @@ public class Main : IPlugin
             {
                 Logger.LogError(string.Concat(arg));
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(5000);
         }
     }
 
@@ -147,11 +157,6 @@ public class Main : IPlugin
                 result = flightMaster;
             }
         }
-        /*
-        if (result == null)
-            Logger.Log("Closest FROM FlightMaster is null");
-        else
-            Logger.Log("Closest FROM FlightMaster is " + result.Name);*/
 
         return result;
     }
@@ -171,34 +176,28 @@ public class Main : IPlugin
                 result = flightMaster;
             }
         }
-        /*
-        if (result == null)
-            Logger.Log("Closest TO FlightMaster is null");
-        else
-            Logger.Log("Closest TO FlightMaster is " + result.Name);
-        */
         return result;
     }
     private static void MovementEventsOnOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
-        if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi)
+        if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi /*|| shouldTakeFlight*/)
             return;
 
         // If we have detected a potential FP travel
-        if (ObjectManager.Me.Position.DistanceTo(((IEnumerable<Vector3>)points).Last()) > (double)WholesomeTBCFlightMasterSettings.CurrentSettings.TaxiTriggerDistance)
+        if (ObjectManager.Me.Position.DistanceTo(points.Last()) > (double)WholesomeTBCFlightMasterSettings.CurrentSettings.TaxiTriggerDistance)
         {
             if (WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPath
                 && Logging.Status.Contains("Follow Path")
                 && !Logging.Status.Contains("Resurrect")
-                && CalculatePathTotalDistance(ObjectManager.Me.Position, ((IEnumerable<Vector3>)points).Last()) < (double)WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance)
+                && CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last()) < (double)WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance)
             {
                 Logger.Log("Currently following path or distance to start (" + CalculatePathTotalDistance(ObjectManager.Me.Position, ((IEnumerable<Vector3>)points).Last()) + " yards) is smaller than setting value (" + WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance + " yards)");
                 Thread.Sleep(1000);
                 return;
             }
 
-            destinationVector = ((IEnumerable<Vector3>)points).Last();
-            float _saveDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, ((IEnumerable<Vector3>)points).Last());
+            destinationVector = points.Last();
+            float _saveDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
             Thread.Sleep(Usefuls.Latency + 500);
 
             from = GetClosestFlightMasterFrom();
@@ -209,7 +208,9 @@ public class Main : IPlugin
             if (to != null
                 && from != null
                 && !from.Equals(to)
-                && CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) + (double)CalculatePathTotalDistance(to.Position, destinationVector) + WholesomeTBCFlightMasterSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
+                && CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) 
+                + (double)CalculatePathTotalDistance(to.Position, destinationVector) 
+                + WholesomeTBCFlightMasterSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
             {
                 Logger.Log("Shorter path detected, taking Taxi from " + from.Name + " to " + to.Name);
                 cancelable.Cancel = true;

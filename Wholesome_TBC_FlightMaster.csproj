@@ -70,5 +70,11 @@
     <Compile Include="WholesomeTBCFlightMasterSettings.cs" />
   </ItemGroup>
   <ItemGroup />
+  <ItemGroup>
+    <Content Include="Compiled\Wholesome_TBC_FlightMaster.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
