@@ -28,7 +28,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.2"; // Must match version in Version.txt
+    public static string version = "0.0.1"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -70,8 +70,6 @@ public class Main : IPlugin
         detectionPulse.Dispose();
         Logger.Log("Disposed");
         isLaunched = false;
-
-        Initialize();
     }
 
     private void AddStates(Engine engine, State state)
