@@ -28,7 +28,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.04"; // Must match version in Version.txt
+    public static string version = "0.0.1"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -59,8 +59,12 @@ public class Main : IPlugin
     public void Restart()
     {
         Logger.Log("Restarting");
-        Dispose();
-        Initialize();
+        new Thread(() =>
+        {
+            Products.ProductStop();
+            Thread.Sleep(1000);
+            Products.ProductStart();
+        }).Start();
     }
 
     public void Dispose()
