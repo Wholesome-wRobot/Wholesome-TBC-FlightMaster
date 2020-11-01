@@ -32,7 +32,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.01"; // Must match version in Version.txt
+    public static string version = "0.0.10"; // Must match version in Version.txt
 
     public void Initialize()
     {

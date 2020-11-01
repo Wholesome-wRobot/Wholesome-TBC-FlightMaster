@@ -79,6 +79,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"</PostBuildEvent>
+    <PostBuildEvent>copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"
+copy /Y "$(TargetDir)\$(ProjectName).dll" "C:\Users\Nico\Desktop\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
