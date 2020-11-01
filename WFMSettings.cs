@@ -16,6 +16,7 @@ public class WFMSettings : Settings
         SkipIfFollowPath = true;
         SkipIfFollowPathDistance = 5000f;
         PauseLengthInSeconds = 300;
+        TakeUndiscoveredTaxi = false;
         //PauseSearingGorge = true;
 
         KnownFlightsList = new List<string>();
@@ -27,6 +28,12 @@ public class WFMSettings : Settings
     [DisplayName("List known nodes")]
     [Description("")]
     public List<string> KnownFlightsList { get; set; }
+
+    [DefaultValue(false)]
+    [Category("1 - Main")]
+    [DisplayName("Take undiscovered taxi")]
+    [Description("Will choose the nearest taxi for a flight even if you haven't discovered it. WARNING : can take you to dangerous zones")]
+    public bool TakeUndiscoveredTaxi { get; set; }
 
     [DefaultValue(300)]
     [Category("1 - Main")]
