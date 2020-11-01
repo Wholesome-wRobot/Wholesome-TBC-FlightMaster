@@ -31,7 +31,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.13"; // Must match version in Version.txt
+    public static string version = "0.0.14"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -303,15 +303,10 @@ public class Main : IPlugin
                 + WFMSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
             {
                 Logger.Log("Shorter path detected, taking Taxi from " + from.Name + " to " + to.Name);
-                MovementManager.StopMove();
-                MovementManager.StopMoveTo();
                 MovementManager.StopMoveNewThread();
                 MovementManager.StopMoveToNewThread();
                 cancelable.Cancel = true;
                 shouldTakeFlight = true;
-                Products.InPause = true;
-                Thread.Sleep(5000);
-                Products.InPause = false;
             }
             else
             {
