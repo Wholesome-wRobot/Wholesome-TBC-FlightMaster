@@ -106,10 +106,10 @@ public class Main : IPlugin
         {
             stateAddDelayer.Restart();
 
-            ToolBox.AddState(engine, new TakeTaxiState(), "Flight master discover");
-            ToolBox.AddState(engine, new DiscoverFlightMasterState(), "Flight master discover");
-            ToolBox.AddState(engine, new DiscoverContinentFlightsState(), "Flight master discover");
-            ToolBox.AddState(engine, new WaitOnTaxiState(), "Flight master discover");
+            ToolBox.AddState(engine, new TakeTaxiState(), "FlightMaster: Take taxi");
+            ToolBox.AddState(engine, new DiscoverFlightMasterState(), "FlightMaster: Take taxi");
+            ToolBox.AddState(engine, new DiscoverContinentFlightsState(), "FlightMaster: Take taxi");
+            ToolBox.AddState(engine, new WaitOnTaxiState(), "FlightMaster: Take taxi");
 
             // Double check because some profiles modify WRobot settings
             SetWRobotSettings();
@@ -268,6 +268,9 @@ public class Main : IPlugin
 
     private static void MovementEventsOnOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
+        if (shouldTakeFlight && points.Last() == destinationVector)
+            cancelable.Cancel = true;
+
         if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi || shouldTakeFlight || !isLaunched || inPause)
             return;
 
@@ -301,8 +304,15 @@ public class Main : IPlugin
                 + WFMSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
             {
                 Logger.Log("Shorter path detected, taking Taxi from " + from.Name + " to " + to.Name);
+                MovementManager.StopMove();
+                MovementManager.StopMoveTo();
+                MovementManager.StopMoveNewThread();
+                MovementManager.StopMoveToNewThread();
                 cancelable.Cancel = true;
                 shouldTakeFlight = true;
+                Products.InPause = true;
+                Thread.Sleep(5000);
+                Products.InPause = false;
             }
             else
             {

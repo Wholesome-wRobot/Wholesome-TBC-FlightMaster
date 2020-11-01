@@ -36,7 +36,7 @@ public class DiscoverContinentFlightsState : State
     {
         MovementManager.StopMoveNewThread();
         FlightMaster flightMaster = Main.nearestFlightMaster;
-        Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at({flightMaster.Name}");
+        Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at {flightMaster.Name}");
 
         if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
         {
