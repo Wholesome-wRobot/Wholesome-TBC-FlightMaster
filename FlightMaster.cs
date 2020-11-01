@@ -18,7 +18,7 @@ public class FlightMaster
 
     public bool IsDiscovered()
     {
-        if (WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(Name))
+        if (WFMSettings.CurrentSettings.KnownFlightsList.Contains(Name))
             return true;
         return false;
     }

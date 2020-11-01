@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutoUpdater.cs" />
-    <Compile Include="WholesomeFlightMasterDeepSettings.cs" />
+    <Compile Include="WFMDeepSettings.cs" />
     <Compile Include="FlightMaster.cs" />
     <Compile Include="FlightMasterDB.cs" />
     <Compile Include="Logger.cs" />
@@ -70,7 +70,7 @@
     <Compile Include="States\TakeTaxiState.cs" />
     <Compile Include="States\WaitOnTaxiState.cs" />
     <Compile Include="ToolBox.cs" />
-    <Compile Include="WholesomeTBCWotlkFlightMasterSettings.cs" />
+    <Compile Include="WFMSettings.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -18,7 +18,7 @@ public class DiscoverFlightMasterState : State
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
                 && Main.nearestFlightMaster != null
-                && !WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
+                && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
             {
                 return true;
             }
@@ -39,6 +39,7 @@ public class DiscoverFlightMasterState : State
         {
             Thread.Sleep(1500);
             FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
+            Main.UnPausePlugin();
             Thread.Sleep(1000);
         }
     }

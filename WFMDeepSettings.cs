@@ -4,11 +4,11 @@ using wManager.Wow.ObjectManager;
 using System.IO;
 
 [Serializable]
-public class WholesomeFlightMasterDeepSettings : robotManager.Helpful.Settings
+public class WFMDeepSettings : robotManager.Helpful.Settings
 {
-    public static WholesomeFlightMasterDeepSettings CurrentSettings { get; set; }
+    public static WFMDeepSettings CurrentSettings { get; set; }
 
-    private WholesomeFlightMasterDeepSettings()
+    private WFMDeepSettings()
     {
         LastUpdateDate = 0;
 
@@ -28,12 +28,12 @@ public class WholesomeFlightMasterDeepSettings : robotManager.Helpful.Settings
     {
         try
         {
-            return Save(AdviserFilePathAndName("WholesomeFlightMasterDeepSettings",
+            return Save(AdviserFilePathAndName("WFMDeepSettings",
                 ObjectManager.Me.Name + "." + Usefuls.RealmName));
         }
         catch (Exception e)
         {
-            Logger.LogError("WholesomeFlightMasterDeepSettings > Save(): " + e);
+            Logger.LogError("WFMDeepSettings > Save(): " + e);
             return false;
         }
     }
@@ -42,19 +42,19 @@ public class WholesomeFlightMasterDeepSettings : robotManager.Helpful.Settings
     {
         try
         {
-            if (File.Exists(AdviserFilePathAndName("WholesomeFlightMasterDeepSettings",
+            if (File.Exists(AdviserFilePathAndName("WFMDeepSettings",
                 ObjectManager.Me.Name + "." + Usefuls.RealmName)))
             {
-                CurrentSettings = Load<WholesomeFlightMasterDeepSettings>(
-                    AdviserFilePathAndName("WholesomeFlightMasterDeepSettings",
+                CurrentSettings = Load<WFMDeepSettings>(
+                    AdviserFilePathAndName("WFMDeepSettings",
                     ObjectManager.Me.Name + "." + Usefuls.RealmName));
                 return true;
             }
-            CurrentSettings = new WholesomeFlightMasterDeepSettings();
+            CurrentSettings = new WFMDeepSettings();
         }
         catch (Exception e)
         {
-            Logger.LogError("WholesomeFlightMasterDeepSettings > Load(): " + e);
+            Logger.LogError("WFMDeepSettings > Load(): " + e);
         }
         return false;
     }

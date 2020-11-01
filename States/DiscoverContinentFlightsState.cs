@@ -18,10 +18,10 @@ public class DiscoverContinentFlightsState : State
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
                 && Main.nearestFlightMaster != null
-                && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WholesomeFlightMasterDeepSettings.CurrentSettings.EKDiscoveredFlights
-                || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WholesomeFlightMasterDeepSettings.CurrentSettings.KalimdorDiscoveredFlights
-                || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !WholesomeFlightMasterDeepSettings.CurrentSettings.OutlandsDiscoveredFlights
-                || (ContinentId)Usefuls.ContinentId == ContinentId.Northrend && !WholesomeFlightMasterDeepSettings.CurrentSettings.NorthrendDiscoveredFlights))
+                && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights
+                || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights
+                || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights
+                || (ContinentId)Usefuls.ContinentId == ContinentId.Northrend && !WFMDeepSettings.CurrentSettings.NorthrendDiscoveredFlights))
             {
                 return true;
             }
@@ -36,8 +36,7 @@ public class DiscoverContinentFlightsState : State
     {
         MovementManager.StopMoveNewThread();
         FlightMaster flightMaster = Main.nearestFlightMaster;
-        Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} ({flightMaster.Name})");
-        WholesomeTBCWotlkFlightMasterSettings settings = WholesomeTBCWotlkFlightMasterSettings.CurrentSettings;
+        Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at({flightMaster.Name}");
 
         if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
         {
@@ -66,15 +65,15 @@ public class DiscoverContinentFlightsState : State
             else
             {
                 if ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth)
-                    WholesomeFlightMasterDeepSettings.CurrentSettings.EKDiscoveredFlights = true;
+                    WFMDeepSettings.CurrentSettings.EKDiscoveredFlights = true;
                 if ((ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor)
-                    WholesomeFlightMasterDeepSettings.CurrentSettings.KalimdorDiscoveredFlights = true;
+                    WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights = true;
                 if ((ContinentId)Usefuls.ContinentId == ContinentId.Expansion01)
-                    WholesomeFlightMasterDeepSettings.CurrentSettings.OutlandsDiscoveredFlights = true;
+                    WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights = true;
                 if ((ContinentId)Usefuls.ContinentId == ContinentId.Northrend)
-                    WholesomeFlightMasterDeepSettings.CurrentSettings.NorthrendDiscoveredFlights = true;
+                    WFMDeepSettings.CurrentSettings.NorthrendDiscoveredFlights = true;
 
-                WholesomeFlightMasterDeepSettings.CurrentSettings.Save();
+                WFMDeepSettings.CurrentSettings.Save();
                 Logger.Log("Known flight paths succesfully recorded");
                 Thread.Sleep(1000);
             }
