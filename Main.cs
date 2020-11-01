@@ -5,7 +5,6 @@ using robotManager.Products;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -32,7 +31,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.12"; // Must match version in Version.txt
+    public static string version = "0.0.13"; // Must match version in Version.txt
 
     public void Initialize()
     {
