@@ -32,7 +32,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.10"; // Must match version in Version.txt
+    public static string version = "0.0.11"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -313,15 +313,21 @@ public class Main : IPlugin
 
     public static void PausePlugin()
     {
-        Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-        pauseTimer.Restart();
-        inPause = true;
+        if (!inPause)
+        {
+            Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
+            pauseTimer.Restart();
+            inPause = true;
+        }
     }
 
     public static void UnPausePlugin()
     {
-        Logger.Log("Unpausing plugin");
-        pauseTimer.Reset();
-        inPause = false;
+        if (inPause)
+        {
+            Logger.Log("Unpausing plugin");
+            pauseTimer.Reset();
+            inPause = false;
+        }
     }
 }

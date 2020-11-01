@@ -32,6 +32,7 @@ public class DiscoverFlightMasterState : State
     public override void Run()
     {
         MovementManager.StopMoveNewThread();
+        MovementManager.StopMoveToNewThread();
         FlightMaster flightMaster = Main.nearestFlightMaster;
         Logger.Log($"Discovering flight master {flightMaster.Name}");
 
@@ -40,6 +41,7 @@ public class DiscoverFlightMasterState : State
             Thread.Sleep(1500);
             FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
             Main.UnPausePlugin();
+            Main.shouldTakeFlight = false;
             Thread.Sleep(1000);
         }
     }
