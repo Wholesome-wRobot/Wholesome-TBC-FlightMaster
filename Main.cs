@@ -28,17 +28,20 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.3"; // Must match version in Version.txt
+    public static string version = "0.0.2"; // Must match version in Version.txt
 
     public void Initialize()
     {
-        isLaunched = true;
+        isLaunched = true; 
 
         WholesomeTBCWotlkFlightMasterSettings.Load();
         WholesomeFlightMasterDeepSettings.Load();
 
         if (AutoUpdater.CheckUpdate(version))
+        {
             Restart();
+            return;
+        }
 
         Logger.Log($"Launching version {version} on client {Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v")}");
 
