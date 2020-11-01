@@ -7,13 +7,13 @@ using System.Threading;
 
 public static class AutoUpdater
 {
-    public static void CheckUpdate(string MyCurrentVersion)
+    public static bool CheckUpdate(string MyCurrentVersion)
     {
         if (wManager.Information.Version.Contains("1.7.2"))
         {
             Logger.Log($"Plugin couldn't load (v {wManager.Information.Version})");
             Products.ProductStop();
-            return;
+            return false;
         }
 
         DateTime dateBegin = new DateTime(2020, 1, 1);
@@ -28,7 +28,7 @@ public static class AutoUpdater
         if (timeSinceLastUpdate < 10)
         {
             Logger.Log($"Update failed {timeSinceLastUpdate} seconds ago. Exiting updater.");
-            return;
+            return false;
         }
 
         try
@@ -44,7 +44,7 @@ public static class AutoUpdater
             if (onlineVersionContent == null || onlineVersionContent.Length > 10 || onlineVersionContent == MyCurrentVersion)
             {
                 Logger.Log($"Your version is up to date ({MyCurrentVersion})");
-                return;
+                return false;
             }
 
             // File check
@@ -52,17 +52,17 @@ public static class AutoUpdater
             var onlineFileContent = new WebClient { Encoding = Encoding.UTF8 }.DownloadData(onlineFile);
             if (onlineFileContent != null && onlineFileContent.Length > 0)
             {
-                Logger.Log($"Your version : {MyCurrentVersion}");
-                Logger.Log($"Online Version : {onlineVersionContent}");
-                Logger.Log("Trying to update");
+                Logger.Log($"Your version : {MyCurrentVersion} - Online Version : {onlineVersionContent}");
+                Logger.Log("Updating");
                 System.IO.File.WriteAllBytes(currentFile, onlineFileContent); // replace user file by online file
                 Thread.Sleep(5000);
-                Products.ProductRestart();
+                return true;
             }
         }
         catch (Exception e)
         {
             Logging.WriteError("Auto update: " + e);
         }
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using robotManager.Events;
 using robotManager.FiniteStateMachine;
 using robotManager.Helpful;
+using robotManager.Products;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -27,7 +28,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.1"; // Must match version in Version.txt
+    public static string version = "0.0.3"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -35,7 +36,10 @@ public class Main : IPlugin
 
         WholesomeTBCWotlkFlightMasterSettings.Load();
         WholesomeFlightMasterDeepSettings.Load();
-        AutoUpdater.CheckUpdate(version);
+
+        if (AutoUpdater.CheckUpdate(version))
+            Restart();
+
         Logger.Log($"Launching version {version} on client {Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v")}");
 
         FlightMasterDB.Initialize();
@@ -49,6 +53,13 @@ public class Main : IPlugin
         MovementEvents.OnMovementPulse += MovementEventsOnOnMovementPulse;
     }
 
+    public void Restart()
+    {
+        Logger.Log("Restarting");
+        Dispose();
+        Initialize();
+    }
+
     public void Dispose()
     {
         MovementEvents.OnMovementPulse -= MovementEventsOnOnMovementPulse;
@@ -56,6 +67,8 @@ public class Main : IPlugin
         detectionPulse.Dispose();
         Logger.Log("Disposed");
         isLaunched = false;
+
+        Initialize();
     }
 
     private void AddStates(Engine engine, State state)
