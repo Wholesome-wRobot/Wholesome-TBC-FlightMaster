@@ -27,7 +27,7 @@ public static class AutoUpdater
         // If last update try was < 10 seconds ago, we exit to avoid looping
         if (timeSinceLastUpdate < 10)
         {
-            Logger.Log($"Update failed {timeSinceLastUpdate} seconds ago. Exiting updater.");
+            Logger.Log($"Last update attempts was {timeSinceLastUpdate} seconds ago. Exiting updater.");
             return false;
         }
 
