@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30621.155
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wholesome_TBC_FlightMaster", "Wholesome_TBC_FlightMaster.csproj", "{EA74D9CA-C680-47EE-9E6A-A977487B114D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wholesome_TBC_WotlK_FlightMaster", "Wholesome_TBC_WotlK_FlightMaster.csproj", "{EA74D9CA-C680-47EE-9E6A-A977487B114D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

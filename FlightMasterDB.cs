@@ -31,11 +31,11 @@ public class FlightMasterDB
 
     public static void SetFlightMasterToKnown(string flightMasterName)
     {
-        if (!WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(flightMasterName))
+        if (!WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(flightMasterName))
         {
             Logger.Log($"Adding {flightMasterName} to known flights list");
-            WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Add(flightMasterName);
-            WholesomeTBCFlightMasterSettings.CurrentSettings.Save();
+            WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Add(flightMasterName);
+            WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.Save();
         }
     }
     public static void SetFlightMasterToKnown(int flightMasterID)
@@ -46,11 +46,11 @@ public class FlightMasterDB
 
     public static void SetFlightMasterToUnknown(string flightMasterName)
     {
-        if (WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(flightMasterName))
+        if (WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(flightMasterName))
         {
             Logger.Log($"Removing {flightMasterName} from known flights list");
-            WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Remove(flightMasterName);
-            WholesomeTBCFlightMasterSettings.CurrentSettings.Save();
+            WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Remove(flightMasterName);
+            WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.Save();
         }
     }
     public static void SetFlightMasterToUnknown(int flightMasterID)

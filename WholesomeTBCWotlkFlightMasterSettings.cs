@@ -6,9 +6,9 @@ using System.IO;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 
-public class WholesomeTBCFlightMasterSettings : Settings
+public class WholesomeTBCWotlkFlightMasterSettings : Settings
 {
-    public WholesomeTBCFlightMasterSettings()
+    public WholesomeTBCWotlkFlightMasterSettings()
     {
         TaxiTriggerDistance = 1000;
         DetectTaxiDistance = 200;
@@ -17,20 +17,10 @@ public class WholesomeTBCFlightMasterSettings : Settings
         SkipIfFollowPathDistance = 5000f;
         //PauseSearingGorge = true;
 
-        EKDiscoveredFlights = false;
-        KalimdorDiscoveredFlights = false;
-        OutlandsDiscoveredFlights = false;
-        NorthrendDiscoveredFlights = false;
-
         KnownFlightsList = new List<string>();
 
         ConfigWinForm(new System.Drawing.Point(400, 400), "Wholesome FlightMaster Settings");
     }
-    
-    public bool EKDiscoveredFlights { get; set; }
-    public bool KalimdorDiscoveredFlights { get; set; }
-    public bool OutlandsDiscoveredFlights { get; set; }
-    public bool NorthrendDiscoveredFlights { get; set; }
 
     [Category("1 - Main")]
     [DisplayName("List known nodes")]
@@ -73,18 +63,18 @@ public class WholesomeTBCFlightMasterSettings : Settings
     [Description("Stops the bot, to prevent it from running into the Searing Gorge gate from Loch Modan and getting stuck over and over again")]
     public bool PauseSearingGorge { get; set; }
     */
-    public static WholesomeTBCFlightMasterSettings CurrentSettings { get; set; }
+    public static WholesomeTBCWotlkFlightMasterSettings CurrentSettings { get; set; }
 
     public bool Save()
     {
         try
         {
-            return Save(AdviserFilePathAndName("WholesomeTBCFlightmasterSettings",
+            return Save(AdviserFilePathAndName("WholesomeTBCWotlkFlightMasterSettings",
                 ObjectManager.Me.Name + "." + Usefuls.RealmName));
         }
         catch (Exception ex)
         {
-            Logger.Log("WholesomeTBCFlightmasterSettings > Save(): " + ex);
+            Logger.Log("WholesomeTBCWotlkFlightMasterSettings > Save(): " + ex);
             return false;
         }
     }
@@ -93,19 +83,19 @@ public class WholesomeTBCFlightMasterSettings : Settings
     {
         try
         {
-            if (File.Exists(AdviserFilePathAndName("WholesomeTBCFlightmasterSettings",
+            if (File.Exists(AdviserFilePathAndName("WholesomeTBCWotlkFlightMasterSettings",
                 ObjectManager.Me.Name + "." + Usefuls.RealmName)))
             {
-                CurrentSettings = Load<WholesomeTBCFlightMasterSettings>(
-                    AdviserFilePathAndName("WholesomeTBCFlightmasterSettings",
+                CurrentSettings = Load<WholesomeTBCWotlkFlightMasterSettings>(
+                    AdviserFilePathAndName("WholesomeTBCWotlkFlightMasterSettings",
                     ObjectManager.Me.Name + "." + Usefuls.RealmName));
                 return true;
             }
-            CurrentSettings = new WholesomeTBCFlightMasterSettings();
+            CurrentSettings = new WholesomeTBCWotlkFlightMasterSettings();
         }
         catch (Exception ex)
         {
-            Logging.WriteDebug("WholesomeTBCFlightmasterSettings > Load(): " + ex);
+            Logging.WriteDebug("WholesomeTBCWotlkFlightMasterSettings > Load(): " + ex);
         }
         return false;
     }

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Wholesome_TBC_FlightMaster</RootNamespace>
-    <AssemblyName>Wholesome_TBC_FlightMaster</AssemblyName>
+    <AssemblyName>Wholesome_TBC_WotlK_FlightMaster</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -57,6 +57,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoUpdater.cs" />
+    <Compile Include="WholesomeFlightMasterDeepSettings.cs" />
     <Compile Include="FlightMaster.cs" />
     <Compile Include="FlightMasterDB.cs" />
     <Compile Include="Logger.cs" />
@@ -67,11 +69,13 @@
     <Compile Include="States\DiscoverContinentFlightsState.cs" />
     <Compile Include="States\TakeTaxiState.cs" />
     <Compile Include="States\WaitOnTaxiState.cs" />
-    <Compile Include="WholesomeTBCFlightMasterSettings.cs" />
+    <Compile Include="ToolBox.cs" />
+    <Compile Include="WholesomeTBCWotlkFlightMasterSettings.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="Compiled\Wholesome_TBC_FlightMaster.dll" />
+    <Content Include="Compiled\Version.txt" />
+    <Content Include="Compiled\Wholesome_TBC_WotlK_FlightMaster.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

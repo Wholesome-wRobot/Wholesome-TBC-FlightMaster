@@ -18,7 +18,7 @@ public class DiscoverFlightMasterState : State
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
                 && Main.nearestFlightMaster != null
-                && !WholesomeTBCFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
+                && !WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
             {
                 return true;
             }
@@ -35,39 +35,11 @@ public class DiscoverFlightMasterState : State
         FlightMaster flightMaster = Main.nearestFlightMaster;
         Logger.Log($"Discovering flight master {flightMaster.Name}");
 
-        WholesomeTBCFlightMasterSettings settings = WholesomeTBCFlightMasterSettings.CurrentSettings;
-
         if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
         {
             Thread.Sleep(1500);
             FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
             Thread.Sleep(1000);
-        }
-    }
-
-    public static void AddState(Engine engine, State state)
-    {
-        bool statedAdded = engine.States.Exists(s => s.DisplayName == "WFM Discovering Flight Master");
-        if (!statedAdded && engine != null && engine.States.Count > 5)
-        {
-            try
-            {
-                State taxiState = engine.States.Find(s => s.DisplayName == "Flight master discover");
-
-                if (taxiState == null)
-                {
-                    Logger.LogError("Couldn't find taxi state");
-                    return;
-                }
-
-                DiscoverFlightMasterState discoverContinentFlightsState = new DiscoverFlightMasterState { Priority = taxiState.Priority };
-                engine.AddState(discoverContinentFlightsState);
-                engine.States.Sort();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Erreur : {0}" + ex.ToString());
-            }
         }
     }
 }

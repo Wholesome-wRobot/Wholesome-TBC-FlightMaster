@@ -44,30 +44,4 @@ public class TakeTaxiState : State
             Main.shouldTakeFlight = false;
         }
     }
-
-    public static void AddState(Engine engine, State state)
-    {
-        bool statedAdded = engine.States.Exists(s => s.DisplayName == "WFM Taking Taxi");
-        if (!statedAdded && engine != null && engine.States.Count > 5)
-        {
-            try
-            {
-                State taxiState = engine.States.Find(s => s.DisplayName == "Flight master discover");
-
-                if (taxiState == null)
-                {
-                    Logger.LogError("Couldn't find taxi state");
-                    return;
-                }
-
-                TakeTaxiState discoverContinentFlightsState = new TakeTaxiState { Priority = taxiState.Priority + 20 };
-                engine.AddState(discoverContinentFlightsState);
-                engine.States.Sort();
-            }
-            catch (Exception ex)
-            {
-                Logger.LogError("Erreur : {0}" + ex.ToString());
-            }
-        }
-    }
 }

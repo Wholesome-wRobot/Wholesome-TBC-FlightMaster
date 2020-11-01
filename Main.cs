@@ -4,6 +4,7 @@ using robotManager.Helpful;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using wManager;
@@ -20,16 +21,23 @@ public class Main : IPlugin
     public static FlightMaster nearestFlightMaster = null;
     public static Vector3 destinationVector = null;
 
+    protected Stopwatch stateAddDelayer = new Stopwatch();
+
     public static FlightMaster from = null;
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
+    public static string version = "0.0.1"; // Must match version in Version.txt
+
     public void Initialize()
     {
-        Logger.Log("Initialization");
         isLaunched = true;
 
-        WholesomeTBCFlightMasterSettings.Load();
+        WholesomeTBCWotlkFlightMasterSettings.Load();
+        WholesomeFlightMasterDeepSettings.Load();
+        AutoUpdater.CheckUpdate(version);
+        Logger.Log($"Launching version {version} on client {Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v")}");
+
         FlightMasterDB.Initialize();
         SetWRobotSettings();
         DiscoverDefaultNodes();
@@ -52,19 +60,29 @@ public class Main : IPlugin
 
     private void AddStates(Engine engine, State state)
     {
-        DiscoverContinentFlightsState.AddState(engine, state);
-        DiscoverFlightMasterState.AddState(engine, state);
-        TakeTaxiState.AddState(engine, state);
-        WaitOnTaxiState.AddState(engine, state);
-        /*
-        Logger.Log($"****************************");
-        foreach (State s in engine.States)
+        if (engine.States.Count <= 5)
+            return;
+
+        if (stateAddDelayer.ElapsedMilliseconds <= 0 || stateAddDelayer.ElapsedMilliseconds > 3000)
         {
-            Logger.Log($"{s.Priority} : {s.DisplayName}");
+            stateAddDelayer.Restart();
+
+            ToolBox.AddState(engine, new TakeTaxiState(), "Flight master discover");
+            ToolBox.AddState(engine, new DiscoverFlightMasterState(), "Flight master discover");
+            ToolBox.AddState(engine, new DiscoverContinentFlightsState(), "Flight master discover");
+            ToolBox.AddState(engine, new WaitOnTaxiState(), "Flight master discover");
+
+            // Double check because some profiles modify WRobot settings
+            SetWRobotSettings();
+            /*
+            Logger.Log($"****************************");
+            foreach (State s in engine.States)
+            {
+                Logger.Log($"{s.Priority} : {s.DisplayName}");
+            }
+            Logger.Log($"****************************");
+            */
         }
-        Logger.Log($"****************************"); 
-        */
-        
     }
 
     private void DiscoverDefaultNodes()
@@ -80,22 +98,24 @@ public class Main : IPlugin
 
     private void SetWRobotSettings()
     {
-        if (!wManagerSetting.CurrentSetting.FlightMasterTaxiUse && !wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear)
+        if (!wManagerSetting.CurrentSetting.FlightMasterTaxiUse 
+            && !wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear
+            && wManagerSetting.CurrentSetting.FlightMasterDiscoverRange == 1)
             return;
 
         Logger.Log("Disabling WRobot's Taxi");
         wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
         wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
+        wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
     }
 
     public void Settings()
     {
-        WholesomeTBCFlightMasterSettings.Load();
-        WholesomeTBCFlightMasterSettings.CurrentSettings.ToForm();
-        WholesomeTBCFlightMasterSettings.CurrentSettings.Save();
+        WholesomeTBCWotlkFlightMasterSettings.Load();
+        WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.ToForm();
+        WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.Save();
     }
 
-    // Detection pulse
     private void DetectionPulse(object sender, DoWorkEventArgs args)
     {
         while (isLaunched)
@@ -114,7 +134,7 @@ public class Main : IPlugin
             {
                 Logger.LogError(string.Concat(arg));
             }
-            Thread.Sleep(5000);
+            Thread.Sleep(3000);
         }
     }
 
@@ -123,7 +143,7 @@ public class Main : IPlugin
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
             if ((ContinentId)Usefuls.ContinentId == flightMaster.Continent
-            && ObjectManager.Me.Position.DistanceTo(flightMaster.Position) < (double)WholesomeTBCFlightMasterSettings.CurrentSettings.DetectTaxiDistance)
+            && ObjectManager.Me.Position.DistanceTo(flightMaster.Position) < (double)WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.DetectTaxiDistance)
             {
                 return flightMaster;
             }
@@ -178,20 +198,21 @@ public class Main : IPlugin
         }
         return result;
     }
+
     private static void MovementEventsOnOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
-        if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi /*|| shouldTakeFlight*/)
+        if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi || shouldTakeFlight)
             return;
 
         // If we have detected a potential FP travel
-        if (ObjectManager.Me.Position.DistanceTo(points.Last()) > (double)WholesomeTBCFlightMasterSettings.CurrentSettings.TaxiTriggerDistance)
+        if (ObjectManager.Me.Position.DistanceTo(points.Last()) > (double)WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.TaxiTriggerDistance)
         {
-            if (WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPath
+            if (WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.SkipIfFollowPath
                 && Logging.Status.Contains("Follow Path")
                 && !Logging.Status.Contains("Resurrect")
-                && CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last()) < (double)WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance)
+                && CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last()) < (double)WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance)
             {
-                Logger.Log("Currently following path or distance to start (" + CalculatePathTotalDistance(ObjectManager.Me.Position, ((IEnumerable<Vector3>)points).Last()) + " yards) is smaller than setting value (" + WholesomeTBCFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance + " yards)");
+                Logger.Log("Currently following path or distance to start (" + CalculatePathTotalDistance(ObjectManager.Me.Position, ((IEnumerable<Vector3>)points).Last()) + " yards) is smaller than setting value (" + WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.SkipIfFollowPathDistance + " yards)");
                 Thread.Sleep(1000);
                 return;
             }
@@ -210,7 +231,7 @@ public class Main : IPlugin
                 && !from.Equals(to)
                 && CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) 
                 + (double)CalculatePathTotalDistance(to.Position, destinationVector) 
-                + WholesomeTBCFlightMasterSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
+                + WholesomeTBCWotlkFlightMasterSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
             {
                 Logger.Log("Shorter path detected, taking Taxi from " + from.Name + " to " + to.Name);
                 cancelable.Cancel = true;
