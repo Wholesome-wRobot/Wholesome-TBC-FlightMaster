@@ -44,7 +44,7 @@ public static class AutoUpdater
             if (onlineVersionContent == null || onlineVersionContent.Length > 10 || onlineVersionContent == MyCurrentVersion)
             {
                 Logger.Log($"Your version is up to date ({MyCurrentVersion})");
-                return true; // REMETTRE A FALSE
+                return false;
             }
 
             // File check
