@@ -31,7 +31,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.162"; // Must match version in Version.txt
+    public static string version = "0.0.163"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -42,7 +42,9 @@ public class Main : IPlugin
 
         if (AutoUpdater.CheckUpdate(version))
         {
-            Logger.LogWarning("A new version has been downloaded, please restart WRobot");
+            Logger.LogWarning("New version downloaded, restarting WRobot, please wait");
+            Restart();
+            return;
         }
 
         Logger.Log($"Launching version {version} on client {Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v")}");
@@ -80,11 +82,9 @@ public class Main : IPlugin
 
     public void Restart()
     {
-        Logger.Log("Restarting");
         new Thread(() =>
         {
             Products.ProductStop();
-            Thread.Sleep(1000);
             Products.ProductStart();
         }).Start();
     }
@@ -307,7 +307,7 @@ public class Main : IPlugin
 
             destinationVector = points.Last();
             float totalWalkingDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
-            Logger.Log("Total walking distance for this path : " + totalWalkingDistance);
+            //Logger.Log("Total walking distance for this path : " + totalWalkingDistance);
             Thread.Sleep(Usefuls.Latency + 500);
 
             from = GetClosestFlightMasterFrom();
@@ -330,13 +330,13 @@ public class Main : IPlugin
                 totalDistance = obligatoryDistance + CalculatePathTotalDistance(to.Position, destinationVector);
             else
                 totalDistance = totalWalkingDistance;
-            Logger.Log("Total FM distance for this path : " + totalDistance);
+            //Logger.Log("Total FM distance for this path : " + totalDistance);
 
             // If total real distance does not save any distance or is longer, try to find alternative
             if (totalDistance >= totalWalkingDistance
                 || to == null)
             {
-                Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
+                //Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
                 foreach (FlightMaster fm in FlightMasterDB.FlightMasterList)
                 {
                     if (fm.Continent == (ContinentId)Usefuls.ContinentId
@@ -347,7 +347,7 @@ public class Main : IPlugin
                         // Look for the closest available FM near destination
                         double alternativeDistance = obligatoryDistance + CalculatePathTotalDistance(fm.Position, destinationVector);
 
-                        Logger.Log($"ALT Destination from {fm.Name} is {alternativeDistance}");
+                        //Logger.Log($"ALT Destination from {fm.Name} is {alternativeDistance}");
                         if (alternativeDistance < totalDistance)
                         {
                             totalDistance = alternativeDistance;
@@ -355,8 +355,8 @@ public class Main : IPlugin
                         }
                     }
                 }
-                if (to != null)
-                    Logger.Log("Closest TO alternative is " + to.Name);
+                //if (to != null)
+                    //Logger.Log("Closest TO alternative is " + to.Name);
             }
 
             Thread.Sleep(1000);
