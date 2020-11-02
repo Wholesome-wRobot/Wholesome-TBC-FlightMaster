@@ -83,5 +83,6 @@ public class DiscoverContinentFlightsState : State
                 }
             }
         }
+        Main.PausePlugin();
     }
 }
