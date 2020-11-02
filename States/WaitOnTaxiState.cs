@@ -1,4 +1,5 @@
 ﻿using robotManager.FiniteStateMachine;
+using robotManager.Products;
 using System;
 using System.Threading;
 using wManager.Wow.Helpers;

@@ -6,12 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Threading;
 using wManager;
 using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Enums;
+using wManager.Wow.Forms;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 
@@ -31,7 +33,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.152"; // Must match version in Version.txt
+    public static string version = "0.0.160"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -57,8 +59,8 @@ public class Main : IPlugin
         detectionPulse.DoWork += BackGroundPulse;
         detectionPulse.RunWorkerAsync();
 
-        FiniteStateMachineEvents.OnAfterRunState += AddStates;
-        MovementEvents.OnMovementPulse += MovementEventsOnOnMovementPulse;
+        FiniteStateMachineEvents.OnRunState += StateEventHandler;
+        MovementEvents.OnMovementPulse += MovementEventsOnMovementPulse;
         EventsLuaWithArgs.OnEventsLuaWithArgs += MessageHandler;
     }
 
@@ -90,9 +92,8 @@ public class Main : IPlugin
         }).Start();
     }
 
-    public void SoftRestart()
+    public static void SoftRestart()
     {
-        Logger.Log("Soft Restart");
         Products.InPause = true;
         Thread.Sleep(1000);
         Products.InPause = false;
@@ -100,22 +101,26 @@ public class Main : IPlugin
 
     public void Dispose()
     {
-        MovementEvents.OnMovementPulse -= MovementEventsOnOnMovementPulse;
+        MovementEvents.OnMovementPulse -= MovementEventsOnMovementPulse;
         EventsLuaWithArgs.OnEventsLuaWithArgs -= MessageHandler;
         detectionPulse.DoWork -= BackGroundPulse;
 
         detectionPulse.Dispose();
         Logger.Log("Disposed");
-        stateAddDelayer.Reset();
+        stateAddDelayer.Stop();
         isLaunched = false;
     }
 
-    private void AddStates(Engine engine, State state)
+    private void StateEventHandler(Engine engine, State state, CancelEventArgs canc)
     {
         if (engine.States.Count <= 5)
+        {
+            if (!stateAddDelayer.IsRunning)
+                SoftRestart(); // hack to wait for correct engine to trigger
             return;
+        }
 
-        if (stateAddDelayer.ElapsedMilliseconds <= 0 || stateAddDelayer.ElapsedMilliseconds > 3000)
+        if (stateAddDelayer.ElapsedMilliseconds <= 0 || stateAddDelayer.ElapsedMilliseconds > 3000 || !stateAddDelayer.IsRunning)
         {
             stateAddDelayer.Restart();
 
@@ -123,11 +128,10 @@ public class Main : IPlugin
             ToolBox.AddState(engine, new DiscoverFlightMasterState(), "FlightMaster: Take taxi");
             ToolBox.AddState(engine, new DiscoverContinentFlightsState(), "FlightMaster: Take taxi");
             ToolBox.AddState(engine, new WaitOnTaxiState(), "FlightMaster: Take taxi");
-            //ToolBox.RemoveState(engine, "FlightMaster: Take taxi");
-            //ToolBox.RemoveState(engine, "Flight master discover");
 
             // Double check because some profiles modify WRobot settings
             SetWRobotSettings();
+
             /*
             Logger.Log($"****************************");
             foreach (State s in engine.States)
@@ -152,17 +156,17 @@ public class Main : IPlugin
 
     private void SetWRobotSettings()
     {
-        if (!wManagerSetting.CurrentSetting.FlightMasterTaxiUse 
-            && !wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear
-            && wManagerSetting.CurrentSetting.FlightMasterDiscoverRange == 1)
-            return;
-
-        Logger.Log("Disabling WRobot's Taxi");
-        wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
-        wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
-        wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
-        wManagerSetting.CurrentSetting.Save();
-        SoftRestart();
+        if (wManagerSetting.CurrentSetting.FlightMasterTaxiUse 
+            || wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear
+            || wManagerSetting.CurrentSetting.FlightMasterDiscoverRange > 1)
+        {
+            Logger.Log("Disabling WRobot's Taxi");
+            wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
+            wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
+            wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
+            wManagerSetting.CurrentSetting.Save();
+            SoftRestart();
+        }
     }
 
     public void Settings()
@@ -230,7 +234,7 @@ public class Main : IPlugin
 
     public static FlightMaster GetClosestFlightMasterFrom()
     {
-        float num = 99999f;
+        float num = float.MaxValue;
         FlightMaster result = null;
 
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
@@ -249,7 +253,7 @@ public class Main : IPlugin
 
     public static FlightMaster GetClosestFlightMasterTo()
     {
-        float num = 99999f;
+        float num = float.MaxValue;
         FlightMaster result = null;
 
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
@@ -268,7 +272,7 @@ public class Main : IPlugin
     // Requires FM map open
     public static FlightMaster GetBestAlternativeTo(List<string> reachableTaxis)
     {
-        float num = 99999f;
+        float num = float.MaxValue;
         FlightMaster result = null;
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
@@ -283,7 +287,7 @@ public class Main : IPlugin
         return result;
     }
 
-    private static void MovementEventsOnOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
+    private static void MovementEventsOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
         if (shouldTakeFlight && points.Last() == destinationVector)
             cancelable.Cancel = true;
@@ -305,20 +309,46 @@ public class Main : IPlugin
             }
 
             destinationVector = points.Last();
-            float _saveDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
+            float totalWalkingDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
+            //Logger.Log("Total walking distance for this path : " + totalWalkingDistance);
             Thread.Sleep(Usefuls.Latency + 500);
 
             from = GetClosestFlightMasterFrom();
             to = GetClosestFlightMasterTo();
+
+            double obligatoryDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) + WFMSettings.CurrentSettings.ShorterMinDistance;
+
+            // Calculate total real distance
+            double totalDistance = obligatoryDistance + CalculatePathTotalDistance(to.Position, destinationVector);
+
+            // If total real distance does not save any distance or is longer, try to find alternative
+            if (totalDistance >= totalWalkingDistance)
+            {
+                foreach (FlightMaster fm in FlightMasterDB.FlightMasterList)
+                {
+                    if (fm.Continent == (ContinentId)Usefuls.ContinentId
+                        && fm.Position.DistanceTo(destinationVector) < totalWalkingDistance
+                        && fm.IsDiscovered())
+                    {
+                        // Look for the closest available FM near destination
+                        double alternativeDistance = obligatoryDistance + CalculatePathTotalDistance(fm.Position, destinationVector);
+
+                        //Logger.Log($"ALT Destination from {fm.Name} is {alternativeDistance}");
+                        if (alternativeDistance < totalDistance)
+                        {
+                            totalDistance = alternativeDistance;
+                            to = fm;
+                        }
+                    }
+                }
+            }
 
             Thread.Sleep(1000);
 
             if (to != null
                 && from != null
                 && !from.Equals(to)
-                && CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) 
-                + (double)CalculatePathTotalDistance(to.Position, destinationVector) 
-                + WFMSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
+                && totalDistance <= totalWalkingDistance)
             {
                 Logger.Log("Flight path found, taking Taxi from " + from.Name + " to " + to.Name);
                 MovementManager.StopMoveNewThread();

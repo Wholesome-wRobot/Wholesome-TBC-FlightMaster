@@ -1,4 +1,5 @@
 ﻿using robotManager.FiniteStateMachine;
+using robotManager.Products;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -42,8 +43,6 @@ public class TakeTaxiState : State
         {
             MountTask.DismountMount();
 
-            string reachable = Lua.LuaDoString<string>("");
-
             List<string> reachableTaxis = new List<string>();
 
             // Look for current To and record reachables in case we don't find him
@@ -82,7 +81,7 @@ public class TakeTaxiState : State
     private void TakeTaxi(string taxiNodeName)
     {
         Lua.LuaDoString("TakeTaxiNode(" + Lua.LuaDoString<int>("for i=0,20 do if string.find(TaxiNodeName(i),'" + taxiNodeName.Replace("'", "\\'") + "') then return i end end", "").ToString() + ")", false);
-        Logger.Log("Heading to " + taxiNodeName);
+        Logger.Log("Flying to " + taxiNodeName);
         Thread.Sleep(Usefuls.Latency + 500);
         Main.shouldTakeFlight = false;
     }

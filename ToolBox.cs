@@ -1,13 +1,12 @@
 ﻿using robotManager.FiniteStateMachine;
 using System;
-using wManager.Wow.Helpers;
 
 public class ToolBox
 {
     public static void AddState(Engine engine, State state, string replace)
     {
         bool statedAdded = engine.States.Exists(s => s.DisplayName == state.DisplayName);
-        if (!statedAdded && engine != null && engine.States.Count > 5)
+        if (!statedAdded && engine != null)
         {
             try
             {
@@ -29,6 +28,7 @@ public class ToolBox
                 }
 
                 state.Priority = priorityToSet;
+                //Logger.Log($"Adding state {state.DisplayName}");
                 engine.AddState(state);
                 engine.States.Sort();
             }
