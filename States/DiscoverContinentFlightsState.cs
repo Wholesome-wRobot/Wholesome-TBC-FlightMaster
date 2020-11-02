@@ -38,44 +38,49 @@ public class DiscoverContinentFlightsState : State
         FlightMaster flightMaster = Main.nearestFlightMaster;
         Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at {flightMaster.Name}");
 
-        if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
+        bool allInvalid = true;
+
+        for(int j = 0; j < 3; j++) // failsafe
         {
-            Thread.Sleep(3000);
-            bool allInvalid = true;
-            for (int i = 0; i < 30; i++)
+            if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
             {
-                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
-                if (nodeName != "INVALID")
+                Thread.Sleep(3000);
+                for (int i = 0; i < 30; i++)
                 {
-                    allInvalid = false;
-                    FlightMasterDB.SetFlightMasterToKnown(nodeName);
+                    string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+                    if (nodeName != "INVALID")
+                    {
+                        allInvalid = false;
+                        FlightMasterDB.SetFlightMasterToKnown(nodeName);
+                    }
+                    else
+                    {
+                        FlightMasterDB.SetFlightMasterToUnknown(nodeName);
+                    }
+                }
+
+                if (allInvalid)
+                {
+                    Logger.Log("All flight paths are invalid, retrying");
+                    Thread.Sleep(1000);
+                    continue;
                 }
                 else
                 {
-                    FlightMasterDB.SetFlightMasterToUnknown(nodeName);
+                    if ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth)
+                        WFMDeepSettings.CurrentSettings.EKDiscoveredFlights = true;
+                    if ((ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor)
+                        WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights = true;
+                    if ((ContinentId)Usefuls.ContinentId == ContinentId.Expansion01)
+                        WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights = true;
+                    if ((ContinentId)Usefuls.ContinentId == ContinentId.Northrend)
+                        WFMDeepSettings.CurrentSettings.NorthrendDiscoveredFlights = true;
+
+                    WFMDeepSettings.CurrentSettings.Save();
+                    Logger.Log("Known flight paths succesfully recorded");
+                    Thread.Sleep(1000);
+                    return;
                 }
-            }
-
-            if (allInvalid)
-            {
-                Logger.Log("All flight paths are invalid, retrying");
-                Thread.Sleep(1000);
-                return;
-            }
-            else
-            {
-                if ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth)
-                    WFMDeepSettings.CurrentSettings.EKDiscoveredFlights = true;
-                if ((ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor)
-                    WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights = true;
-                if ((ContinentId)Usefuls.ContinentId == ContinentId.Expansion01)
-                    WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights = true;
-                if ((ContinentId)Usefuls.ContinentId == ContinentId.Northrend)
-                    WFMDeepSettings.CurrentSettings.NorthrendDiscoveredFlights = true;
-
-                WFMDeepSettings.CurrentSettings.Save();
-                Logger.Log("Known flight paths succesfully recorded");
-                Thread.Sleep(1000);
             }
         }
     }

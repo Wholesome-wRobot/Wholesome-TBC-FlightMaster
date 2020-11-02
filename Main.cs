@@ -31,7 +31,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.14"; // Must match version in Version.txt
+    public static string version = "0.0.15"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -302,7 +302,7 @@ public class Main : IPlugin
                 + (double)CalculatePathTotalDistance(to.Position, destinationVector) 
                 + WFMSettings.CurrentSettings.ShorterMinDistance <= _saveDistance)
             {
-                Logger.Log("Shorter path detected, taking Taxi from " + from.Name + " to " + to.Name);
+                Logger.Log("Flight path found, taking Taxi from " + from.Name + " to " + to.Name);
                 MovementManager.StopMoveNewThread();
                 MovementManager.StopMoveToNewThread();
                 cancelable.Cancel = true;
@@ -310,7 +310,7 @@ public class Main : IPlugin
             }
             else
             {
-                Logger.Log("No shorter path available, skip flying");
+                Logger.Log("No relevant flight path found");
             }
         }
     }

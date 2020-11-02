@@ -63,6 +63,7 @@ public class FlightMasterDB
     {
         FlightMasterList = new List<FlightMaster>()
         {
+            // EK
             new FlightMaster("Grom'gol, Stranglethorn", 1387, new Vector3(-12417.5f, 144.474f, 3.36881f, "None"), ContinentId.Azeroth),
             new FlightMaster("Flame Crest, Burning Steppes", 13177, new Vector3(-7504.06f, -2190.77f, 165.302f, "None"), ContinentId.Azeroth),
             new FlightMaster("Booty Bay, Stranglethorn", 2858, new Vector3(-14448.6f, 506.129f, 26.3565f, "None"), ContinentId.Azeroth),
@@ -74,7 +75,7 @@ public class FlightMasterDB
             new FlightMaster("Revantusk Village, The Hinterlands", 4314, new Vector3(-631.736f, -4720.6f, 5.48226f, "None"), ContinentId.Azeroth),
             new FlightMaster("Stonard, Swamp of Sorrows", 6026, new Vector3(-10459.2f, -3279.76f, 21.5445f, "None"), ContinentId.Azeroth),
             new FlightMaster("Undercity, Tirisfal", 4551, new Vector3(1567.12f, 266.345f, -43.0194f, "None"), ContinentId.Azeroth),
-                     
+            // Kalimdor
             new FlightMaster("Sun Rock Retreat, Stonetalon Mountains", 4312, new Vector3(968.077f, 1042.29f, 104.563f, "None"), ContinentId.Kalimdor),
             new FlightMaster("Moonglade", 12740, new Vector3(7466.15f, -2122.08f, 492.427f, "None"), ContinentId.Kalimdor),
             new FlightMaster("Bloodvenom Post, Felwood", 11900, new Vector3(5064.72f, -338.845f, 367.463f, "None"), ContinentId.Kalimdor),
@@ -94,7 +95,7 @@ public class FlightMasterDB
             new FlightMaster("Splintertree Post, Ashenvale", 12616, new Vector3(2305.64f, -2520.15f, 103.893f, "None"), ContinentId.Kalimdor),
             new FlightMaster("Cenarion Hold, Silithus", 15178, new Vector3(-6810.2f, 841.704f, 49.7481f, "None"), ContinentId.Kalimdor),
             new FlightMaster("Marshal's Refuge, Un'Goro Crater", 10583, new Vector3(-6110.54f, -1140.35f, -186.866f, "None"), ContinentId.Kalimdor),
-
+            // Outlands
             new FlightMaster("Thrallmar, Hellfire Peninsula", 16587, new Vector3(228.5f, 2633.57f, 87.67f, "None"), ContinentId.Expansion01),
             new FlightMaster("Falcon Watch, Hellfire Peninsula", 18942, new Vector3(-587.41f, 4101.01f, 91.37f, "None"), ContinentId.Expansion01),
             new FlightMaster("Zabra'jin, Zangarmarsh", 18791, new Vector3(219.45f, 7816f, 22.72f, "None"), ContinentId.Expansion01),

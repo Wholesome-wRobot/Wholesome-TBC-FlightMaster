@@ -80,6 +80,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"
-copy /Y "$(TargetDir)\$(ProjectName).dll" "C:\Users\Nico\Desktop\$(ProjectName).dll"</PostBuildEvent>
+copy /Y "$(TargetDir)\$(ProjectName).dll" "C:\Users\Nico\Desktop\$(ProjectName).dll"
+copy /Y "$(TargetDir)\$(ProjectName).dll" "D:\WoW\WoW Wotlk\WRobot WOTLK\Plugins\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
