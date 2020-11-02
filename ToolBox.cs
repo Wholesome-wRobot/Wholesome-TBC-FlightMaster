@@ -38,4 +38,21 @@ public class ToolBox
             }
         }
     }
+    public static void RemoveState(Engine engine, string stateToRemove)
+    {
+        bool stateExists = engine.States.Exists(s => s.DisplayName == stateToRemove);
+        if (stateExists && engine != null && engine.States.Count > 5)
+        {
+            try
+            {
+                State state = engine.States.Find(s => s.DisplayName == stateToRemove);
+                engine.States.Remove(state);
+                engine.States.Sort();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError("Erreur : {0}" + ex.ToString());
+            }
+        }
+    }
 }

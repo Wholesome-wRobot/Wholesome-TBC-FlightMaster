@@ -31,7 +31,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.151"; // Must match version in Version.txt
+    public static string version = "0.0.152"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -71,6 +71,11 @@ public class Main : IPlugin
                 Logger.Log($"Unconnected flight");
                 PausePlugin();
             }
+            if (args[0] == "You don't have enough money!")
+            {
+                Logger.Log($"Not enough money, bruh :(");
+                PausePlugin();
+            }
         }
     }
 
@@ -85,11 +90,20 @@ public class Main : IPlugin
         }).Start();
     }
 
+    public void SoftRestart()
+    {
+        Logger.Log("Soft Restart");
+        Products.InPause = true;
+        Thread.Sleep(1000);
+        Products.InPause = false;
+    }
+
     public void Dispose()
     {
         MovementEvents.OnMovementPulse -= MovementEventsOnOnMovementPulse;
-        detectionPulse.DoWork -= BackGroundPulse;
         EventsLuaWithArgs.OnEventsLuaWithArgs -= MessageHandler;
+        detectionPulse.DoWork -= BackGroundPulse;
+
         detectionPulse.Dispose();
         Logger.Log("Disposed");
         stateAddDelayer.Reset();
@@ -109,6 +123,8 @@ public class Main : IPlugin
             ToolBox.AddState(engine, new DiscoverFlightMasterState(), "FlightMaster: Take taxi");
             ToolBox.AddState(engine, new DiscoverContinentFlightsState(), "FlightMaster: Take taxi");
             ToolBox.AddState(engine, new WaitOnTaxiState(), "FlightMaster: Take taxi");
+            //ToolBox.RemoveState(engine, "FlightMaster: Take taxi");
+            //ToolBox.RemoveState(engine, "Flight master discover");
 
             // Double check because some profiles modify WRobot settings
             SetWRobotSettings();
@@ -145,6 +161,8 @@ public class Main : IPlugin
         wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
         wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
         wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
+        wManagerSetting.CurrentSetting.Save();
+        SoftRestart();
     }
 
     public void Settings()

@@ -61,7 +61,7 @@ public class DiscoverContinentFlightsState : State
 
                 if (allInvalid)
                 {
-                    Logger.Log("All flight paths are invalid, retrying");
+                    Logger.Log($"All flight paths are invalid, retrying ({j+1})");
                     Thread.Sleep(1000);
                     continue;
                 }
@@ -83,6 +83,7 @@ public class DiscoverContinentFlightsState : State
                 }
             }
         }
+        // all invalid
         Main.PausePlugin();
     }
 }

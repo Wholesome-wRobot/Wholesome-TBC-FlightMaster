@@ -1,6 +1,5 @@
 ﻿using robotManager.Helpful;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using wManager.Wow.Enums;
 
 public class FlightMasterDB
