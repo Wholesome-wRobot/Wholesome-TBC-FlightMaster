@@ -11,4 +11,8 @@ public class Logger
     {
         Logging.WriteError($"[Wholesome TBC-WotlK FlightMaster] {s}");
     }
+    public static void LogWarning(string s)
+    {
+        Logging.Write($"[Wholesome TBC-WotlK FlightMaster] {s}", Logging.LogType.Normal, Color.IndianRed);
+    }
 }

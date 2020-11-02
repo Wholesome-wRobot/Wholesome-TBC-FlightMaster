@@ -12,7 +12,6 @@ using wManager;
 using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Enums;
-using wManager.Wow.Forms;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 
@@ -32,7 +31,7 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
 
-    public static string version = "0.0.161"; // Must match version in Version.txt
+    public static string version = "0.0.162"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -43,8 +42,7 @@ public class Main : IPlugin
 
         if (AutoUpdater.CheckUpdate(version))
         {
-            Restart();
-            return;
+            Logger.LogWarning("A new version has been downloaded, please restart WRobot");
         }
 
         Logger.Log($"Launching version {version} on client {Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v")}");
@@ -338,6 +336,7 @@ public class Main : IPlugin
             if (totalDistance >= totalWalkingDistance
                 || to == null)
             {
+                Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
                 foreach (FlightMaster fm in FlightMasterDB.FlightMasterList)
                 {
                     if (fm.Continent == (ContinentId)Usefuls.ContinentId
