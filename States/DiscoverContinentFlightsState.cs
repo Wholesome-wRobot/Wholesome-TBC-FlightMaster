@@ -18,7 +18,9 @@ public class DiscoverContinentFlightsState : State
                 && Main.isLaunched
                 && !Main.inPause
                 && Main.nearestFlightMaster != null
-                && Main.nearestFlightMaster.Name != "Hellfire Peninsula, The Dark Portal"
+                && Main.nearestFlightMaster.NPCId != 18930 // horde dark portal
+                && Main.nearestFlightMaster.NPCId != 18931 // alliance dark portal
+                && !ToolBox.IsInBloodElfStartingZone()
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights
@@ -85,6 +87,6 @@ public class DiscoverContinentFlightsState : State
             }
         }
         // all invalid
-        Main.PausePlugin("Couldn't find a valid flight path");
+        ToolBox.PausePlugin("Couldn't find a valid flight path");
     }
 }

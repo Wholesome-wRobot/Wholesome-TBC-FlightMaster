@@ -1,6 +1,4 @@
 ﻿using robotManager.FiniteStateMachine;
-using robotManager.Products;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 using wManager.Wow.Bot.Tasks;
@@ -72,7 +70,7 @@ public class TakeTaxiState : State
             else
             {
                 Main.shouldTakeFlight = false;
-                Main.PausePlugin("Couldn't find an alternative flight");
+                ToolBox.PausePlugin("Couldn't find an alternative flight");
             }
         }
     }

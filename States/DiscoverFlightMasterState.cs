@@ -1,6 +1,4 @@
 ﻿using robotManager.FiniteStateMachine;
-using robotManager.Products;
-using System;
 using System.Threading;
 using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
@@ -41,7 +39,7 @@ public class DiscoverFlightMasterState : State
         {
             Thread.Sleep(1500);
             FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
-            Main.UnPausePlugin();
+            ToolBox.UnPausePlugin();
             Main.shouldTakeFlight = false;
             Thread.Sleep(1000);
         }

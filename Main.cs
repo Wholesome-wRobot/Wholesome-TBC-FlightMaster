@@ -1,14 +1,12 @@
 ﻿using robotManager.Events;
 using robotManager.FiniteStateMachine;
 using robotManager.Helpful;
-using robotManager.Products;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using wManager;
 using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Enums;
@@ -31,12 +29,15 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
     public static bool isTaxiMapOpened = false;
+    public static bool isHorde;
 
-    public static string version = "0.0.164"; // Must match version in Version.txt
+    public static string version = "0.0.170"; // Must match version in Version.txt
 
     public void Initialize()
     {
         isLaunched = true;
+
+        isHorde = ToolBox.GetIsHorde();
 
         WFMSettings.Load();
         WFMDeepSettings.Load();
@@ -44,7 +45,7 @@ public class Main : IPlugin
         if (AutoUpdater.CheckUpdate(version))
         {
             Logger.LogWarning("New version downloaded, restarting WRobot, please wait");
-            Restart();
+            ToolBox.Restart();
             return;
         }
 
@@ -53,56 +54,21 @@ public class Main : IPlugin
         MovementManager.StopMoveToNewThread();
 
         FlightMasterDB.Initialize();
-        SetWRobotSettings();
-        DiscoverDefaultNodes();
+        ToolBox.SetWRobotSettings();
+        ToolBox.DiscoverDefaultNodes();
 
         detectionPulse.DoWork += BackGroundPulse;
         detectionPulse.RunWorkerAsync();
 
         FiniteStateMachineEvents.OnRunState += StateEventHandler;
         MovementEvents.OnMovementPulse += MovementEventsOnMovementPulse;
-        EventsLuaWithArgs.OnEventsLuaWithArgs += MessageHandler;
-    }
-
-    private void MessageHandler(LuaEventsId id, List<string> args)
-    {
-        if (isLaunched)
-        {
-            if (id == LuaEventsId.UI_INFO_MESSAGE)
-            {
-                if (args[0] == "There is no direct path to that destination!")
-                    PausePlugin("Unconnected flight");
-                if (args[0] == "You don't have enough money!")
-                    PausePlugin("Not enough money");
-            }
-
-            if (id == LuaEventsId.TAXIMAP_OPENED)
-                isTaxiMapOpened = true;
-            if (id == LuaEventsId.TAXIMAP_CLOSED)
-                isTaxiMapOpened = false;
-        }
-    }
-
-    private void Restart()
-    {
-        new Thread(() =>
-        {
-            Products.ProductStop();
-            Products.ProductStart();
-        }).Start();
-    }
-
-    public static void SoftRestart()
-    {
-        Products.InPause = true;
-        Thread.Sleep(1000);
-        Products.InPause = false;
+        EventsLuaWithArgs.OnEventsLuaWithArgs += ToolBox.MessageHandler;
     }
 
     public void Dispose()
     {
         MovementEvents.OnMovementPulse -= MovementEventsOnMovementPulse;
-        EventsLuaWithArgs.OnEventsLuaWithArgs -= MessageHandler;
+        EventsLuaWithArgs.OnEventsLuaWithArgs -= ToolBox.MessageHandler;
         detectionPulse.DoWork -= BackGroundPulse;
 
         detectionPulse.Dispose();
@@ -116,7 +82,7 @@ public class Main : IPlugin
         if (engine.States.Count <= 5)
         {
             if (!stateAddDelayer.IsRunning)
-                SoftRestart(); // hack to wait for correct engine to trigger
+                ToolBox.SoftRestart(); // hack to wait for correct engine to trigger
             return;
         }
 
@@ -130,7 +96,7 @@ public class Main : IPlugin
             ToolBox.AddState(engine, new WaitOnTaxiState(), "FlightMaster: Take taxi");
 
             // Double check because some profiles modify WRobot settings
-            SetWRobotSettings();
+            ToolBox.SetWRobotSettings();
 
             /*
             Logger.Log($"****************************");
@@ -140,32 +106,6 @@ public class Main : IPlugin
             }
             Logger.Log($"****************************");
             */
-        }
-    }
-
-    private void DiscoverDefaultNodes()
-    {
-        if (ObjectManager.Me.PlayerRace == PlayerFactions.Orc || ObjectManager.Me.PlayerRace == PlayerFactions.Troll)
-            FlightMasterDB.SetFlightMasterToKnown(3310);
-        if (ObjectManager.Me.PlayerRace == PlayerFactions.Tauren)
-            FlightMasterDB.SetFlightMasterToKnown(2995);
-        if (ObjectManager.Me.PlayerRace == PlayerFactions.Undead)
-            FlightMasterDB.SetFlightMasterToKnown(4551);
-        // TODO Ajouter Blood elf
-    }
-
-    private void SetWRobotSettings()
-    {
-        if (wManagerSetting.CurrentSetting.FlightMasterTaxiUse 
-            || wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear
-            || wManagerSetting.CurrentSetting.FlightMasterDiscoverRange > 1)
-        {
-            Logger.Log("Disabling WRobot's Taxi");
-            wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
-            wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
-            wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
-            wManagerSetting.CurrentSetting.Save();
-            SoftRestart();
         }
     }
 
@@ -185,7 +125,7 @@ public class Main : IPlugin
                 if (inPause && pauseTimer.ElapsedMilliseconds > WFMSettings.CurrentSettings.PauseLengthInSeconds * 1000)
                 {
                     Logger.Log($"{WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds elapsed in pause");
-                    UnPausePlugin();
+                    ToolBox.UnPausePlugin();
                     MovementManager.StopMoveNewThread();
                     MovementManager.StopMoveToNewThread();
                 }
@@ -210,7 +150,7 @@ public class Main : IPlugin
     {
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
-            if ((ContinentId)Usefuls.ContinentId == flightMaster.Continent
+            if (ToolBox.FMIsOnMyContinent(flightMaster)
             && ObjectManager.Me.Position.DistanceTo(flightMaster.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance)
             {
                 return flightMaster;
@@ -241,13 +181,12 @@ public class Main : IPlugin
         {
             if ((flightMaster.IsDiscovered() || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi)
                 && flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < num
-                && flightMaster.Continent == (ContinentId)Usefuls.ContinentId)
+                && ToolBox.FMIsOnMyContinent(flightMaster))
             {
                 num = flightMaster.Position.DistanceTo(ObjectManager.Me.Position);
                 result = flightMaster;
             }
         }
-
         return result;
     }
 
@@ -260,7 +199,7 @@ public class Main : IPlugin
         {
             if (flightMaster.IsDiscovered()
                 && flightMaster.Position.DistanceTo(destinationVector) < num
-                && flightMaster.Continent == (ContinentId)Usefuls.ContinentId)
+                && ToolBox.FMIsOnMyContinent(flightMaster))
             {
                 num = flightMaster.Position.DistanceTo(destinationVector);
                 result = flightMaster;
@@ -318,15 +257,18 @@ public class Main : IPlugin
 
             from = GetClosestFlightMasterFrom();
             to = GetClosestFlightMasterTo();
-
-            if (from.Equals(to))
-                to = null;
             /*
             if (from != null)
                 Logger.Log("Closest FROM is " + from.Name);
+            else
+                Logger.Log("Closest FROM is NULL");
             if (to != null)
                 Logger.Log("Closest TO is " + to.Name);
             */
+            if (from.Equals(to))
+                to = null;
+            
+            
             double obligatoryDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) + WFMSettings.CurrentSettings.ShorterMinDistance;
 
             // Calculate total real distance FROM/TO
@@ -343,21 +285,21 @@ public class Main : IPlugin
                 || to == null)
             {
                 //Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
-                foreach (FlightMaster fm in FlightMasterDB.FlightMasterList)
+                foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
                 {
-                    if (fm.Continent == (ContinentId)Usefuls.ContinentId
-                        && fm.Position.DistanceTo(destinationVector) < totalWalkingDistance
-                        && fm.IsDiscovered()
-                        && !fm.Equals(from))
+                    if (ToolBox.FMIsOnMyContinent(flightMaster)
+                        && flightMaster.Position.DistanceTo(destinationVector) < totalWalkingDistance
+                        && flightMaster.IsDiscovered()
+                        && !flightMaster.Equals(from))
                     {
                         // Look for the closest available FM near destination
-                        double alternativeDistance = obligatoryDistance + CalculatePathTotalDistance(fm.Position, destinationVector);
+                        double alternativeDistance = obligatoryDistance + CalculatePathTotalDistance(flightMaster.Position, destinationVector);
 
                         //Logger.Log($"ALT Destination from {fm.Name} is {alternativeDistance}");
                         if (alternativeDistance < totalDistance)
                         {
                             totalDistance = alternativeDistance;
-                            to = fm;
+                            to = flightMaster;
                         }
                     }
                 }
@@ -382,26 +324,6 @@ public class Main : IPlugin
             {
                 Logger.Log("No relevant flight path found");
             }
-        }
-    }
-
-    public static void PausePlugin(string reason)
-    {
-        if (!inPause)
-        {
-            Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds ({reason})");
-            pauseTimer.Restart();
-            inPause = true;
-        }
-    }
-
-    public static void UnPausePlugin()
-    {
-        if (inPause)
-        {
-            Logger.Log("Unpausing plugin");
-            pauseTimer.Reset();
-            inPause = false;
         }
     }
 }
