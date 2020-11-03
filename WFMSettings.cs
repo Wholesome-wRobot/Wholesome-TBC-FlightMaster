@@ -15,7 +15,7 @@ public class WFMSettings : Settings
         ShorterMinDistance = 1000;
         SkipIfFollowPath = true;
         SkipIfFollowPathDistance = 5000f;
-        PauseLengthInSeconds = 300;
+        PauseLengthInSeconds = 600;
         TakeUndiscoveredTaxi = false;
         //PauseSearingGorge = true;
 
@@ -35,7 +35,7 @@ public class WFMSettings : Settings
     [Description("Will choose the nearest taxi for a flight even if you haven't discovered it. WARNING : can take you to dangerous zones")]
     public bool TakeUndiscoveredTaxi { get; set; }
 
-    [DefaultValue(300)]
+    [DefaultValue(600)]
     [Category("1 - Main")]
     [DisplayName("Pause length in seconds")]
     [Description("In case of an unconnected flight, set how long the plugin should be paused (in seconds)")]

@@ -1,6 +1,4 @@
 ﻿using robotManager.FiniteStateMachine;
-using robotManager.Products;
-using System;
 using System.Threading;
 using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
@@ -18,7 +16,9 @@ public class DiscoverContinentFlightsState : State
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
+                && !Main.inPause
                 && Main.nearestFlightMaster != null
+                && Main.nearestFlightMaster.Name != "Hellfire Peninsula, The Dark Portal"
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights
@@ -85,6 +85,6 @@ public class DiscoverContinentFlightsState : State
             }
         }
         // all invalid
-        Main.PausePlugin();
+        Main.PausePlugin("Couldn't find a valid flight path");
     }
 }

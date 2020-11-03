@@ -52,7 +52,7 @@ public class TakeTaxiState : State
                 string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
                 if (nodeStatus == "REACHABLE")
                 {
-                    if (nodeName == Main.to.Name.Replace("'", "\\'"))
+                    if (nodeName == Main.to.Name)
                     {
                         TakeTaxi(nodeName);
                         return;
@@ -71,9 +71,8 @@ public class TakeTaxiState : State
             }
             else
             {
-                Logger.Log($"Couldn't find an alternative");
                 Main.shouldTakeFlight = false;
-                Main.PausePlugin();
+                Main.PausePlugin("Couldn't find an alternative flight");
             }
         }
     }

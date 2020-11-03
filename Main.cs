@@ -30,8 +30,9 @@ public class Main : IPlugin
     public static FlightMaster from = null;
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
+    public static bool isTaxiMapOpened = false;
 
-    public static string version = "0.0.163"; // Must match version in Version.txt
+    public static string version = "0.0.164"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -65,22 +66,24 @@ public class Main : IPlugin
 
     private void MessageHandler(LuaEventsId id, List<string> args)
     {
-        if (isLaunched && id == LuaEventsId.UI_INFO_MESSAGE)
+        if (isLaunched)
         {
-            if (args[0] == "There is no direct path to that destination!")
+            if (id == LuaEventsId.UI_INFO_MESSAGE)
             {
-                Logger.Log($"Unconnected flight");
-                PausePlugin();
+                if (args[0] == "There is no direct path to that destination!")
+                    PausePlugin("Unconnected flight");
+                if (args[0] == "You don't have enough money!")
+                    PausePlugin("Not enough money");
             }
-            if (args[0] == "You don't have enough money!")
-            {
-                Logger.Log($"Not enough money, bruh :(");
-                PausePlugin();
-            }
+
+            if (id == LuaEventsId.TAXIMAP_OPENED)
+                isTaxiMapOpened = true;
+            if (id == LuaEventsId.TAXIMAP_CLOSED)
+                isTaxiMapOpened = false;
         }
     }
 
-    public void Restart()
+    private void Restart()
     {
         new Thread(() =>
         {
@@ -286,8 +289,11 @@ public class Main : IPlugin
 
     private static void MovementEventsOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
-        if (shouldTakeFlight && points.Last() == destinationVector)
+        if (shouldTakeFlight && (points.Last() == destinationVector))
+        {
+            Logger.Log("Cancelled move to " + destinationVector);
             cancelable.Cancel = true;
+        }
 
         if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi || shouldTakeFlight || !isLaunched || inPause)
             return;
@@ -379,11 +385,11 @@ public class Main : IPlugin
         }
     }
 
-    public static void PausePlugin()
+    public static void PausePlugin(string reason)
     {
         if (!inPause)
         {
-            Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
+            Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds ({reason})");
             pauseTimer.Restart();
             inPause = true;
         }
