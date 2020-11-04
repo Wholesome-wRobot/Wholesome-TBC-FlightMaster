@@ -20,7 +20,7 @@ public class DiscoverContinentFlightsState : State
                 && Main.nearestFlightMaster != null
                 && Main.nearestFlightMaster.NPCId != 18930 // horde dark portal
                 && Main.nearestFlightMaster.NPCId != 18931 // alliance dark portal
-                && !ToolBox.IsInBloodElfStartingZone()
+                && !ToolBox.PlayerInBloodElfStartingZone()
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights
@@ -45,7 +45,7 @@ public class DiscoverContinentFlightsState : State
 
         for(int j = 0; j < 3; j++) // failsafe
         {
-            if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
+            if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, /*(int)GossipOptionsType.taxi)*/1))
             {
                 Thread.Sleep(3000);
                 for (int i = 0; i < 30; i++)

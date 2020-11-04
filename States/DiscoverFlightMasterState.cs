@@ -35,7 +35,7 @@ public class DiscoverFlightMasterState : State
         FlightMaster flightMaster = Main.nearestFlightMaster;
         Logger.Log($"Discovering flight master {flightMaster.Name}");
 
-        if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, (int)GossipOptionsType.taxi))
+        if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, /*(int)GossipOptionsType.taxi)*/1))
         {
             Thread.Sleep(1500);
             FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);

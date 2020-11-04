@@ -89,13 +89,13 @@ public class FlightMasterDB
         new FlightMaster("Auberdine, Darkshore", 3841, new Vector3(6343.2f, 561.651f, 15.79894f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Forest Song, Ashenvale", 22935, new Vector3(3002.88f, -3206.81f, 190.0471f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Astranaar, Ashenvale", 4267, new Vector3(2828.38f, -284.25f, 106.6782f, "None"), ContinentId.Kalimdor),
-        new FlightMaster("Talrendis Point, Azshara", 12577, new Vector3(2718.18f, -3880.75f, 101.4483f, "None"), ContinentId.Kalimdor),
+        new FlightMaster("Talrendis Point, Azshara", 12577, new Vector3(2718.18f, -3880.75f, 101.4485f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Stonetalon Peak, Stonetalon Mountains", 4407, new Vector3(2682.83f, 1466.45f, 233.6487f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Nijel's Point, Desolace", 6706, new Vector3(136.218f, 1326.33f, 193.4992f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Theramore, Dustwallow Marsh", 4321, new Vector3(-3828.88f, -4517.51f, 10.66114f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Thalanaar, Feralas", 4319, new Vector3(-4491.12f, -778.347f, -40.20263f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Feathermoon, Feralas", 8019, new Vector3(-4370.54f, 3340.11f, 12.26892f, "None"), ContinentId.Kalimdor),
-        new FlightMaster("Gadgetzan, Tanaris", 7823, new Vector3(-7224.87f, -3738.21f, 8.400914f, "None"), ContinentId.Kalimdor),
+        new FlightMaster("Gadgetzan, Tanaris", 7823, new Vector3(-7224.87f, -3738.21f, 8.401169f, "None"), ContinentId.Kalimdor), // can't interact
         new FlightMaster("Cenarion Hold, Silithus", 15177, new Vector3(-6758.55f, 775.594f, 89.02157f, "None"), ContinentId.Kalimdor),
         // Outlands
         new FlightMaster("Hellfire Peninsula, The Dark Portal, Alliance", 18931, new Vector3(-323.81f, 1027.61f, 54.15654f, "None"), ContinentId.Expansion01),

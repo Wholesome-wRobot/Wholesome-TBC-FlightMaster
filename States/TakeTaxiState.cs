@@ -37,7 +37,7 @@ public class TakeTaxiState : State
     {
         MovementManager.StopMoveNewThread();
         MovementManager.StopMoveToNewThread();
-        if (GoToTask.ToPositionAndIntecractWithNpc(Main.from.Position, Main.from.NPCId, (int)GossipOptionsType.taxi))
+        if (GoToTask.ToPositionAndIntecractWithNpc(Main.from.Position, Main.from.NPCId, /*(int)GossipOptionsType.taxi*/1))
         {
             MountTask.DismountMount();
 

@@ -9,7 +9,6 @@ using System.Linq;
 using System.Threading;
 using wManager.Events;
 using wManager.Plugin;
-using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 
@@ -31,7 +30,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.170"; // Must match version in Version.txt
+    public static string version = "0.0.171"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -148,15 +147,17 @@ public class Main : IPlugin
 
     private FlightMaster GetNearestFlightMaster()
     {
+        FlightMaster nearest = null;
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
             if (ToolBox.FMIsOnMyContinent(flightMaster)
-            && ObjectManager.Me.Position.DistanceTo(flightMaster.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance)
+            && ObjectManager.Me.Position.DistanceTo(flightMaster.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance
+            && (nearest == null || nearest.Position.DistanceTo(ObjectManager.Me.Position) > flightMaster.Position.DistanceTo(ObjectManager.Me.Position)))
             {
-                return flightMaster;
+                nearest = flightMaster;
             }
         }
-        return null;
+        return nearest;
     }
 
     private static float CalculatePathTotalDistance(Vector3 from, Vector3 to)
@@ -264,11 +265,15 @@ public class Main : IPlugin
                 Logger.Log("Closest FROM is NULL");
             if (to != null)
                 Logger.Log("Closest TO is " + to.Name);
+            else
+                Logger.Log("Closest TO is NULL");
             */
+            if (from == null)
+                return;
+
             if (from.Equals(to))
                 to = null;
-            
-            
+
             double obligatoryDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) + WFMSettings.CurrentSettings.ShorterMinDistance;
 
             // Calculate total real distance FROM/TO

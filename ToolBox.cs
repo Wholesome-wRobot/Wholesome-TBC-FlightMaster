@@ -172,18 +172,28 @@ public class ToolBox
         }
     }
 
-    public static bool IsInBloodElfStartingZone()
+    public static bool PlayerInBloodElfStartingZone()
     {
         string zone = Lua.LuaDoString<string>("return GetRealZoneText();");
-        bool result = zone == "Eversong Woods" || zone == "Ghostlands" || zone == "Silvermoon City";
-        return result;
+        return zone == "Eversong Woods" || zone == "Ghostlands" || zone == "Silvermoon City";
     }
 
     public static bool FMIsOnMyContinent(FlightMaster fm)
     {
-        if (IsInBloodElfStartingZone())
-            return fm.NPCId == 16189 || fm.NPCId == 16192;
+        if (PlayerInBloodElfStartingZone())
+        {
+            return FMIsInBloodElfStartingZone(fm) || fm.Continent == ContinentId.Azeroth;
+        }
 
-        return fm.Continent == (ContinentId)Usefuls.ContinentId && fm.NPCId != 16189 && fm.NPCId != 16192;
+        return fm.Continent == (ContinentId)Usefuls.ContinentId 
+            || (FMIsInBloodElfStartingZone(fm) && (ContinentId)Usefuls.ContinentId == ContinentId.Azeroth);
+    }
+
+    private static bool FMIsInBloodElfStartingZone(FlightMaster fm)
+    {
+        return fm.NPCId == 16189
+            || fm.NPCId == 16192
+            || fm.NPCId == 24851
+            || fm.NPCId == 26560;
     }
 }
