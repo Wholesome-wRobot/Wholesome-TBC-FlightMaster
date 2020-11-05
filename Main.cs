@@ -1,6 +1,7 @@
 ﻿using robotManager.Events;
 using robotManager.FiniteStateMachine;
 using robotManager.Helpful;
+using robotManager.Products;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,10 +31,14 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.171"; // Must match version in Version.txt
+    public static string version = "0.0.172"; // Must match version in Version.txt
 
     public void Initialize()
     {
+        if (!Products.ProductName.Equals("Quester") 
+            && !Products.ProductName.Equals("Grinder"))
+            return;
+
         isLaunched = true;
 
         isHorde = ToolBox.GetIsHorde();

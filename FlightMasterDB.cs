@@ -78,7 +78,7 @@ public class FlightMasterDB
         new FlightMaster("Stormwind, Elwynn", 352, new Vector3(-8835.76f, 490.084f, 109.6157f, "None"), ContinentId.Azeroth),
         new FlightMaster("Darkshire, Duskwood", 2409, new Vector3(-10513.8f, -1258.79f, 41.43284f, "None"), ContinentId.Azeroth),
         new FlightMaster("Sentinel Hill, Westfall", 523, new Vector3(-10628.3f, 1037.27f, 34.11045f, "None"), ContinentId.Azeroth),
-        new FlightMaster("Rebel Camp, Stranglethorn", 24366, new Vector3(-11340.5f, -219.14f, 75.21273f, "None"), ContinentId.Azeroth),
+        new FlightMaster("Rebel Camp, Stranglethorn Vale", 24366, new Vector3(-11340.5f, -219.14f, 75.21273f, "None"), ContinentId.Azeroth),
         new FlightMaster("Booty Bay, Stranglethorn", 2859, new Vector3(-14477.9f, 464.101f, 36.38131f, "None"), ContinentId.Azeroth),
         new FlightMaster("Nethergarde Keep, Blasted Lands", 8609, new Vector3(-11110.2f, -3437.1f, 79.19771f, "None"), ContinentId.Azeroth),
         // Kalimdor
