@@ -44,16 +44,12 @@ public class FlightMasterDB
         new FlightMaster("Falcon Watch, Hellfire Peninsula", 18942, new Vector3(-587.41f, 4101.01f, 91.37f, "None"), ContinentId.Expansion01),
         new FlightMaster("Zabra'jin, Zangarmarsh", 18791, new Vector3(219.45f, 7816f, 22.72f, "None"), ContinentId.Expansion01),
         new FlightMaster("Garadar, Nagrand", 18808, new Vector3(-1261.09f, 7133.39f, 57.34f, "None"), ContinentId.Expansion01),
-        new FlightMaster("Area 52, Netherstorm", 18938, new Vector3(3082.31f, 3596.11f, 144.02f, "None"), ContinentId.Expansion01),
         new FlightMaster("Shadowmoon Village, Shadowmoon Valley", 19317, new Vector3(-3018.62f, 2557.09f, 79.09f, "None"), ContinentId.Expansion01),
         new FlightMaster("Stonebreaker Hold, Terokkar Forest", 18807, new Vector3(-2567.33f, 4423.83f, 39.33f, "None"), ContinentId.Expansion01),
         new FlightMaster("Thunderlord Stronghold, Blade's Edge Mountains", 18953, new Vector3(2446.37f, 6020.93f, 154.34f, "None"), ContinentId.Expansion01),
-        new FlightMaster("Shattrath, Terokkar Forest", 18940, new Vector3(-1837.23f, 5301.9f, -12.43f, "None"), ContinentId.Expansion01),
-        new FlightMaster("The Stormspire, Netherstorm", 19583, new Vector3(4157.58f, 2959.69f, 352.08f, "None"), ContinentId.Expansion01),
         new FlightMaster("Sanctum of the Stars, Shadowmoon Valley", 21766, new Vector3(-4073.17f, 1123.61f, 42.47f, "None"), ContinentId.Expansion01),
         new FlightMaster("Spinebreaker Ridge, Hellfire Peninsula", 19558, new Vector3(-1316.84f, 2358.62f, 88.96f, "None"), ContinentId.Expansion01),
         new FlightMaster("Mok'Nathal Village, Blade's Edge Mountains", 22455, new Vector3(2028.79f, 4705.27f, 150.51f, "None"), ContinentId.Expansion01),
-        new FlightMaster("Evergrove, Blade's Edge Mountains", 22216, new Vector3(2976.01f, 5501.13f, 143.67f, "None"), ContinentId.Expansion01),
         new FlightMaster("Swamprat Post, Zangarmarsh", 20762, new Vector3(91.67f, 5214.92f, 23.1f, "None"), ContinentId.Expansion01),
         new FlightMaster("Hellfire Peninsula, The Dark Portal, Horde", 18930, new Vector3(-178.09f, 1026.72f, 54.19f, "None"), ContinentId.Expansion01),
         // Ghostlands
@@ -101,6 +97,17 @@ public class FlightMasterDB
         new FlightMaster("Hellfire Peninsula, The Dark Portal, Alliance", 18931, new Vector3(-323.81f, 1027.61f, 54.15654f, "None"), ContinentId.Expansion01),
         new FlightMaster("Honor Hold, Hellfire Peninsula", 16822, new Vector3(-665.804f, 2715.48f, 94.09752f, "None"), ContinentId.Expansion01),
         new FlightMaster("Temple of Telhamat, Hellfire Peninsula", 18785, new Vector3(199.061f, 4238.42f, 121.7271f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Shatter Point, Hellfire Peninsula", 20234, new Vector3(279.397f, 1489.76f, -15.52282f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Telredor, Zangarmarsh", 18788, new Vector3(210.492f, 6065.09f, 148.3183f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Orebor Harborage, Zangarmarsh", 22485, new Vector3(963.428f, 7399.58f, 29.24892f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Allerian Stronghold, Terokkar Forest", 18809, new Vector3(-2995.4f, 3873.27f, 9.543159f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Telaar, Nagrand", 18789, new Vector3(-2723.1f, 7302.84f, 88.63432f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Sylvanaar, Blade's Edge Mountains", 18937, new Vector3(2187.88f, 6794f, 183.3297f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Toshley's Station, Blade's Edge Mountains", 21107, new Vector3(1860.71f, 5528.27f, 276.6563f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Wildhammer Stronghold, Shadowmoon Valley", 18939, new Vector3(-3980.97f, 2156.29f, 104.9289f, "None"), ContinentId.Expansion01),
+        // Dranei Continent
+        new FlightMaster("The Exodar", 17555, new Vector3(-4057.15f, -11788.6f, 8.87662f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Blood Watch, Bloodmyst Isle", 17554, new Vector3(-1930.02f, -11956.8f, 57.39266f, "None"), ContinentId.Expansion01),
     };
 
     private static readonly List<FlightMaster> neutralFlightMasters = new List<FlightMaster>()
@@ -114,6 +121,16 @@ public class FlightMasterDB
         // Ghostlands
         new FlightMaster("Shattered Sun Staging Area", 26560, new Vector3(13012.4f, -6911.19f, 9.584099f, "None"), ContinentId.Expansion01),
         new FlightMaster("Zul'Aman, Ghostlands", 24851, new Vector3(6789.91f, -7749.43f, 126.619f, "None"), ContinentId.Expansion01),
+        // Outlands
+        new FlightMaster("Cosmowrench, Netherstorm", 20515, new Vector3(2973.2f, 1848.45f, 141.0015f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Shattrath, Terokkar Forest", 18940, new Vector3(-1837.23f, 5301.9f, -12.43f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Evergrove, Blade's Edge Mountains", 22216, new Vector3(2976.01f, 5501.13f, 143.67f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Area 52, Netherstorm", 18938, new Vector3(3082.31f, 3596.11f, 144.02f, "None"), ContinentId.Expansion01),
+        new FlightMaster("The Stormspire, Netherstorm", 19583, new Vector3(4157.58f, 2959.69f, 352.08f, "None"), ContinentId.Expansion01),
+        // Aldor reputation
+        new FlightMaster("Altar of Sha'tar, Shadowmoon Valley", 19581, new Vector3(-3062.63f, 741.933f, -10.14242f, "None"), ContinentId.Expansion01),
+        // Scryer reputation
+        new FlightMaster("Sanctum of the Stars, Shadowmoon Valley", 21766, new Vector3(-4073.17f, 1123.61f, 42.47f, "None"), ContinentId.Expansion01),
     };
 
     public static void Initialize()
