@@ -31,7 +31,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.172"; // Must match version in Version.txt
+    public static string version = "0.0.173"; // Must match version in Version.txt
 
     public void Initialize()
     {

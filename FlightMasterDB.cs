@@ -66,9 +66,9 @@ public class FlightMasterDB
         // EK
         new FlightMaster("Light's Hope Chapel, Eastern Plaguelands", 12617, new Vector3(2269.85f, -5345.39f, 86.94077f, "None"), ContinentId.Azeroth),
         new FlightMaster("Chillwind Camp, Western Plaguelands", 12596, new Vector3(928.273f, -1429.08f, 64.75098f, "None"), ContinentId.Azeroth),
-        new FlightMaster("Aerie Peak, Hinterlands", 8018, new Vector3(282.096f, -2001.28f, 194.127f, "None"), ContinentId.Azeroth),
+        new FlightMaster("Aerie Peak, The Hinterlands", 8018, new Vector3(282.096f, -2001.28f, 194.127f, "None"), ContinentId.Azeroth),
         new FlightMaster("Southshore, Hillsbrad", 2432, new Vector3(-715.146f, -512.134f, 26.5445f, "None"), ContinentId.Azeroth),
-        new FlightMaster("Refuge Pointe, Arathi Highlands", 2835, new Vector3(-1240.03f, -2513.96f, 21.92965f, "None"), ContinentId.Azeroth),
+        new FlightMaster("Refuge Pointe, Arathi", 2835, new Vector3(-1240.03f, -2513.96f, 21.92965f, "None"), ContinentId.Azeroth),
         new FlightMaster("Menethil Harbor, Wetlands", 1571, new Vector3(-3793.2f, -782.052f, 9.014537f, "None"), ContinentId.Azeroth),
         new FlightMaster("Ironforge, Dun Morogh", 1573, new Vector3(-4821.13f, -1152.4f, 502.2118f, "None"), ContinentId.Azeroth),
         new FlightMaster("Thelsamar, Loch Modan", 1572, new Vector3(-5424.85f, -2929.87f, 347.5621f, "None"), ContinentId.Azeroth),
