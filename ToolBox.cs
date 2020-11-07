@@ -243,12 +243,14 @@ public class ToolBox
             if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
             {
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-                Thread.Sleep(500);
+                Thread.Sleep(1000);
                 if (!Main.isTaxiMapOpened)
                 {
-                    Logger.Log("Taxi map is not open. Retrying");
+                    Lua.LuaDoString("CloseTaxiMap()");
+                    Thread.Sleep(1000);
+                    Logger.Log($"Taxi map is not open. Retrying ({i})");
                     Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-                    Thread.Sleep(500);
+                    Thread.Sleep(1000);
                 }
                 else
                     return true;
