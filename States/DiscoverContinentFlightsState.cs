@@ -3,6 +3,7 @@ using System.Threading;
 using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
+using wManager.Wow.ObjectManager;
 
 public class DiscoverContinentFlightsState : State
 {
@@ -18,8 +19,10 @@ public class DiscoverContinentFlightsState : State
                 && Main.isLaunched
                 && !Main.inPause
                 && Main.nearestFlightMaster != null
+                && !Main.nearestFlightMaster.IsDisabled()
                 && Main.nearestFlightMaster.NPCId != 18930 // horde dark portal
                 && Main.nearestFlightMaster.NPCId != 18931 // alliance dark portal
+                && ToolBox.ShatterPointFailSafe(Main.nearestFlightMaster) // Shatter Point
                 && !ToolBox.PlayerInBloodElfStartingZone()
                 && !ToolBox.PlayerInDraneiStartingZone()
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights
@@ -42,13 +45,58 @@ public class DiscoverContinentFlightsState : State
         FlightMaster flightMaster = Main.nearestFlightMaster;
         Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at {flightMaster.Name}");
 
-        bool allInvalid = true;
 
-        for(int j = 0; j < 3; j++) // failsafe
+        // We go to the position
+        if (GoToTask.ToPosition(flightMaster.Position, 0.5f))
         {
-            if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, /*(int)GossipOptionsType.taxi)*/1))
+            // Dismount
+            if (ObjectManager.Me.IsMounted)
+                MountTask.DismountMount();
+
+            // 3 attempts to find NPC
+            bool NPCisHere = false;
+            for (int i = 1; i <= 3; i++)
             {
-                Thread.Sleep(3000);
+                if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
+                    Thread.Sleep(1000);
+                else
+                    NPCisHere = true;
+            }
+
+            if (!NPCisHere)
+            {
+                Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
+                flightMaster.Disable();
+                return;
+            }
+
+            // 3 attempts to open map
+            for (int i = 1; i <= 3; i++)
+            {
+                // interract with FM
+                if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId))
+                {
+                    Thread.Sleep(500);
+                    if (!Main.isTaxiMapOpened)
+                        Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+                    Thread.Sleep(500);
+                }
+
+                if (Main.isTaxiMapOpened)
+                    break;
+            }
+
+            if (!Main.isTaxiMapOpened)
+            {
+                ToolBox.PausePlugin("Couldn't open FM map");
+                return;
+            }
+
+            // 3 attempts to discover flights
+            bool allInvalid = true;
+            for (int j = 0; j < 3; j++)
+            {
+                // Loop through nodes
                 for (int i = 0; i < 30; i++)
                 {
                     string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
@@ -65,8 +113,8 @@ public class DiscoverContinentFlightsState : State
 
                 if (allInvalid)
                 {
-                    Logger.Log($"All flight paths are invalid, retrying ({j+1})");
-                    Thread.Sleep(1000);
+                    Logger.Log($"All flight paths are invalid, retrying ({j + 1})");
+                    Thread.Sleep(500);
                     continue;
                 }
                 else
@@ -82,12 +130,13 @@ public class DiscoverContinentFlightsState : State
 
                     WFMDeepSettings.CurrentSettings.Save();
                     Logger.Log("Known flight paths succesfully recorded");
-                    Thread.Sleep(1000);
+                    Thread.Sleep(500);
                     return;
                 }
             }
+
+            // all invalid
+            ToolBox.PausePlugin("Couldn't find a valid flight path");
         }
-        // all invalid
-        ToolBox.PausePlugin("Couldn't find a valid flight path");
     }
 }

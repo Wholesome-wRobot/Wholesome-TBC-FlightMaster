@@ -22,6 +22,8 @@ public class TakeTaxiState : State
                 && Main.shouldTakeFlight
                 && Main.to != null
                 && Main.from != null
+                && !Main.from.IsDisabled()
+                && ToolBox.ShatterPointFailSafe(Main.from) // Shatter Point
                 && !ObjectManager.Me.IsOnTaxi)
             {
                 return true;
@@ -37,12 +39,47 @@ public class TakeTaxiState : State
     {
         MovementManager.StopMoveNewThread();
         MovementManager.StopMoveToNewThread();
-        if (GoToTask.ToPositionAndIntecractWithNpc(Main.from.Position, Main.from.NPCId, /*(int)GossipOptionsType.taxi*/1))
+
+        // We go to the position
+        if (GoToTask.ToPosition(Main.from.Position, 0.5f))
         {
-            MountTask.DismountMount();
+            // Dismount
+            if (ObjectManager.Me.IsMounted)
+                MountTask.DismountMount();
+
+            // 3 attempts to find NPC
+            bool NPCisHere = false;
+            for (int i = 1; i <= 3; i++)
+            {
+                if (!ToolBox.FMIsNearbyAndAlive(Main.from))
+                    Thread.Sleep(1000);
+                else
+                    NPCisHere = true;
+            }
+
+            if (!NPCisHere)
+                ToolBox.PausePlugin("FlightMaster is absent or dead");
+
+            // 3 attempts to open map
+            for (int i = 1; i <= 3; i++)
+            {
+                // interract with FM
+                if (GoToTask.ToPositionAndIntecractWithNpc(Main.from.Position, Main.from.NPCId))
+                {
+                    Thread.Sleep(500);
+                    if (!Main.isTaxiMapOpened)
+                        Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+                    Thread.Sleep(500);
+                }
+
+                if (Main.isTaxiMapOpened)
+                    break;
+            }
+
+            if (!Main.isTaxiMapOpened)
+                ToolBox.PausePlugin("Couldn't open FM map");
 
             List<string> reachableTaxis = new List<string>();
-
             // Look for current To and record reachables in case we don't find him
             for (int i = 0; i < 30; i++)
             {

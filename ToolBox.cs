@@ -154,12 +154,9 @@ public class ToolBox
 
     public static void PausePlugin(string reason)
     {
-        if (!Main.inPause)
-        {
-            Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds ({reason})");
-            Main.pauseTimer.Restart();
-            Main.inPause = true;
-        }
+        Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds ({reason})");
+        Main.pauseTimer.Restart();
+        Main.inPause = true;
     }
 
     public static void UnPausePlugin()
@@ -208,5 +205,22 @@ public class ToolBox
     {
         return fm.NPCId == 17555
             || fm.NPCId == 17554;
+    }
+
+    public static bool FMIsNearbyAndAlive(FlightMaster fm)
+    {
+        bool FMDetected = false;
+        List<WoWUnit> surroundingEnemies = ObjectManager.GetObjectWoWUnit();
+        foreach (WoWUnit unit in surroundingEnemies)
+        {
+            if (unit.Entry == fm.NPCId && unit.IsAlive)
+                FMDetected = true;
+        }
+        return FMDetected;
+    }
+
+    public static bool ShatterPointFailSafe(FlightMaster fm)
+    {
+        return fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100;
     }
 }
