@@ -12,6 +12,7 @@ using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
+using static wManager.Wow.Helpers.PathFinder;
 
 public class Main : IPlugin
 {
@@ -31,7 +32,11 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.174"; // Must match version in Version.txt
+    // BANNED points
+    static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
+    static Vector3 DesolacePointAfterTBJump = new Vector3(-706.7505f, 579.7277f, 154.6033f, "None");
+
+    public static string version = "0.0.175"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -168,11 +173,18 @@ public class Main : IPlugin
     private static float CalculatePathTotalDistance(Vector3 from, Vector3 to)
     {
         float distance = 0.0f;
-        List<Vector3> path = PathFinder.FindPath(from, to, false);
+        List<Vector3> path = FindPath(from, to, false);
 
-        for (int index = 0; index < path.Count - 1; ++index)
+        for (int i = 0; i < path.Count - 1; ++i)
         {
-            distance += path[index].DistanceTo2D(path[index + 1]);
+            distance += path[i].DistanceTo2D(path[i + 1]);
+
+            // FIX FOR TB JUMP OFF
+            if (path[i].DistanceTo(TBjumpPoint) < 50 && path[i + 1].DistanceTo(DesolacePointAfterTBJump) < 50)
+            {
+                Logger.Log("Jump off TB detected, skipping");
+                return 999999999f;
+            }
         }
 
         return distance;

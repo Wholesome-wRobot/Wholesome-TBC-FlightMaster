@@ -21,6 +21,7 @@ public class DiscoverContinentFlightsState : State
                 && Main.nearestFlightMaster.NPCId != 18930 // horde dark portal
                 && Main.nearestFlightMaster.NPCId != 18931 // alliance dark portal
                 && !ToolBox.PlayerInBloodElfStartingZone()
+                && !ToolBox.PlayerInDraneiStartingZone()
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !WFMDeepSettings.CurrentSettings.KalimdorDiscoveredFlights
                 || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !WFMDeepSettings.CurrentSettings.OutlandsDiscoveredFlights
