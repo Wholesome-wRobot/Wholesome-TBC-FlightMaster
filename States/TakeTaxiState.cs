@@ -39,20 +39,23 @@ public class TakeTaxiState : State
         MovementManager.StopMoveNewThread();
         MovementManager.StopMoveToNewThread();
 
+        FlightMaster flightmasterFrom = Main.from;
+        FlightMaster flightmasterTo = Main.to;
+
         // We go to the position
-        if (GoToTask.ToPosition(Main.from.Position, 0.5f))
+        if (GoToTask.ToPosition(flightmasterFrom.Position, 0.5f))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
-            if (!ToolBox.FMIsNearbyAndAlive(Main.from))
+            if (!ToolBox.FMIsNearbyAndAlive(flightmasterFrom))
             {
                 ToolBox.PausePlugin("FlightMaster is absent or dead");
                 return;
             }
 
-            if (!ToolBox.OpenTaxiMapSuccess(Main.from))
+            if (!ToolBox.OpenTaxiMapSuccess(flightmasterFrom))
                 return;
 
             List<string> reachableTaxis = new List<string>();
@@ -63,7 +66,7 @@ public class TakeTaxiState : State
                 string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
                 if (nodeStatus == "REACHABLE")
                 {
-                    if (nodeName == Main.to.Name)
+                    if (nodeName == flightmasterTo.Name)
                     {
                         TakeTaxi(nodeName);
                         return;
@@ -73,7 +76,7 @@ public class TakeTaxiState : State
             }
 
             // Find an alternative
-            Logger.Log($"{Main.to.Name} is unreachable, trying to find an alternative");
+            Logger.Log($"{flightmasterTo.Name} is unreachable, trying to find an alternative");
             FlightMaster alternativeFm = Main.GetBestAlternativeTo(reachableTaxis);
             if (alternativeFm != null)
             {

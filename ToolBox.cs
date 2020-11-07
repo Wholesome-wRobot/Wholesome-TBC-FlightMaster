@@ -139,7 +139,8 @@ public class ToolBox
     {
         if (Main.isLaunched)
         {
-            if (id == LuaEventsId.UI_INFO_MESSAGE)
+            string eventName = id.ToString();
+            if (eventName == "UI_INFO_MESSAGE")
             {
                 if (args[0] == "There is no direct path to that destination!")
                     PausePlugin("Unconnected flight");
@@ -147,16 +148,10 @@ public class ToolBox
                     PausePlugin("Not enough money");
             }
 
-            if (id == LuaEventsId.TAXIMAP_OPENED)
-            {
-                Logger.Log("Taxi map opened");
+            if (eventName == "TAXIMAP_OPENED")
                 Main.isTaxiMapOpened = true;
-            }
-            if (id == LuaEventsId.TAXIMAP_CLOSED)
-            {
-                Logger.Log("Taxi map closed");
+            if (eventName == "TAXIMAP_CLOSED")
                 Main.isTaxiMapOpened = false;
-            }
         }
     }
 
@@ -243,14 +238,18 @@ public class ToolBox
             if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
             {
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-                Thread.Sleep(1000);
+
+                int limit = 0;
+                while (!Main.isTaxiMapOpened && limit < 3000)
+                {
+                    limit += 200;
+                    Thread.Sleep(200);
+                }
+
                 if (!Main.isTaxiMapOpened)
                 {
                     Lua.LuaDoString("CloseTaxiMap()");
-                    Thread.Sleep(1000);
-                    Logger.Log($"Taxi map is not open. Retrying ({i})");
-                    Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-                    Thread.Sleep(1000);
+                    Logger.Log($"Couldn't open taxi map. Retrying ({i})");
                 }
                 else
                     return true;
