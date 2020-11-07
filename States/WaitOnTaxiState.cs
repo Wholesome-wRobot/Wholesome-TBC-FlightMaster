@@ -1,6 +1,4 @@
 ﻿using robotManager.FiniteStateMachine;
-using robotManager.Products;
-using System;
 using System.Threading;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
@@ -8,7 +6,6 @@ using wManager.Wow.ObjectManager;
 public class WaitOnTaxiState : State
 {
     public override string DisplayName => "WFM Waiting on Taxi";
-    public WaitOnTaxiState() { }
 
     public override bool NeedToRun
     {

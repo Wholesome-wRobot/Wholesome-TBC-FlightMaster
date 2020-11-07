@@ -9,8 +9,6 @@ public class DiscoverContinentFlightsState : State
 {
     public override string DisplayName => "WFM Discovering Continent Flights";
 
-    public DiscoverContinentFlightsState() { }
-
     public override bool NeedToRun
     {
         get
@@ -22,7 +20,7 @@ public class DiscoverContinentFlightsState : State
                 && !Main.nearestFlightMaster.IsDisabled()
                 && Main.nearestFlightMaster.NPCId != 18930 // horde dark portal
                 && Main.nearestFlightMaster.NPCId != 18931 // alliance dark portal
-                && ToolBox.ShatterPointFailSafe(Main.nearestFlightMaster) // Shatter Point
+                && ToolBox.ExceptionConditionsAreMet(Main.nearestFlightMaster)
                 && !ToolBox.PlayerInBloodElfStartingZone()
                 && !ToolBox.PlayerInDraneiStartingZone()
                 && ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !WFMDeepSettings.CurrentSettings.EKDiscoveredFlights

@@ -9,8 +9,6 @@ public class TakeTaxiState : State
 {
     public override string DisplayName => "WFM Taking Taxi";
 
-    public TakeTaxiState() { }
-
     public override bool NeedToRun
     {
         get
@@ -22,7 +20,7 @@ public class TakeTaxiState : State
                 && Main.to != null
                 && Main.from != null
                 && !Main.from.IsDisabled()
-                && ToolBox.ShatterPointFailSafe(Main.from) // Shatter Point
+                && ToolBox.ExceptionConditionsAreMet(Main.from)
                 && !ObjectManager.Me.IsOnTaxi)
             {
                 return true;

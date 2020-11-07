@@ -20,6 +20,8 @@ public class Main : IPlugin
     private readonly BackgroundWorker detectionPulse = new BackgroundWorker();
     public static FlightMaster nearestFlightMaster = null;
     public static Vector3 destinationVector = null;
+    public static int aldorRep;
+    public static int scryersRep;
 
     protected Stopwatch stateAddDelayer = new Stopwatch();
 
@@ -36,7 +38,7 @@ public class Main : IPlugin
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
     static Vector3 DesolacePointAfterTBJump = new Vector3(-706.7505f, 579.7277f, 154.6033f, "None");
 
-    public static string version = "0.0.180"; // Must match version in Version.txt
+    public static string version = "0.0.181"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -145,6 +147,7 @@ public class Main : IPlugin
                     && ObjectManager.Me.IsAlive)
                 {
                     nearestFlightMaster = GetNearestFlightMaster();
+                    ToolBox.UpdateReputations();
                 }
             }
             catch (Exception arg)

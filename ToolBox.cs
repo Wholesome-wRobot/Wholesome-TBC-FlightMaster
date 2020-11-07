@@ -218,15 +218,16 @@ public class ToolBox
             if (ObjectManager.GetObjectWoWUnit().Exists(unit => unit.Entry == fm.NPCId && unit.IsAlive))
                 return true;
             else
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
         }
-
         return false;
     }
 
-    public static bool ShatterPointFailSafe(FlightMaster fm)
+    public static bool ExceptionConditionsAreMet(FlightMaster fm)
     {
-        return fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100;
+        return (fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100)
+            && (fm.NPCId != 19581 || Main.aldorRep > 0)
+            && (fm.NPCId != 21766 || Main.scryersRep > 0);
     }
 
     public static bool OpenTaxiMapSuccess(FlightMaster fm)
@@ -257,5 +258,21 @@ public class ToolBox
         }
         PausePlugin("Couldn't open FM map");
         return false;
+    }
+
+    public static void UpdateReputations()
+    {
+        Main.scryersRep = Lua.LuaDoString<int>(@"for i=1, 25 do 
+                                local name, _, _, _, _, earnedValue, _, _, _, _, _, _, _ = GetFactionInfo(i);
+                                    if name == 'The Scryers' then
+                                        return earnedValue
+                                end
+                            end");
+        Main.aldorRep = Lua.LuaDoString<int>(@"for i=1, 25 do 
+                                local name, _, _, _, _, earnedValue, _, _, _, _, _, _, _ = GetFactionInfo(i);
+                                    if name == 'The Aldor' then
+                                        return earnedValue
+                                end
+                            end");
     }
 }

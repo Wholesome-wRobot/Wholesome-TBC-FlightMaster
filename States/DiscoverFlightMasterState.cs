@@ -8,8 +8,6 @@ public class DiscoverFlightMasterState : State
 {
     public override string DisplayName => "WFM Discovering Flight Master";
 
-    public DiscoverFlightMasterState() { }
-
     public override bool NeedToRun
     {
         get
@@ -18,7 +16,7 @@ public class DiscoverFlightMasterState : State
                 && Main.isLaunched
                 && Main.nearestFlightMaster != null
                 && !Main.nearestFlightMaster.IsDisabled()
-                && ToolBox.ShatterPointFailSafe(Main.nearestFlightMaster) // Shatter Point
+                && ToolBox.ExceptionConditionsAreMet(Main.nearestFlightMaster)
                 && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
             {
                 return true;
