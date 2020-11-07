@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using wManager;
+using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
@@ -13,6 +14,7 @@ public class ToolBox
     public static void AddState(Engine engine, State state, string replace)
     {
         bool statedAdded = engine.States.Exists(s => s.DisplayName == state.DisplayName);
+
         if (!statedAdded && engine != null)
         {
             try
@@ -35,7 +37,7 @@ public class ToolBox
                 }
 
                 state.Priority = priorityToSet;
-                //Logger.Log($"Adding state {state.DisplayName}");
+                //Logger.Log($"Adding state {state.DisplayName} with prio {priorityToSet}");
                 engine.AddState(state);
                 engine.States.Sort();
             }
@@ -129,7 +131,7 @@ public class ToolBox
     public static void SoftRestart()
     {
         Products.InPause = true;
-        Thread.Sleep(1000);
+        Thread.Sleep(100);
         Products.InPause = false;
     }
 
@@ -209,18 +211,44 @@ public class ToolBox
 
     public static bool FMIsNearbyAndAlive(FlightMaster fm)
     {
-        bool FMDetected = false;
-        List<WoWUnit> surroundingEnemies = ObjectManager.GetObjectWoWUnit();
-        foreach (WoWUnit unit in surroundingEnemies)
+        // 3 attempts to find NPC
+        for (int i = 1; i <= 3; i++)
         {
-            if (unit.Entry == fm.NPCId && unit.IsAlive)
-                FMDetected = true;
+            if (ObjectManager.GetObjectWoWUnit().Exists(unit => unit.Entry == fm.NPCId && unit.IsAlive))
+                return true;
+            else
+                Thread.Sleep(1000);
         }
-        return FMDetected;
+
+        return false;
     }
 
     public static bool ShatterPointFailSafe(FlightMaster fm)
     {
         return fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100;
+    }
+
+    public static bool OpenTaxiMapSuccess(FlightMaster fm)
+    {
+        // 3 attempts to open map
+        for (int i = 1; i <= 3; i++)
+        {
+            // interract with FM
+            if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
+            {
+                Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+                Thread.Sleep(500);
+                if (!Main.isTaxiMapOpened)
+                {
+                    Logger.Log("Taxi map is not open. Retrying");
+                    Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+                    Thread.Sleep(500);
+                }
+                else
+                    return true;
+            }
+        }
+        PausePlugin("Couldn't open FM map");
+        return false;
     }
 }

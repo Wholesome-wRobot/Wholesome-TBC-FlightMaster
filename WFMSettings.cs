@@ -10,9 +10,9 @@ public class WFMSettings : Settings
 {
     public WFMSettings()
     {
-        TaxiTriggerDistance = 1000;
-        DetectTaxiDistance = 200;
-        ShorterMinDistance = 1000;
+        TaxiTriggerDistance = 600;
+        DetectTaxiDistance = 400;
+        ShorterMinDistance = 500;
         SkipIfFollowPath = true;
         SkipIfFollowPathDistance = 5000f;
         PauseLengthInSeconds = 600;
@@ -41,19 +41,19 @@ public class WFMSettings : Settings
     [Description("In case of an unconnected flight, set how long the plugin should be paused (in seconds)")]
     public int PauseLengthInSeconds { get; set; }
 
-    [DefaultValue(1000)]
+    [DefaultValue(600)]
     [Category("1 - Main")]
     [DisplayName("Trigger Distance")]
     [Description("Sets how long your distance to your destination has to be, to trigger use of taxi")]
     public int TaxiTriggerDistance { get; set; }
 
-    [DefaultValue(200)]
+    [DefaultValue(400)]
     [Category("1 - Main")]
     [DisplayName("Discover Distance")]
     [Description("Min distance to discover an undiscovered taxi node")]
     public int DetectTaxiDistance { get; set; }
 
-    [DefaultValue(1000)]
+    [DefaultValue(500)]
     [Category("1 - Main")]
     [DisplayName("Shorter Path Min")]
     [Description("Sets how much shorter a path has to be, to trigger taxi")]

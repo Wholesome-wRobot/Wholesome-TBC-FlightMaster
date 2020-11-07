@@ -45,7 +45,6 @@ public class DiscoverContinentFlightsState : State
         FlightMaster flightMaster = Main.nearestFlightMaster;
         Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at {flightMaster.Name}");
 
-
         // We go to the position
         if (GoToTask.ToPosition(flightMaster.Position, 0.5f))
         {
@@ -53,44 +52,15 @@ public class DiscoverContinentFlightsState : State
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
-            // 3 attempts to find NPC
-            bool NPCisHere = false;
-            for (int i = 1; i <= 3; i++)
-            {
-                if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
-                    Thread.Sleep(1000);
-                else
-                    NPCisHere = true;
-            }
-
-            if (!NPCisHere)
+            if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
             {
                 Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
                 flightMaster.Disable();
                 return;
             }
 
-            // 3 attempts to open map
-            for (int i = 1; i <= 3; i++)
-            {
-                // interract with FM
-                if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId))
-                {
-                    Thread.Sleep(500);
-                    if (!Main.isTaxiMapOpened)
-                        Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-                    Thread.Sleep(500);
-                }
-
-                if (Main.isTaxiMapOpened)
-                    break;
-            }
-
-            if (!Main.isTaxiMapOpened)
-            {
-                ToolBox.PausePlugin("Couldn't open FM map");
+            if (!ToolBox.OpenTaxiMapSuccess(flightMaster))
                 return;
-            }
 
             // 3 attempts to discover flights
             bool allInvalid = true;

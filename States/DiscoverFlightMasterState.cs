@@ -44,17 +44,7 @@ public class DiscoverFlightMasterState : State
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
-            // 3 attempts to find NPC
-            bool NPCisHere = false;
-            for (int i = 1; i <= 3; i++)
-            {
-                if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
-                    Thread.Sleep(1000);
-                else
-                    NPCisHere = true;
-            }
-
-            if (!NPCisHere)
+            if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
             {
                 Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
                 flightMaster.Disable();

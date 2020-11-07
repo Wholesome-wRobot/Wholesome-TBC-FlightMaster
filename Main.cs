@@ -36,7 +36,7 @@ public class Main : IPlugin
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
     static Vector3 DesolacePointAfterTBJump = new Vector3(-706.7505f, 579.7277f, 154.6033f, "None");
 
-    public static string version = "0.0.176"; // Must match version in Version.txt
+    public static string version = "0.0.177"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -258,7 +258,10 @@ public class Main : IPlugin
             return;
 
         // If we have detected a potential FP travel
-        if (ObjectManager.Me.Position.DistanceTo(points.Last()) > (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
+        float totalWalkingDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());            
+        Logger.Log($"Path detected : {totalWalkingDistance} yards.");
+
+        if (totalWalkingDistance > (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
             if (WFMSettings.CurrentSettings.SkipIfFollowPath
                 && Logging.Status.Contains("Follow Path")
@@ -271,22 +274,11 @@ public class Main : IPlugin
             }
 
             destinationVector = points.Last();
-            float totalWalkingDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
-            //Logger.Log("Total walking distance for this path : " + totalWalkingDistance);
             Thread.Sleep(Usefuls.Latency + 500);
 
             from = GetClosestFlightMasterFrom();
             to = GetClosestFlightMasterTo();
-            /*
-            if (from != null)
-                Logger.Log("Closest FROM is " + from.Name);
-            else
-                Logger.Log("Closest FROM is NULL");
-            if (to != null)
-                Logger.Log("Closest TO is " + to.Name);
-            else
-                Logger.Log("Closest TO is NULL");
-            */
+
             if (from == null)
                 return;
 
@@ -302,7 +294,6 @@ public class Main : IPlugin
                 totalDistance = obligatoryDistance + CalculatePathTotalDistance(to.Position, destinationVector);
             else
                 totalDistance = totalWalkingDistance;
-            //Logger.Log("Total FM distance for this path : " + totalDistance);
 
             // If total real distance does not save any distance or is longer, try to find alternative
             if (totalDistance >= totalWalkingDistance
@@ -319,7 +310,6 @@ public class Main : IPlugin
                         // Look for the closest available FM near destination
                         double alternativeDistance = obligatoryDistance + CalculatePathTotalDistance(flightMaster.Position, destinationVector);
 
-                        //Logger.Log($"ALT Destination from {fm.Name} is {alternativeDistance}");
                         if (alternativeDistance < totalDistance)
                         {
                             totalDistance = alternativeDistance;
@@ -327,8 +317,6 @@ public class Main : IPlugin
                         }
                     }
                 }
-                //if (to != null)
-                    //Logger.Log("Closest TO alternative is " + to.Name);
             }
 
             Thread.Sleep(1000);
@@ -348,6 +336,10 @@ public class Main : IPlugin
             {
                 Logger.Log("No relevant flight path found");
             }
+        }
+        else
+        {
+            Logger.Log($"Travel distance {totalWalkingDistance} is shorter than setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
         }
     }
 }

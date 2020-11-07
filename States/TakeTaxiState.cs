@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using wManager.Wow.Bot.Tasks;
-using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 
@@ -47,37 +46,14 @@ public class TakeTaxiState : State
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
-            // 3 attempts to find NPC
-            bool NPCisHere = false;
-            for (int i = 1; i <= 3; i++)
+            if (!ToolBox.FMIsNearbyAndAlive(Main.from))
             {
-                if (!ToolBox.FMIsNearbyAndAlive(Main.from))
-                    Thread.Sleep(1000);
-                else
-                    NPCisHere = true;
-            }
-
-            if (!NPCisHere)
                 ToolBox.PausePlugin("FlightMaster is absent or dead");
-
-            // 3 attempts to open map
-            for (int i = 1; i <= 3; i++)
-            {
-                // interract with FM
-                if (GoToTask.ToPositionAndIntecractWithNpc(Main.from.Position, Main.from.NPCId))
-                {
-                    Thread.Sleep(500);
-                    if (!Main.isTaxiMapOpened)
-                        Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-                    Thread.Sleep(500);
-                }
-
-                if (Main.isTaxiMapOpened)
-                    break;
+                return;
             }
 
-            if (!Main.isTaxiMapOpened)
-                ToolBox.PausePlugin("Couldn't open FM map");
+            if (!ToolBox.OpenTaxiMapSuccess(Main.from))
+                return;
 
             List<string> reachableTaxis = new List<string>();
             // Look for current To and record reachables in case we don't find him
