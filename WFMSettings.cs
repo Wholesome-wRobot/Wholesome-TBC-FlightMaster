@@ -26,7 +26,7 @@ public class WFMSettings : Settings
 
     [Category("1 - Main")]
     [DisplayName("List known nodes")]
-    [Description("")]
+    [Description("List of already known nodes")]
     public List<string> KnownFlightsList { get; set; }
 
     [DefaultValue(false)]
@@ -38,38 +38,39 @@ public class WFMSettings : Settings
     [DefaultValue(600)]
     [Category("1 - Main")]
     [DisplayName("Pause length in seconds")]
-    [Description("In case of an unconnected flight, set how long the plugin should be paused (in seconds)")]
+    [Description("In case of an unconnected flight or dead FlightMaster, set how long the plugin should be paused (in seconds)")]
     public int PauseLengthInSeconds { get; set; }
 
     [DefaultValue(600)]
     [Category("1 - Main")]
     [DisplayName("Trigger Distance")]
-    [Description("Sets how long your distance to your destination has to be, to trigger use of taxi")]
+    [Description("Sets the minimum walking distance to your destination to trigger use of taxi")]
     public int TaxiTriggerDistance { get; set; }
 
     [DefaultValue(400)]
     [Category("1 - Main")]
     [DisplayName("Discover Distance")]
-    [Description("Min distance to discover an undiscovered taxi node")]
+    [Description("Maximum distance to discover a taxi node")]
     public int DetectTaxiDistance { get; set; }
 
     [DefaultValue(500)]
     [Category("1 - Main")]
-    [DisplayName("Shorter Path Min")]
-    [Description("Sets how much shorter a path has to be, to trigger taxi")]
+    [DisplayName("Minimum distance saving")]
+    [Description("Sets how much shorter a path has to be to trigger taxi")]
     public int ShorterMinDistance { get; set; }
 
     [DefaultValue(true)]
     [Category("2 - Useful")]
-    [DisplayName("Skip if Follow Path / Boat step")]
-    [Description("Skips take taxi, if currently executing a Follow Path or Boat Quester step. When running a profile with dedicated paths")]
+    [DisplayName("Disable if Follow Path / Boat step")]
+    [Description("Disable flights if currently executing a Follow Path or Boat Quester step")]
     public bool SkipIfFollowPath { get; set; }
 
     [DefaultValue(5000f)]
     [Category("2 - Useful")]
-    [DisplayName("Skip if ... min distance")]
-    [Description("Won't skip taxi min distance to destination")]
+    [DisplayName("Minimum Follow Path distance flight")]
+    [Description("Minimum Follow Path distance to be considered for a flight")]
     public float SkipIfFollowPathDistance { get; set; }
+
     /*
     [DefaultValue(true)]
     [Category("2 - Useful")]
@@ -77,6 +78,7 @@ public class WFMSettings : Settings
     [Description("Stops the bot, to prevent it from running into the Searing Gorge gate from Loch Modan and getting stuck over and over again")]
     public bool PauseSearingGorge { get; set; }
     */
+
     public static WFMSettings CurrentSettings { get; set; }
 
     public bool Save()

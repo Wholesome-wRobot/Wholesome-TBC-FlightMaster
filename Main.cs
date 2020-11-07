@@ -36,7 +36,7 @@ public class Main : IPlugin
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
     static Vector3 DesolacePointAfterTBJump = new Vector3(-706.7505f, 579.7277f, 154.6033f, "None");
 
-    public static string version = "0.0.177"; // Must match version in Version.txt
+    public static string version = "0.0.178"; // Must match version in Version.txt
 
     public void Initialize()
     {
@@ -266,9 +266,9 @@ public class Main : IPlugin
             if (WFMSettings.CurrentSettings.SkipIfFollowPath
                 && Logging.Status.Contains("Follow Path")
                 && !Logging.Status.Contains("Resurrect")
-                && CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last()) < (double)WFMSettings.CurrentSettings.SkipIfFollowPathDistance)
+                && totalWalkingDistance < (double)WFMSettings.CurrentSettings.SkipIfFollowPathDistance)
             {
-                Logger.Log("Currently following path or distance to start (" + CalculatePathTotalDistance(ObjectManager.Me.Position, ((IEnumerable<Vector3>)points).Last()) + " yards) is smaller than setting value (" + WFMSettings.CurrentSettings.SkipIfFollowPathDistance + " yards)");
+                Logger.Log($"Currently following path. {totalWalkingDistance} yards is smaller than setting {WFMSettings.CurrentSettings.SkipIfFollowPathDistance} yards. Ignoring flights.");
                 Thread.Sleep(1000);
                 return;
             }

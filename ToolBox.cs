@@ -148,9 +148,15 @@ public class ToolBox
             }
 
             if (id == LuaEventsId.TAXIMAP_OPENED)
+            {
+                Logger.Log("Taxi map opened");
                 Main.isTaxiMapOpened = true;
+            }
             if (id == LuaEventsId.TAXIMAP_CLOSED)
+            {
+                Logger.Log("Taxi map closed");
                 Main.isTaxiMapOpened = false;
+            }
         }
     }
 
