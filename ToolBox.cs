@@ -251,7 +251,7 @@ public class ToolBox
                     Thread.Sleep(200);
                 }
 
-                if (!Main.isTaxiMapOpened)
+                if (limit >= 3000) 
                 {
                     Lua.LuaDoString("CloseTaxiMap()");
                     Logger.Log($"Couldn't open taxi map. Retrying ({i})");
@@ -260,7 +260,10 @@ public class ToolBox
                     return true;
             }
         }
-        PausePlugin("Couldn't open FM map");
+
+        if (ObjectManager.Me.Position.DistanceTo(fm.Position) < 10)
+            PausePlugin("Couldn't open FM map");
+
         return false;
     }
 
