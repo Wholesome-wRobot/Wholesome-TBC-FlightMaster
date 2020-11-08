@@ -36,7 +36,7 @@ public class DiscoverFlightMasterState : State
         Logger.Log($"Discovering flight master {flightMaster.Name}");
 
         // We go to the position
-        if (GoToTask.ToPosition(flightMaster.Position, 0.5f))
+        if (GoToTask.ToPosition(flightMaster.Position, 0.5f, true))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)

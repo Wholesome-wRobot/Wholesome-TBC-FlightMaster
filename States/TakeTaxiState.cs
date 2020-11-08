@@ -41,7 +41,7 @@ public class TakeTaxiState : State
         FlightMaster flightmasterTo = Main.to;
 
         // We go to the position
-        if (GoToTask.ToPosition(flightmasterFrom.Position, 0.5f))
+        if (GoToTask.ToPosition(flightmasterFrom.Position, 0.5f, true))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
@@ -49,6 +49,8 @@ public class TakeTaxiState : State
 
             if (!ToolBox.FMIsNearbyAndAlive(flightmasterFrom))
             {
+                if (ObjectManager.Me.InCombatFlagOnly)
+                    return;
                 ToolBox.PausePlugin("FlightMaster is absent or dead");
                 return;
             }

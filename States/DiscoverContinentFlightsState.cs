@@ -44,7 +44,7 @@ public class DiscoverContinentFlightsState : State
         Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at {flightMaster.Name}");
 
         // We go to the position
-        if (GoToTask.ToPosition(flightMaster.Position, 0.5f))
+        if (GoToTask.ToPosition(flightMaster.Position, 0.5f, true))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
