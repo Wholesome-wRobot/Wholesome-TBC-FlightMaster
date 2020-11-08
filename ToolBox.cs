@@ -212,13 +212,17 @@ public class ToolBox
 
     public static bool FMIsNearbyAndAlive(FlightMaster fm)
     {
+        // Only if we're nearby the taxi node
+        if (ObjectManager.Me.Position.DistanceTo(fm.Position) > 20)
+            return true;
+
         // 3 attempts to find NPC
         for (int i = 1; i <= 3; i++)
         {
             if (ObjectManager.GetObjectWoWUnit().Exists(unit => unit.Entry == fm.NPCId && unit.IsAlive))
                 return true;
             else
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
         }
         return false;
     }

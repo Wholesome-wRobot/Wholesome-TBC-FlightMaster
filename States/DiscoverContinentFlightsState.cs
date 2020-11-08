@@ -44,18 +44,11 @@ public class DiscoverContinentFlightsState : State
         Logger.Log($"Discovering known flights on continent {(ContinentId)Usefuls.ContinentId} at {flightMaster.Name}");
 
         // We go to the position
-        if (GoToTask.ToPosition(flightMaster.Position, 0.5f, true))
+        if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
-
-            if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
-            {
-                Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-                flightMaster.Disable();
-                return;
-            }
 
             if (!ToolBox.OpenTaxiMapSuccess(flightMaster))
                 return;
@@ -105,6 +98,14 @@ public class DiscoverContinentFlightsState : State
 
             // all invalid
             ToolBox.PausePlugin("Couldn't find a valid flight path");
+        }
+
+        // Check if FM is here or dead
+        if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
+        {
+            Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
+            flightMaster.Disable();
+            return;
         }
     }
 }

@@ -41,19 +41,11 @@ public class TakeTaxiState : State
         FlightMaster flightmasterTo = Main.to;
 
         // We go to the position
-        if (GoToTask.ToPosition(flightmasterFrom.Position, 0.5f, true))
+        if (GoToTask.ToPositionAndIntecractWithNpc(flightmasterFrom.Position, flightmasterFrom.NPCId))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
-
-            if (!ToolBox.FMIsNearbyAndAlive(flightmasterFrom))
-            {
-                if (ObjectManager.Me.InCombatFlagOnly)
-                    return;
-                ToolBox.PausePlugin("FlightMaster is absent or dead");
-                return;
-            }
 
             if (!ToolBox.OpenTaxiMapSuccess(flightmasterFrom))
                 return;
@@ -88,6 +80,13 @@ public class TakeTaxiState : State
                 Main.shouldTakeFlight = false;
                 ToolBox.PausePlugin("Couldn't find an alternative flight");
             }
+        }
+
+        // Check if FM is here or dead
+        if (!ToolBox.FMIsNearbyAndAlive(flightmasterFrom))
+        {
+            ToolBox.PausePlugin("FlightMaster is absent or dead");
+            return;
         }
     }
 
