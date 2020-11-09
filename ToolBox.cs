@@ -140,6 +140,7 @@ public class ToolBox
         if (Main.isLaunched)
         {
             string eventName = id.ToString();
+            //Logger.Log(eventName);
             if (eventName == "UI_INFO_MESSAGE")
             {
                 if (args[0] == "There is no direct path to that destination!")
@@ -149,9 +150,23 @@ public class ToolBox
             }
 
             if (eventName == "TAXIMAP_OPENED")
+            {
+                Logger.Log("Taxi map opened");
                 Main.isTaxiMapOpened = true;
+            }
             if (eventName == "TAXIMAP_CLOSED")
+            {
+                Logger.Log("Taxi map closed");
                 Main.isTaxiMapOpened = false;
+            }
+            if (eventName == "GOSSIP_SHOW")
+            {
+                Logger.Log("Gossip show");
+            }
+            if (eventName == "GOSSIP_CLOSED")
+            {
+                Logger.Log("Gossip closed");
+            }
         }
     }
 
@@ -243,6 +258,8 @@ public class ToolBox
             if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
             {
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+
+                Thread.Sleep(1000);
 
                 int limit = 0;
                 while (!Main.isTaxiMapOpened && limit < 3000)
