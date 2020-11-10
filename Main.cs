@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.191"; // Must match version in Version.txt
+    public static string version = "0.0.192"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -214,7 +214,7 @@ public class Main : IPlugin
         return distance;
     }
 
-    public static FlightMaster GetClosestFlightMasterFrom()
+    public static FlightMaster GetClosestFlightMasterFrom(float maxRadius)
     {
         float num = float.MaxValue;
         FlightMaster result = null;
@@ -222,17 +222,21 @@ public class Main : IPlugin
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
             if ((flightMaster.IsDiscovered() || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi)
-                && flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < num
+                && flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < maxRadius
                 && ToolBox.FMIsOnMyContinent(flightMaster))
             {
-                num = flightMaster.Position.DistanceTo(ObjectManager.Me.Position);
-                result = flightMaster;
+                float realDIst = CalculatePathTotalDistance(ObjectManager.Me.Position, flightMaster.Position);
+                if (realDIst < num)
+                {
+                    num = realDIst;
+                    result = flightMaster;
+                }
             }
         }
         return result;
     }
 
-    public static FlightMaster GetClosestFlightMasterTo()
+    public static FlightMaster GetClosestFlightMasterTo(float maxRadius)
     {
         float num = float.MaxValue;
         FlightMaster result = null;
@@ -240,11 +244,16 @@ public class Main : IPlugin
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
             if (flightMaster.IsDiscovered()
-                && flightMaster.Position.DistanceTo(destinationVector) < num
-                && ToolBox.FMIsOnMyContinent(flightMaster))
+                && flightMaster.Position.DistanceTo(destinationVector) < maxRadius
+                && ToolBox.FMIsOnMyContinent(flightMaster)
+                && CalculatePathTotalDistance(flightMaster.Position, destinationVector) < num)
             {
-                num = flightMaster.Position.DistanceTo(destinationVector);
-                result = flightMaster;
+                float realDist = CalculatePathTotalDistance(flightMaster.Position, destinationVector);
+                if (realDist < num)
+                {
+                    num = realDist;
+                    result = flightMaster;
+                }
             }
         }
         return result;
@@ -304,8 +313,8 @@ public class Main : IPlugin
         destinationVector = points.Last();
         //Thread.Sleep(Usefuls.Latency + 500);
 
-        from = GetClosestFlightMasterFrom();
-        to = GetClosestFlightMasterTo();
+        from = GetClosestFlightMasterFrom(totalWalkingDistance);
+        to = GetClosestFlightMasterTo(totalWalkingDistance);
 
         Logger.Log($"Closest FROM is {from?.Name}");
         Logger.Log($"Closest TO is {to?.Name}");
