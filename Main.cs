@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.190"; // Must match version in Version.txt
+    public static string version = "0.0.191"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -163,9 +163,12 @@ public class Main : IPlugin
                     // Hook for HMP states locks
                     if (currentState.DisplayName.Contains("Training")
                         && (discoverFlightMasterState.NeedToRun || discoverContinentFlightState.NeedToRun))
+                    {
+                        Logger.Log("Stop on training tracks");
                         MovementManager.StopMove();
+                    }
 
-                    Logger.Log($"Nearest FM is {nearestFlightMaster?.Name}");
+                    //Logger.Log($"Nearest FM is {nearestFlightMaster?.Name}");
                 }
             }
             catch (Exception arg)
@@ -313,8 +316,8 @@ public class Main : IPlugin
         if (from.Equals(to))
             to = null;
 
-        double obligatoryDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position) + WFMSettings.CurrentSettings.ShorterMinDistance;
-
+        double distanceToNearestFM = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position);
+        double obligatoryDistance = distanceToNearestFM + WFMSettings.CurrentSettings.ShorterMinDistance;
 
         // Calculate total real distance FROM/TO
         // if no TO found, we set the total distance back to walking distance
@@ -335,7 +338,7 @@ public class Main : IPlugin
             foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
             {
                 if (ToolBox.FMIsOnMyContinent(flightMaster)
-                    && flightMaster.Position.DistanceTo(destinationVector) < totalWalkingDistance
+                    && flightMaster.Position.DistanceTo(destinationVector) + obligatoryDistance < totalWalkingDistance
                     && flightMaster.IsDiscovered()
                     && !flightMaster.Equals(from))
                 {
