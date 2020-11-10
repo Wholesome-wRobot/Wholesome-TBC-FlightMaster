@@ -21,6 +21,8 @@ public class FlightMasterDB
         new FlightMaster("Stonard, Swamp of Sorrows", 6026, new Vector3(-10459.2f, -3279.76f, 21.5445f, "None"), ContinentId.Azeroth),
         new FlightMaster("Undercity, Tirisfal", 4551, new Vector3(1567.12f, 266.345f, -43.0194f, "None"), ContinentId.Azeroth),
         new FlightMaster("Light's Hope Chapel, Eastern Plaguelands", 12636, new Vector3(2328.48f, -5290.72f, 81.79177f, "None"), ContinentId.Azeroth),
+        // WotLK only
+        new FlightMaster("The Bulwark, Tirisfal", 37915, new Vector3(1730.37f, -743.194f, 59.33407f, "None"), ContinentId.Azeroth),
         // Kalimdor
         new FlightMaster("Sun Rock Retreat, Stonetalon Mountains", 4312, new Vector3(968.077f, 1042.29f, 104.563f, "None"), ContinentId.Kalimdor),
         new FlightMaster("Moonglade", 12740, new Vector3(7466.15f, -2122.08f, 492.427f, "None"), ContinentId.Kalimdor),
@@ -54,7 +56,24 @@ public class FlightMasterDB
         new FlightMaster("Hellfire Peninsula, The Dark Portal, Horde", 18930, new Vector3(-178.09f, 1026.72f, 54.19f, "None"), ContinentId.Expansion01),
         // Ghostlands
         new FlightMaster("Tranquillien, Ghostlands", 16189, new Vector3(7595.16f, -6782.24f, 86.76129f, "None"), ContinentId.Expansion01),
-        new FlightMaster("Silvermoon City", 16192, new Vector3(9376.4f, -7164.92f, 8.937795f, "None"), ContinentId.Expansion01)
+        new FlightMaster("Silvermoon City", 16192, new Vector3(9376.4f, -7164.92f, 8.937795f, "None"), ContinentId.Expansion01),
+        //Northrend Horde
+        new FlightMaster("Warsong Hold, Borean Tundra", 25288, new Vector3(2922.39f, 6244.39f, 208.753f, "None"), ContinentId.Northrend),
+        new FlightMaster("Bor'gorok Outpost, Borean Tundra", 26848, new Vector3(4473.24f, 5708.79f, 81.26324f, "None"), ContinentId.Northrend),
+        new FlightMaster("Taunka'le Village, Borean Tundra", 26847, new Vector3(3446.11f, 4088.41f, 16.77694f, "None"), ContinentId.Northrend),
+        new FlightMaster("Vengeance Landing, Howling Fjord", 27344, new Vector3(1919.03f, -6176.72f, 24.48341f, "None"), ContinentId.Northrend),
+        new FlightMaster("New Agamand, Howling Fjord", 24155, new Vector3(400.47f, -4542.25f, 245.0059f, "None"), ContinentId.Northrend),
+        new FlightMaster("Apothecary Camp, Howling Fjord", 26844, new Vector3(2106.05f, -2968.81f, 148.5838f, "None"), ContinentId.Northrend),
+        new FlightMaster("Camp Winterhoof, Howling Fjord", 24032, new Vector3(2649.27f, -4394.5f, 283.3044f, "None"), ContinentId.Northrend),
+        new FlightMaster("Venomspite, Dragonblight", 26845, new Vector3(3248.77f, -662.297f, 166.7902f, "None"), ContinentId.Northrend),
+        new FlightMaster("Agmar's Hammer, Dragonblight", 26566, new Vector3(3863.63f, 1523.11f, 90.10977f, "None"), ContinentId.Northrend),
+        new FlightMaster("Kor'koron Vanguard, Dragonblight", 26850, new Vector3(4941.59f, 1167.95f, 239.3193f, "None"), ContinentId.Northrend),
+        new FlightMaster("Conquest Hold, Grizzly Hills", 26852, new Vector3(3261.52f, -2265.45f, 114.1291f, "None"), ContinentId.Northrend),
+        new FlightMaster("Camp Oneqwah, Grizzly Hills", 26853, new Vector3(3874.18f, -4520.87f, 217.2177f, "None"), ContinentId.Northrend),
+        new FlightMaster("Sunreaver's Command, Crystalsong Forest", 30269, new Vector3(5587.26f, -694.69f, 206.6273f, "None"), ContinentId.Northrend),
+        new FlightMaster("Warsong Camp, Wintergrasp", 30870, new Vector3(5023.4f, 3686.03f, 363.0365f, "None"), ContinentId.Northrend),
+        new FlightMaster("Grom'arsh Crash-Site, The Storm Peaks", 29757, new Vector3(7855.98f, -732.388f, 1177.473f, "None"), ContinentId.Northrend),
+        new FlightMaster("Camp Tunka'lo, The Storm Peaks", 29762, new Vector3(7798.38f, -2810.29f, 1217.843f, "None"), ContinentId.Northrend)
     };
 
     private static readonly List<FlightMaster> allianceFlightMasters = new List<FlightMaster>()
@@ -108,6 +127,20 @@ public class FlightMasterDB
         // Dranei Continent
         new FlightMaster("The Exodar", 17555, new Vector3(-4057.15f, -11788.6f, 8.87662f, "None"), ContinentId.Expansion01),
         new FlightMaster("Blood Watch, Bloodmyst Isle", 17554, new Vector3(-1930.02f, -11956.8f, 57.39266f, "None"), ContinentId.Expansion01),
+        //Northrend Alliance
+        new FlightMaster("Valiance Keep, Borean Tundra", 26879, new Vector3(2272.98f, 5171.82f, 11.16359f, "None"), ContinentId.Northrend),
+        new FlightMaster("Fizzcrank Airstrip, Borean Tundra", 26602, new Vector3(4126.8f, 5309.59f, 28.72333f, "None"), ContinentId.Northrend),
+        new FlightMaster("Valgarde Port, Howling Fjord", 23736, new Vector3(567.415f, -5012.58f, 11.48421f, "None"), ContinentId.Northrend),
+        new FlightMaster("Westguard Keep, Howling Fjord", 23859, new Vector3(1343.75f, -3287.78f, 174.4526f, "None"), ContinentId.Northrend),
+        new FlightMaster("Fort Wildervar, Howling Fjord", 24061, new Vector3(2467.34f, -5028.79f, 283.6946f, "None"), ContinentId.Northrend),
+        new FlightMaster("Wintergarde Keep, Dragonblight", 26878, new Vector3(3712.43f, -694.86f, 215.36f, "None"), ContinentId.Northrend),
+        new FlightMaster("Stars' Rest, Dragonblight", 26881, new Vector3(3506.07f, 1990.42f, 65.18267f, "None"), ContinentId.Northrend),
+        new FlightMaster("Fordragon Hold, Dragonblight", 26877, new Vector3(4606.09f, 1410.71f, 194.7481f, "None"), ContinentId.Northrend),
+        new FlightMaster("Amberpine Lodge, Grizzly Hills", 26880, new Vector3(3447.84f, -2754.01f, 199.3687f, "None"), ContinentId.Northrend),
+        new FlightMaster("Westfall Brigade, Grizzly Hills", 26876, new Vector3(4582.63f, -4254.86f, 182.208f, "None"), ContinentId.Northrend),
+        new FlightMaster("Windrunner's Overlook, Crystalsong Forest", 30271, new Vector3(5032.91f, -521.242f, 225.9917f, "None"), ContinentId.Northrend),
+        new FlightMaster("Valiance Landing Camp, Wintergrasp", 30869, new Vector3(5102.75f, 2187.83f, 365.6246f, "None"), ContinentId.Northrend),
+        new FlightMaster("Frosthold, The Storm Peaks", 29750, new Vector3(6673.3f, -256.596f, 962.127f, "None"), ContinentId.Northrend)
     };
 
     private static readonly List<FlightMaster> neutralFlightMasters = new List<FlightMaster>()
@@ -118,6 +151,10 @@ public class FlightMasterDB
         new FlightMaster("Ratchet, The Barrens", 16227, new Vector3(-898.246f, -3769.65f, 11.7932f, "None"), ContinentId.Kalimdor),
         // EK
         new FlightMaster("Mudsprocket, Dustwallow Marsh", 23612, new Vector3(-4568.4f, -3223.19f, 34.90614f, "None"), ContinentId.Kalimdor),
+        // WotLK only
+        new FlightMaster("Thondoril River, Western Plaguelands", 37888, new Vector3(1943.14f, -2561.74f, 60.84085f, "None"), ContinentId.Azeroth),
+        // DK only
+        new FlightMaster("Acherus: The Ebon Hold", 29480, new Vector3(2348.63f, -5669.29f, 382.2413f, "None"), ContinentId.Azeroth),
         // Ghostlands
         new FlightMaster("Shattered Sun Staging Area", 26560, new Vector3(13012.4f, -6911.19f, 9.584099f, "None"), ContinentId.Expansion01),
         new FlightMaster("Zul'Aman, Ghostlands", 24851, new Vector3(6789.91f, -7749.43f, 126.619f, "None"), ContinentId.Expansion01),
@@ -131,6 +168,35 @@ public class FlightMasterDB
         new FlightMaster("Altar of Sha'tar, Shadowmoon Valley", 19581, new Vector3(-3062.63f, 741.933f, -10.14242f, "None"), ContinentId.Expansion01),
         // Scryer reputation
         new FlightMaster("Sanctum of the Stars, Shadowmoon Valley", 21766, new Vector3(-4073.17f, 1123.61f, 42.47f, "None"), ContinentId.Expansion01),
+        //Northrend Neutral
+        new FlightMaster("Amber Ledge, Borean Tundra", 24795, new Vector3(3571.12f, 5957.59f, 135.7559f, "None"), ContinentId.Northrend),
+        new FlightMaster("Transitus Shield, Coldarra", 27046, new Vector3(3573.9f, 6661.07f, 195.1814f, "None"), ContinentId.Northrend),
+        new FlightMaster("Unu'pe, Borean Tundra", 28195, new Vector3(2917.21f, 4043.44f, 1.78471f, "None"), ContinentId.Northrend),
+        new FlightMaster("Kamagua, Howling Fjord", 28197, new Vector3(787.755f, -2889.06f, 6.408492f, "None"), ContinentId.Northrend),
+        new FlightMaster("Moa'ki, Dragonblight", 28196, new Vector3(2793.19f, 906.36f, 22.36289f, "None"), ContinentId.Northrend),
+        new FlightMaster("Wyrmrest Temple, Dragonblight", 26851, new Vector3(3647.26f, 244.051f, 52.22766f, "None"), ContinentId.Northrend),
+        new FlightMaster("Dalaran", 28674, new Vector3(5813.37f, 453.403f, 658.7562f, "None"), ContinentId.Northrend),
+        new FlightMaster("Light's Breach, Zul'Drak", 28618, new Vector3(5192.26f, -2207.04f, 239.3989f, "None"), ContinentId.Northrend),
+        new FlightMaster("Ebon Watch, Zul'Drak", 28615, new Vector3(5218.97f, -1299.12f, 242.2672f, "None"), ContinentId.Northrend),
+        new FlightMaster("The Argent Stand, Zul'Drak", 28623, new Vector3(5523.68f, -2674.97f, 303.9543f, "None"), ContinentId.Northrend),
+        new FlightMaster("Zim'Torga, Zul'Drak", 28624, new Vector3(5780.84f, -3598.16f, 387.1552f, "None"), ContinentId.Northrend),
+        new FlightMaster("Gundrak, Zul'Drak", 30569, new Vector3(6893.54f, -4118.87f, 467.3545f, "None"), ContinentId.Northrend),
+        new FlightMaster("River's Heart, Sholazar Basin", 28574, new Vector3(5505.6f, 4745.33f, -194.4336f, "None"), ContinentId.Northrend),
+        new FlightMaster("K3, The Storm Peaks", 29721, new Vector3(6188.97f, -1056.53f, 409.8226f, "None"), ContinentId.Northrend),
+        new FlightMaster("Bouldercrag's Refuge, The Storm Peaks", 29950, new Vector3(8475.49f, -337.946f, 905.9264f, "None"), ContinentId.Northrend),
+        new FlightMaster("Ulduar, The Storm Peaks", 29951, new Vector3(8861.33f, -1322.39f, 1033.314f, "None"), ContinentId.Northrend),
+        new FlightMaster("The Argent Vanguard, Icecrown", 30433, new Vector3(6162.62f, -62.0921f, 388.1804f, "None"), ContinentId.Northrend),
+        new FlightMaster("Death's Rise, Icecrown", 31078, new Vector3(7429.6f, 4231.64f, 314.285f, "None"), ContinentId.Northrend),
+        new FlightMaster("Argent Tournament Grounds, Icecrown", 33849, new Vector3(8481.62f, 891.614f, 547.293f, "None"), ContinentId.Northrend),
+        //Northrend Neutral after Quest
+        // Quest ID 12896 for Alliance - 12897 for Horde
+        new FlightMaster("The Shadow Vault, Icecrown", 30314, new Vector3(8407.96f, 2700.43f, 655.1186f, "None"), ContinentId.Northrend),
+        // Quest ID 12523 Neutral
+        new FlightMaster("Nesingwary Base Camp, Sholazar Basin", 28037, new Vector3(5587.64f, 5830.73f, -67.9672f, "None"), ContinentId.Northrend),
+        // Quest ID 13141 Neutral
+        new FlightMaster("Crusaders' Pinnacle, Icecrown", 31069, new Vector3(6401.22f, 464.245f, 512.5808f, "None"), ContinentId.Northrend),
+        // Quest ID 12956 Neutral
+        new FlightMaster("Dun Nifflelem, The Storm Peaks", 32571, new Vector3(7309.45f, -2612.99f, 814.8444f, "None"), ContinentId.Northrend)
     };
 
     public static void Initialize()

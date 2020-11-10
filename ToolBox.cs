@@ -106,17 +106,39 @@ public class ToolBox
 
     public static void SetWRobotSettings()
     {
-        if (wManagerSetting.CurrentSetting.FlightMasterTaxiUse
-            || wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear
-            || wManagerSetting.CurrentSetting.FlightMasterDiscoverRange > 1)
+        bool settingchanged = false;
+        if (wManagerSetting.CurrentSetting.FlightMasterTaxiUse)
+        {
+            Main.saveFlightMasterTaxiUse = wManagerSetting.CurrentSetting.FlightMasterTaxiUse;
+            wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
+            settingchanged = true;
+        }
+        if (wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear)
+        {
+            Main.saveFlightMasterTaxiUseOnlyIfNear = wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear;
+            wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
+            settingchanged = true;
+        }
+        if (wManagerSetting.CurrentSetting.FlightMasterDiscoverRange > 1)
+        {
+            Main.saveFlightMasterDiscoverRange = wManagerSetting.CurrentSetting.FlightMasterDiscoverRange;
+            wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
+            settingchanged = true;
+        }
+        if (settingchanged)
         {
             Logger.Log("Disabling WRobot's Taxi");
-            wManagerSetting.CurrentSetting.FlightMasterTaxiUse = false;
-            wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = false;
-            wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = 1;
             wManagerSetting.CurrentSetting.Save();
             SoftRestart();
         }
+    }
+
+    public static void RestoreWRobotSettings()
+    {
+        wManagerSetting.CurrentSetting.FlightMasterDiscoverRange = Main.saveFlightMasterDiscoverRange;
+        wManagerSetting.CurrentSetting.FlightMasterTaxiUse = Main.saveFlightMasterTaxiUse;
+        wManagerSetting.CurrentSetting.FlightMasterTaxiUseOnlyIfNear = Main.saveFlightMasterTaxiUseOnlyIfNear;
+        wManagerSetting.CurrentSetting.Save();
     }
 
     public static void Restart()
@@ -244,9 +266,18 @@ public class ToolBox
 
     public static bool ExceptionConditionsAreMet(FlightMaster fm)
     {
-        return (fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100)
-            && (fm.NPCId != 19581 || Main.aldorRep > 0)
-            && (fm.NPCId != 21766 || Main.scryersRep > 0);
+        return (fm != null
+            && (fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100)) // Shatter Point, Hellfire Peninsula
+            && (fm.NPCId != 19581 || GetReputation("The Aldor") > 0) // Altar of Sha'tar, Shadowmoon Valley
+            && (fm.NPCId != 21766 || GetReputation("The Scryers") > 0) // Sanctum of the Stars, Shadowmoon Valley
+            && (fm.NPCId != 30314 || Quest.GetLogQuestIsComplete(12896) || Quest.GetLogQuestIsComplete(12897) // The Shadow Vault, Icecrown
+            && (fm.NPCId != 28037 || Quest.GetLogQuestIsComplete(12523)) // Nesingwary Base Camp, Sholazar Basin
+            && (fm.NPCId != 31069 || Quest.GetLogQuestIsComplete(13141)) // Crusaders' Pinnacle, Icecrown
+            && (fm.NPCId != 32571 || Quest.GetLogQuestIsComplete(12956)) // Dun Nifflelem, The Storm Peaks
+            && (fm.NPCId != 37915 || GetWoWVersion().Equals("3.3.5")) // The Bulwark, Tirisfal
+            && (fm.NPCId != 37888 || GetWoWVersion().Equals("3.3.5")) // Thondoril River, Western Plaguelands
+            && (fm.NPCId != 29480 || ObjectManager.Me.WowClass == WoWClass.DeathKnight) // Acherus: The Ebon Hold
+            );
     }
 
     public static bool OpenTaxiMapSuccess(FlightMaster fm)
@@ -284,19 +315,18 @@ public class ToolBox
         return false;
     }
 
-    public static void UpdateReputations()
+    private static int GetReputation(string faction)
     {
-        Main.scryersRep = Lua.LuaDoString<int>(@"for i=1, 25 do 
+        return Lua.LuaDoString<int>($@"for i=1, 25 do 
                                 local name, _, _, _, _, earnedValue, _, _, _, _, _, _, _ = GetFactionInfo(i);
-                                    if name == 'The Scryers' then
+                                    if name == '{faction}' then
                                         return earnedValue
                                 end
                             end");
-        Main.aldorRep = Lua.LuaDoString<int>(@"for i=1, 25 do 
-                                local name, _, _, _, _, earnedValue, _, _, _, _, _, _, _ = GetFactionInfo(i);
-                                    if name == 'The Aldor' then
-                                        return earnedValue
-                                end
-                            end");
+    }
+
+    public static string GetWoWVersion()
+    {
+        return Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v");
     }
 }
