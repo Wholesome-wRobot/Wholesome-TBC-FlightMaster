@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.196"; // Must match version in Version.txt
+    public static string version = "0.0.197"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -357,12 +357,14 @@ public class Main : IPlugin
             || to == null)
         {
             Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
-            foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
+            // Pre order the list
+            List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
+                .FindAll(fm => fm.IsDiscovered() && ToolBox.FMIsOnMyContinent(fm) && !fm.Equals(from))
+                .OrderBy(fm => fm.Position.DistanceTo(destinationVector)).ToList();
+
+            foreach (FlightMaster flightMaster in orderedListFM)
             {
-                if (ToolBox.FMIsOnMyContinent(flightMaster)
-                    && flightMaster.Position.DistanceTo(destinationVector) + obligatoryDistance < totalWalkingDistance
-                    && flightMaster.IsDiscovered()
-                    && !flightMaster.Equals(from))
+                if (flightMaster.Position.DistanceTo(destinationVector) + obligatoryDistance < totalWalkingDistance)
                 {
                     // Look for the closest available FM near destination
                     double alternativeDistance = obligatoryDistance + CalculatePathTotalDistance(flightMaster.Position, destinationVector);
