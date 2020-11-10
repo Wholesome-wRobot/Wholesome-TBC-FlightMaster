@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.195"; // Must match version in Version.txt
+    public static string version = "0.0.196"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -306,12 +306,11 @@ public class Main : IPlugin
 
         // If we have detected a potential FP travel
         float totalWalkingDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
-        Logger.Log($"Path detected - {totalWalkingDistance} yards");
 
         // If the path is shorter than setting, we skip
         if (totalWalkingDistance < (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
-            Logger.Log($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
+            Logger.Log($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
             return;
         }
 
@@ -320,21 +319,18 @@ public class Main : IPlugin
             && !Logging.Status.Contains("Resurrect")
             && totalWalkingDistance < (double)WFMSettings.CurrentSettings.SkipIfFollowPathDistance)
         {
-            Logger.Log($"Currently following path. {totalWalkingDistance} yards is smaller than setting {WFMSettings.CurrentSettings.SkipIfFollowPathDistance} yards. Ignoring flights.");
+            Logger.Log($"Currently following path. {totalWalkingDistance} yards is smaller than trigger setting {WFMSettings.CurrentSettings.SkipIfFollowPathDistance} yards. Ignoring flights.");
             return;
         }
 
         destinationVector = points.Last();
-        Logger.Log($"Process time : {(DateTime.Now.Ticks - dateBegin.Ticks) / 10000} ms");
 
         from = GetClosestFlightMasterFrom(totalWalkingDistance);
-        Logger.Log($"Process time : {(DateTime.Now.Ticks - dateBegin.Ticks) / 10000} ms");
 
         if (from == null)
             return;
 
         to = GetClosestFlightMasterTo(totalWalkingDistance);
-        Logger.Log($"Process time : {(DateTime.Now.Ticks - dateBegin.Ticks) / 10000} ms");
 
         Logger.Log($"Best FROM is {from?.Name}");
         Logger.Log($"Best TO is {to?.Name}");
