@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.193"; // Must match version in Version.txt
+    public static string version = "0.0.194"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -216,7 +216,6 @@ public class Main : IPlugin
 
     public static FlightMaster GetClosestFlightMasterFrom(float maxRadius)
     {
-        float num = float.MaxValue;
         FlightMaster result = null;
 
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
@@ -226,10 +225,10 @@ public class Main : IPlugin
                 && flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < maxRadius)
             {
                 float realDist = CalculatePathTotalDistance(ObjectManager.Me.Position, flightMaster.Position);
-                Logger.Log($"Distance from me to {flightMaster.Name} is {realDist} yards");
-                if (realDist < num)
+                Logger.Log($"[FROM] Me to {flightMaster.Name} is {realDist} yards");
+                if (realDist < maxRadius)
                 {
-                    num = realDist;
+                    maxRadius = realDist;
                     result = flightMaster;
                 }
             }
@@ -239,19 +238,19 @@ public class Main : IPlugin
 
     public static FlightMaster GetClosestFlightMasterTo(float maxRadius)
     {
-        float num = float.MaxValue;
         FlightMaster result = null;
 
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
-            if (ToolBox.FMIsOnMyContinent(flightMaster)
+            if (flightMaster.IsDiscovered()
+                && ToolBox.FMIsOnMyContinent(flightMaster)
                 && flightMaster.Position.DistanceTo(destinationVector) < maxRadius)
             {
                 float realDist = CalculatePathTotalDistance(flightMaster.Position, destinationVector);
-                Logger.Log($"Distance from {flightMaster.Name} to destination is {realDist} yards");
-                if (realDist < num)
+                Logger.Log($"[TO] {flightMaster.Name} to destination is {realDist} yards");
+                if (realDist < maxRadius)
                 {
-                    num = realDist;
+                    maxRadius = realDist;
                     result = flightMaster;
                 }
             }
@@ -262,14 +261,15 @@ public class Main : IPlugin
     // Requires FM map open
     public static FlightMaster GetBestAlternativeTo(List<string> reachableTaxis)
     {
-        float num = float.MaxValue;
+        float num = ObjectManager.Me.Position.DistanceTo(destinationVector);
         FlightMaster resultFM = null;
         foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
         {
-            if (reachableTaxis.Contains(flightMaster.Name))
+            if (reachableTaxis.Contains(flightMaster.Name)
+                && flightMaster.Position.DistanceTo(destinationVector) < num)
             {
                 float realDist = CalculatePathTotalDistance(flightMaster.Position, destinationVector);
-                Logger.Log($"Distance from {flightMaster.Name} to destination is {realDist} yards");
+                Logger.Log($"[TO2] {flightMaster.Name} to destination is {realDist} yards");
                 if (realDist < num)
                 {
                     num = flightMaster.Position.DistanceTo(destinationVector);
