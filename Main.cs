@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.197"; // Must match version in Version.txt
+    public static string version = "0.0.198"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -161,8 +161,9 @@ public class Main : IPlugin
                     nearestFlightMaster = GetNearestFlightMaster();
 
                     // Hook for HMP states locks
-                    if (currentState.DisplayName.Contains("Training")
-                        && (discoverFlightMasterState.NeedToRun || discoverContinentFlightState.NeedToRun))
+                    if (MovementManager.InMoveTo
+                        && (discoverFlightMasterState.NeedToRun && currentState != discoverFlightMasterState
+                        || discoverContinentFlightState.NeedToRun && currentState != discoverContinentFlightState))
                     {
                         Logger.Log("Stop on training tracks");
                         MovementManager.StopMove();
