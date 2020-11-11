@@ -162,7 +162,7 @@ public class FlightMasterDB
         new FlightMaster("Cosmowrench, Netherstorm", 20515, new Vector3(2973.2f, 1848.45f, 141.0015f, "None"), ContinentId.Expansion01),
         new FlightMaster("Shattrath, Terokkar Forest", 18940, new Vector3(-1837.23f, 5301.9f, -12.43f, "None"), ContinentId.Expansion01),
         new FlightMaster("Evergrove, Blade's Edge Mountains", 22216, new Vector3(2976.01f, 5501.13f, 143.67f, "None"), ContinentId.Expansion01),
-        new FlightMaster("Area 52, Netherstorm", 18938, new Vector3(3082.31f, 3596.11f, 144.02f, "None"), ContinentId.Expansion01),
+        //new FlightMaster("Area 52, Netherstorm", 18938, new Vector3(3082.31f, 3596.11f, 144.02f, "None"), ContinentId.Expansion01),
         new FlightMaster("The Stormspire, Netherstorm", 19583, new Vector3(4157.58f, 2959.69f, 352.08f, "None"), ContinentId.Expansion01),
         // Aldor reputation
         new FlightMaster("Altar of Sha'tar, Shadowmoon Valley", 19581, new Vector3(-3062.63f, 741.933f, -10.14242f, "None"), ContinentId.Expansion01),

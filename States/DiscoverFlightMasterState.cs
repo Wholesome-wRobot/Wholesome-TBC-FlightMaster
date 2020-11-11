@@ -1,5 +1,4 @@
 ﻿using robotManager.FiniteStateMachine;
-using System.Threading;
 using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
@@ -42,22 +41,25 @@ public class DiscoverFlightMasterState : State
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
-            if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId, 1))
-            {
-                Thread.Sleep(500);
-                FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
-                ToolBox.UnPausePlugin();
-                Main.shouldTakeFlight = false;
-                Thread.Sleep(500);
-            }
-        }
+            FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
+            ToolBox.UnPausePlugin();
+            Main.shouldTakeFlight = false;
 
-        // Check if FM is here or dead
-        if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
-        {
-            Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-            flightMaster.Disable();
-            return;
+            if (!ToolBox.OpenTaxiMapSuccess(flightMaster))
+            {
+                // Check if FM is here or dead
+                if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
+                {
+                    Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
+                    flightMaster.Disable();
+                    return;
+                }
+                return;
+            }
+            else
+            {
+                ToolBox.UpdateKnownFMs();
+            }
         }
     }
 }

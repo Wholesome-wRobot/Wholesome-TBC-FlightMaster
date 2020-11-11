@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.200"; // Must match version in Version.txt
+    public static string version = "0.0.201"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -45,7 +45,6 @@ public class Main : IPlugin
     public static float saveFlightMasterDiscoverRange = 1;
 
     // Custom states
-    private State discoverContinentFlightState = new DiscoverContinentFlightsState();
     private State discoverFlightMasterState = new DiscoverFlightMasterState();
     private State takeTaxiState = new TakeTaxiState();
     private State waitOnTaxiState = new WaitOnTaxiState();
@@ -75,7 +74,6 @@ public class Main : IPlugin
         MovementManager.StopMoveToNewThread();
 
         FlightMasterDB.Initialize();
-        //ToolBox.SetWRobotSettings();
         ToolBox.DiscoverDefaultNodes();
 
         detectionPulse.DoWork += BackGroundPulse;
@@ -116,7 +114,6 @@ public class Main : IPlugin
 
             ToolBox.AddState(engine, takeTaxiState, "FlightMaster: Take taxi");
             ToolBox.AddState(engine, discoverFlightMasterState, "FlightMaster: Take taxi");
-            ToolBox.AddState(engine, discoverContinentFlightState, "FlightMaster: Take taxi");
             ToolBox.AddState(engine, waitOnTaxiState, "FlightMaster: Take taxi");
 
             // Double check because some profiles modify WRobot settings
@@ -161,8 +158,7 @@ public class Main : IPlugin
                     nearestFlightMaster = GetNearestFlightMaster();
 
                     // Hook for HMP states locks and others
-                    if (discoverFlightMasterState.NeedToRun && currentState.Priority < discoverFlightMasterState.Priority
-                        || discoverContinentFlightState.NeedToRun && currentState.Priority < discoverContinentFlightState.Priority)
+                    if (discoverFlightMasterState.NeedToRun && currentState?.Priority < discoverFlightMasterState.Priority)
                     {
                         Logger.Log("Stop on tracks to ensure discovery");
                         MovementManager.StopMove();
@@ -204,7 +200,7 @@ public class Main : IPlugin
             // FIX FOR TB JUMP OFF
             if (path[i].DistanceTo(TBjumpPoint) < 200 && path[i + 1].DistanceTo(TBjumpPoint) > 200)
             {
-                Logger.Log("Jump off TB detected, skipping");
+                Logger.Log("Jump off Thunder Bluff detected, Trying to find an alternative. Please wait.");
                 return 999999999f;
             }
         }
@@ -218,7 +214,7 @@ public class Main : IPlugin
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-            .FindAll(fm => (fm.IsDiscovered() || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi) && ToolBox.FMIsOnMyContinent(fm))
+            .FindAll(fm => (fm.IsDiscovered || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi) && ToolBox.FMIsOnMyContinent(fm))
             .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position)).ToList();
 
         foreach (FlightMaster flightMaster in orderedListFM)
@@ -243,7 +239,7 @@ public class Main : IPlugin
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-            .FindAll(fm => fm.IsDiscovered() && ToolBox.FMIsOnMyContinent(fm))
+            .FindAll(fm => fm.IsDiscovered && ToolBox.FMIsOnMyContinent(fm) && fm != from)
             .OrderBy(fm => fm.Position.DistanceTo(destinationVector)).ToList();
 
         foreach (FlightMaster flightMaster in orderedListFM)
@@ -281,7 +277,7 @@ public class Main : IPlugin
                 Logger.Log($"[TO2] {flightMaster.Name} to destination is {Math.Round(realDist)} yards");
                 if (realDist < num)
                 {
-                    num = flightMaster.Position.DistanceTo(destinationVector);
+                    num = realDist;
                     resultFM = flightMaster;
                 }
             }
@@ -307,7 +303,7 @@ public class Main : IPlugin
         // If we have detected a potential FP travel
         float totalWalkingDistance = CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
 
-        // If the path is shorter than setting, we skip
+            // If the path is shorter than setting, we skip
         if (totalWalkingDistance < (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
             Logger.Log($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
@@ -332,8 +328,8 @@ public class Main : IPlugin
 
         to = GetClosestFlightMasterTo(totalWalkingDistance);
 
-        Logger.Log($"Best FROM is {from?.Name}");
-        Logger.Log($"Best TO is {to?.Name}");
+        //Logger.Log($"Best FROM is {from?.Name}");
+        //Logger.Log($"Best TO is {to?.Name}");
 
         if (from.Equals(to))
             to = null;
@@ -349,8 +345,8 @@ public class Main : IPlugin
         else
             totalDistance = totalWalkingDistance;
 
-        Logger.Log($"Walking distance is {Math.Round(totalWalkingDistance)}");
-        Logger.Log($"Processed distance is {Math.Round(totalDistance)}");
+        //Logger.Log($"Walking distance is {Math.Round(totalWalkingDistance)}");
+        //Logger.Log($"Processed distance is {Math.Round(totalDistance)}");
 
         // If total real distance does not save any distance or is longer, try to find alternative
         if (totalDistance >= totalWalkingDistance
@@ -359,7 +355,7 @@ public class Main : IPlugin
             Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
             // Pre order the list
             List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-                .FindAll(fm => fm.IsDiscovered() && ToolBox.FMIsOnMyContinent(fm) && !fm.Equals(from))
+                .FindAll(fm => fm.IsDiscovered && ToolBox.FMIsOnMyContinent(fm) && !fm.Equals(from))
                 .OrderBy(fm => fm.Position.DistanceTo(destinationVector)).ToList();
 
             foreach (FlightMaster flightMaster in orderedListFM)

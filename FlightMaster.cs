@@ -20,12 +20,7 @@ public class FlightMaster
         disableTimer.Reset();
     }
 
-    public bool IsDiscovered()
-    {
-        if (WFMSettings.CurrentSettings.KnownFlightsList.Contains(Name))
-            return true;
-        return false;
-    }
+    public bool IsDiscovered => WFMSettings.CurrentSettings.KnownFlightsList.Contains(Name);
 
     public bool IsDisabled()
     {

@@ -66,7 +66,6 @@
     <Compile Include="OldMain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="States\DiscoverFlightMasterState.cs" />
-    <Compile Include="States\DiscoverContinentFlightsState.cs" />
     <Compile Include="States\TakeTaxiState.cs" />
     <Compile Include="States\WaitOnTaxiState.cs" />
     <Compile Include="ToolBox.cs" />

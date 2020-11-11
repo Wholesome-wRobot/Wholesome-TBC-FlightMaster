@@ -11,18 +11,9 @@ public class WFMDeepSettings : robotManager.Helpful.Settings
     private WFMDeepSettings()
     {
         LastUpdateDate = 0;
-
-        EKDiscoveredFlights = false;
-        KalimdorDiscoveredFlights = false;
-        OutlandsDiscoveredFlights = false;
-        NorthrendDiscoveredFlights = false;
     }
 
     public double LastUpdateDate { get; set; }
-    public bool EKDiscoveredFlights { get; set; }
-    public bool KalimdorDiscoveredFlights { get; set; }
-    public bool OutlandsDiscoveredFlights { get; set; }
-    public bool NorthrendDiscoveredFlights { get; set; }
 
     public bool Save()
     {

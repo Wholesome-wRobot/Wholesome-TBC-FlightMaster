@@ -329,4 +329,36 @@ public class ToolBox
     {
         return Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v");
     }
+
+    public static void UpdateKnownFMs()
+    {
+        Logger.Log("Updating known FlightMasters");
+        // 3 attempts to discover flights
+        bool allInvalid = true;
+        for (int j = 0; j < 3; j++)
+        {
+            // Loop through nodes
+            for (int i = 0; i < 30; i++)
+            {
+                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+                if (nodeName != "INVALID")
+                {
+                    allInvalid = false;
+                    FlightMasterDB.SetFlightMasterToKnown(nodeName);
+                }
+                else
+                {
+                    FlightMasterDB.SetFlightMasterToUnknown(nodeName);
+                }
+            }
+
+            if (allInvalid)
+            {
+                Logger.Log($"All flight nodes are invalid, retrying ({j + 1})");
+                Thread.Sleep(500);
+                PausePlugin("Couldn't find a valid flight node");
+                return;
+            }
+        }
+    }
 }
