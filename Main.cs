@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.202"; // Must match version in Version.txt
+    public static string version = "0.0.203"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -289,6 +289,12 @@ public class Main : IPlugin
 
     private static void MovementEventsOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
+        if (points.First() == points.Last())
+        {
+            Logger.Log("In grind loop, ignoring");
+            return;
+        }
+
         if (shouldTakeFlight 
             && points.Last() == destinationVector 
             && !inPause)
