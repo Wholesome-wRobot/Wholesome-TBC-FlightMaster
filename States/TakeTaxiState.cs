@@ -50,8 +50,6 @@ public class TakeTaxiState : State
             if (!ToolBox.OpenTaxiMapSuccess(flightmasterFrom))
                 return;
 
-            ToolBox.UpdateKnownFMs();
-
             List<string> reachableTaxis = new List<string>();
             // Look for current To and record reachables in case we don't find him
             for (int i = 0; i < 30; i++)

@@ -56,10 +56,6 @@ public class DiscoverFlightMasterState : State
                 }
                 return;
             }
-            else
-            {
-                ToolBox.UpdateKnownFMs();
-            }
         }
     }
 }

@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.201"; // Must match version in Version.txt
+    public static string version = "0.0.202"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBjumpPoint = new Vector3(-1005.205f, 302.6988f, 135.8554f, "None");
@@ -208,9 +208,10 @@ public class Main : IPlugin
         return distance;
     }
 
-    public static FlightMaster GetClosestFlightMasterFrom(float maxRadius)
+    public static FlightMaster GetClosestFlightMasterFrom()
     {
         FlightMaster result = null;
+        float bestDist = float.MaxValue;
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
@@ -219,13 +220,13 @@ public class Main : IPlugin
 
         foreach (FlightMaster flightMaster in orderedListFM)
         {
-            if (flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < maxRadius)
+            if (flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < bestDist)
             {
                 float realDist = CalculatePathTotalDistance(ObjectManager.Me.Position, flightMaster.Position);
                 Logger.Log($"[FROM] Me to {flightMaster.Name} is {Math.Round(realDist)} yards");
-                if (realDist < maxRadius)
+                if (realDist < bestDist)
                 {
-                    maxRadius = realDist;
+                    bestDist = realDist;
                     result = flightMaster;
                 }
             }
@@ -233,24 +234,25 @@ public class Main : IPlugin
         return result;
     }
 
-    public static FlightMaster GetClosestFlightMasterTo(float maxRadius)
+    public static FlightMaster GetClosestFlightMasterTo()
     {
         FlightMaster result = null;
+        float bestDist = float.MaxValue;
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-            .FindAll(fm => fm.IsDiscovered && ToolBox.FMIsOnMyContinent(fm) && fm != from)
+            .FindAll(fm => fm.IsDiscovered && fm.NPCId != from.NPCId && ToolBox.FMIsOnMyContinent(fm))
             .OrderBy(fm => fm.Position.DistanceTo(destinationVector)).ToList();
 
         foreach (FlightMaster flightMaster in orderedListFM)
         {
-            if (flightMaster.Position.DistanceTo(destinationVector) < maxRadius)
+            if (flightMaster.Position.DistanceTo(destinationVector) < bestDist)
             {
                 float realDist = CalculatePathTotalDistance(flightMaster.Position, destinationVector);
                 Logger.Log($"[TO] {flightMaster.Name} to destination is {Math.Round(realDist)} yards");
-                if (realDist < maxRadius)
+                if (realDist < bestDist)
                 {
-                    maxRadius = realDist;
+                    bestDist = realDist;
                     result = flightMaster;
                 }
             }
@@ -321,21 +323,21 @@ public class Main : IPlugin
 
         destinationVector = points.Last();
 
-        from = GetClosestFlightMasterFrom(totalWalkingDistance);
+        from = GetClosestFlightMasterFrom();
 
         if (from == null)
             return;
 
-        to = GetClosestFlightMasterTo(totalWalkingDistance);
+        to = GetClosestFlightMasterTo();
 
-        //Logger.Log($"Best FROM is {from?.Name}");
-        //Logger.Log($"Best TO is {to?.Name}");
+        Logger.Log($"Best FROM is {from?.Name}");
+        Logger.Log($"Best TO is {to?.Name}");
 
         if (from.Equals(to))
             to = null;
 
         double distanceToNearestFM = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position);
-        double obligatoryDistance = distanceToNearestFM + WFMSettings.CurrentSettings.ShorterMinDistance;
+        double obligatoryDistance = distanceToNearestFM + WFMSettings.CurrentSettings.MinimumDistanceSaving;
 
         // Calculate total real distance FROM/TO
         // if no TO found, we set the total distance back to walking distance
@@ -352,10 +354,10 @@ public class Main : IPlugin
         if (totalDistance >= totalWalkingDistance
             || to == null)
         {
-            Logger.Log("Direct flight path is impossible, trying to find an alternative, please wait");
+            Logger.Log($"No direct flight path, trying to find an alternative, please wait");
             // Pre order the list
             List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-                .FindAll(fm => fm.IsDiscovered && ToolBox.FMIsOnMyContinent(fm) && !fm.Equals(from))
+                .FindAll(fm => fm.IsDiscovered && fm.NPCId != from.NPCId && ToolBox.FMIsOnMyContinent(fm))
                 .OrderBy(fm => fm.Position.DistanceTo(destinationVector)).ToList();
 
             foreach (FlightMaster flightMaster in orderedListFM)
@@ -380,7 +382,7 @@ public class Main : IPlugin
             && !from.Equals(to)
             && totalDistance <= totalWalkingDistance)
         {
-            Logger.Log($"Flight found for {Math.Round(totalWalkingDistance)} yards path, processed distance is {Math.Round(totalDistance)} yards, taking Taxi from " + from.Name + " to " + to.Name);
+            Logger.Log($"Flight found for {Math.Round(totalWalkingDistance)} yards path, processed distance is {Math.Round(totalDistance - WFMSettings.CurrentSettings.MinimumDistanceSaving)} yards, taking Taxi from " + from.Name + " to " + to.Name);
             MovementManager.StopMoveNewThread();
             MovementManager.StopMoveToNewThread();
             cancelable.Cancel = true;

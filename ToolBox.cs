@@ -47,6 +47,7 @@ public class ToolBox
             }
         }
     }
+
     public static void RemoveState(Engine engine, string stateToRemove)
     {
         bool stateExists = engine.States.Exists(s => s.DisplayName == stateToRemove);
@@ -305,7 +306,10 @@ public class ToolBox
                     Logger.Log($"Couldn't open taxi map. Retrying ({i})");
                 }
                 else
+                {
+                    UpdateKnownFMs();
                     return true;
+                }
             }
         }
 

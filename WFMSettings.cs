@@ -12,7 +12,7 @@ public class WFMSettings : Settings
     {
         TaxiTriggerDistance = 600;
         DetectTaxiDistance = 400;
-        ShorterMinDistance = 500;
+        MinimumDistanceSaving = 500;
         SkipIfFollowPath = true;
         SkipIfFollowPathDistance = 5000f;
         PauseLengthInSeconds = 600;
@@ -57,7 +57,7 @@ public class WFMSettings : Settings
     [Category("1 - Main")]
     [DisplayName("Minimum distance saving")]
     [Description("Sets how much shorter a path has to be to trigger taxi")]
-    public int ShorterMinDistance { get; set; }
+    public int MinimumDistanceSaving { get; set; }
 
     [DefaultValue(true)]
     [Category("2 - Useful")]
