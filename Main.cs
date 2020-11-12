@@ -198,9 +198,9 @@ public class Main : IPlugin
             distance += path[i].DistanceTo2D(path[i + 1]);
             
             // FIX FOR TB JUMP OFF
-            if (path[i].DistanceTo(TBCenter) < 400 && path[i + 1].DistanceTo(TBCenter) > 200)
+            if (path[i].DistanceTo(TBCenter) < 400 && path[i + 1].DistanceTo(path[i]) > 200)
             {
-                Logger.Log("Jump off Thunder Bluff detected, Trying to find an alternative. Please wait.");
+                Logger.Log($"Jump off Thunder Bluff detected {path[i]} to {path[i + 1]}, Trying to find an alternative. Please wait.");
                 return 999999999f;
             }
         }
