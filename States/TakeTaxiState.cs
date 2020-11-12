@@ -47,6 +47,12 @@ public class TakeTaxiState : State
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
+            if (ObjectManager.Me.InCombatFlagOnly)
+            {
+                Logger.Log("You are in combat");
+                return;
+            }
+
             if (!ToolBox.OpenTaxiMapSuccess(flightmasterFrom))
                 return;
 

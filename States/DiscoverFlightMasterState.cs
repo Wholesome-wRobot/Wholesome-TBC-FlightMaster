@@ -41,6 +41,12 @@ public class DiscoverFlightMasterState : State
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
+            if (ObjectManager.Me.InCombatFlagOnly)
+            {
+                Logger.Log("You are in combat");
+                return;
+            }
+
             FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
             ToolBox.UnPausePlugin();
             Main.shouldTakeFlight = false;
