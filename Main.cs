@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.206"; // Must match version in Version.txt
+    public static string version = "0.0.207"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBCenter = new Vector3(-1190.982f, 6.03807f, 165.4799f, "None");
@@ -52,7 +52,8 @@ public class Main : IPlugin
     public void Initialize()
     {
         if (!Products.ProductName.Equals("Quester") 
-            && !Products.ProductName.Equals("Grinder"))
+            && !Products.ProductName.Equals("Grinder")
+            && !Products.ProductName.Equals("Wholesome Professions WotLK"))
             return;
 
         isLaunched = true;
