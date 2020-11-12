@@ -20,17 +20,18 @@ public class WFMSettings : Settings
         //PauseSearingGorge = true;
 
         KnownFlightsList = new List<string>();
+        DisabledFlightsList = new string[] { };
 
         ConfigWinForm(new System.Drawing.Point(400, 400), "Wholesome FlightMaster Settings");
     }
 
     [Category("Lists")]
-    [DisplayName("List known nodes")]
+    [DisplayName("Discovered nodes")]
     [Description("List of already known nodes. You cannot modify this list.")]
     public List<string> KnownFlightsList { get; set; }
 
     [Category("Lists")]
-    [DisplayName("Disabled nodes")]
+    [DisplayName("Blacklisted nodes")]
     [Description("You can add flight nodes you want to disable completely in this list. The name can be partial (ex : mojach for Camp Mojache)")]
     public string[] DisabledFlightsList { get; set; }
 
@@ -61,7 +62,7 @@ public class WFMSettings : Settings
     [DefaultValue(500)]
     [Category("Settings")]
     [DisplayName("Minimum distance saving")]
-    [Description("Sets how much shorter a path has to be to trigger taxi")]
+    [Description("Sets how much shorter a path has to be for a flight to be taken")]
     public int MinimumDistanceSaving { get; set; }
 
     [DefaultValue(true)]
@@ -72,7 +73,7 @@ public class WFMSettings : Settings
 
     [DefaultValue(5000f)]
     [Category("Follow Path")]
-    [DisplayName("Minimum Follow Path distance flight")]
+    [DisplayName("Minimum Follow Path distance")]
     [Description("Minimum Follow Path distance to be considered for a flight")]
     public float SkipIfFollowPathDistance { get; set; }
 
