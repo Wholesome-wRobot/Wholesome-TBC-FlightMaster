@@ -12,6 +12,7 @@ using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
+using wManager;
 using static wManager.Wow.Helpers.PathFinder;
 using Math = System.Math;
 
@@ -34,7 +35,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.207"; // Must match version in Version.txt
+    public static string version = "0.0.208"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBCenter = new Vector3(-1190.982f, 6.03807f, 165.4799f, "None");
@@ -73,6 +74,10 @@ public class Main : IPlugin
         Logger.Log($"Launching version {version} on client {ToolBox.GetWoWVersion()}");
         MovementManager.StopMoveNewThread();
         MovementManager.StopMoveToNewThread();
+
+        // Avoid Orgrimmar Braseros
+        wManagerSetting.AddBlackListZone(new Vector3(1731.702, -4423.403, 36.86293, "None"), 5.00f, true);
+        wManagerSetting.AddBlackListZone(new Vector3(1669.99, -4359.609, 29.23425, "None"), 5.00f, true);
 
         FlightMasterDB.Initialize();
         ToolBox.DiscoverDefaultNodes();

@@ -37,6 +37,9 @@
       <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\MemoryRobot.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="RDManaged">
+      <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\RDManaged.dll</HintPath>
+    </Reference>
     <Reference Include="robotManager">
       <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\robotManager.dll</HintPath>
       <Private>False</Private>
