@@ -24,49 +24,54 @@ public class WFMSettings : Settings
         ConfigWinForm(new System.Drawing.Point(400, 400), "Wholesome FlightMaster Settings");
     }
 
-    [Category("1 - Main")]
+    [Category("Lists")]
     [DisplayName("List known nodes")]
-    [Description("List of already known nodes")]
+    [Description("List of already known nodes. You cannot modify this list.")]
     public List<string> KnownFlightsList { get; set; }
 
+    [Category("Lists")]
+    [DisplayName("Disabled nodes")]
+    [Description("You can add flight nodes you want to disable completely in this list. The name can be partial (ex : mojach for Camp Mojache)")]
+    public string[] DisabledFlightsList { get; set; }
+
     [DefaultValue(false)]
-    [Category("1 - Main")]
+    [Category("Settings")]
     [DisplayName("Take undiscovered taxi")]
     [Description("Will choose the nearest taxi for a flight even if you haven't discovered it. WARNING : can take you to dangerous zones")]
     public bool TakeUndiscoveredTaxi { get; set; }
 
     [DefaultValue(600)]
-    [Category("1 - Main")]
+    [Category("Settings")]
     [DisplayName("Pause length in seconds")]
     [Description("In case of an unconnected flight or dead FlightMaster, set how long the plugin should be paused (in seconds)")]
     public int PauseLengthInSeconds { get; set; }
 
     [DefaultValue(600)]
-    [Category("1 - Main")]
+    [Category("Settings")]
     [DisplayName("Trigger Distance")]
     [Description("Sets the minimum walking distance to your destination to trigger use of taxi")]
     public int TaxiTriggerDistance { get; set; }
 
     [DefaultValue(400)]
-    [Category("1 - Main")]
+    [Category("Settings")]
     [DisplayName("Discover Distance")]
     [Description("Maximum distance to discover a taxi node")]
     public int DetectTaxiDistance { get; set; }
 
     [DefaultValue(500)]
-    [Category("1 - Main")]
+    [Category("Settings")]
     [DisplayName("Minimum distance saving")]
     [Description("Sets how much shorter a path has to be to trigger taxi")]
     public int MinimumDistanceSaving { get; set; }
 
     [DefaultValue(true)]
-    [Category("2 - Useful")]
+    [Category("Follow Path")]
     [DisplayName("Disable if Follow Path / Boat step")]
     [Description("Disable flights if currently executing a Follow Path or Boat Quester step")]
     public bool SkipIfFollowPath { get; set; }
 
     [DefaultValue(5000f)]
-    [Category("2 - Useful")]
+    [Category("Follow Path")]
     [DisplayName("Minimum Follow Path distance flight")]
     [Description("Minimum Follow Path distance to be considered for a flight")]
     public float SkipIfFollowPathDistance { get; set; }

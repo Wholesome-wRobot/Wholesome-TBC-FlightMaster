@@ -35,7 +35,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.208"; // Must match version in Version.txt
+    public static string version = "0.0.209"; // Must match version in Version.txt
 
     // BANNED points
     static Vector3 TBCenter = new Vector3(-1190.982f, 6.03807f, 165.4799f, "None");
@@ -336,7 +336,10 @@ public class Main : IPlugin
         from = GetClosestFlightMasterFrom(totalWalkingDistance);
 
         if (from == null)
+        {
+            Logger.Log("No FROM found");
             return;
+        }
 
         double distanceToNearestFM = CalculatePathTotalDistance(ObjectManager.Me.Position, from.Position);
         double obligatoryDistance = distanceToNearestFM + WFMSettings.CurrentSettings.MinimumDistanceSaving;

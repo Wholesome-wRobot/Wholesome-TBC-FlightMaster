@@ -14,7 +14,7 @@ public class DiscoverFlightMasterState : State
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
                 && Main.nearestFlightMaster != null
-                && !Main.nearestFlightMaster.IsDisabled()
+                && !Main.nearestFlightMaster.IsDisabledByPlugin()
                 && ToolBox.ExceptionConditionsAreMet(Main.nearestFlightMaster)
                 && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
             {

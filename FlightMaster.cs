@@ -1,4 +1,5 @@
 ﻿using robotManager.Helpful;
+using System.Collections.Generic;
 using System.Diagnostics;
 using wManager.Wow.Enums;
 
@@ -22,7 +23,7 @@ public class FlightMaster
 
     public bool IsDiscovered => WFMSettings.CurrentSettings.KnownFlightsList.Contains(Name);
 
-    public bool IsDisabled()
+    public bool IsDisabledByPlugin()
     {
         bool isDisabled = disableTimer.IsRunning && disableTimer.ElapsedMilliseconds < WFMSettings.CurrentSettings.PauseLengthInSeconds * 1000;
         if (disableTimer.ElapsedMilliseconds >= WFMSettings.CurrentSettings.PauseLengthInSeconds * 1000)

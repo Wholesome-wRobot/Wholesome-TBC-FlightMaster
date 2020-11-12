@@ -1,5 +1,6 @@
 ﻿using robotManager.Helpful;
 using System.Collections.Generic;
+using System.Linq;
 using wManager.Wow.Enums;
 
 public class FlightMasterDB
@@ -210,6 +211,18 @@ public class FlightMasterDB
         {
             FlightMasterList = allianceFlightMasters;
             FlightMasterList.AddRange(neutralFlightMasters);
+        }
+
+        // Remove disabled FMs
+        List<string> disabledFms = new List<string>(WFMSettings.CurrentSettings.DisabledFlightsList);
+        List<FlightMaster> listFMCopy = new List<FlightMaster>(FlightMasterList);
+        foreach (FlightMaster fm in listFMCopy)
+        {
+            if (disabledFms.Exists(disabled => fm.Name.ToLower().Contains(disabled.ToLower())))
+            {
+                Logger.Log($"You have disabled {fm.Name}");
+                FlightMasterList.Remove(fm);
+            }
         }
     }
 
