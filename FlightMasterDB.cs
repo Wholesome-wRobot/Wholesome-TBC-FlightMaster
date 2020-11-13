@@ -1,7 +1,8 @@
 ﻿using robotManager.Helpful;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading;
 using wManager.Wow.Enums;
+using wManager.Wow.Helpers;
 
 public class FlightMasterDB
 {
@@ -163,7 +164,7 @@ public class FlightMasterDB
         new FlightMaster("Cosmowrench, Netherstorm", 20515, new Vector3(2973.2f, 1848.45f, 141.0015f, "None"), ContinentId.Expansion01),
         new FlightMaster("Shattrath, Terokkar Forest", 18940, new Vector3(-1837.23f, 5301.9f, -12.43f, "None"), ContinentId.Expansion01),
         new FlightMaster("Evergrove, Blade's Edge Mountains", 22216, new Vector3(2976.01f, 5501.13f, 143.67f, "None"), ContinentId.Expansion01),
-        //new FlightMaster("Area 52, Netherstorm", 18938, new Vector3(3082.31f, 3596.11f, 144.02f, "None"), ContinentId.Expansion01),
+        new FlightMaster("Area 52, Netherstorm", 18938, new Vector3(3082.31f, 3596.11f, 144.02f, "None"), ContinentId.Expansion01),
         new FlightMaster("The Stormspire, Netherstorm", 19583, new Vector3(4157.58f, 2959.69f, 352.08f, "None"), ContinentId.Expansion01),
         // Aldor reputation
         new FlightMaster("Altar of Sha'tar, Shadowmoon Valley", 19581, new Vector3(-3062.63f, 741.933f, -10.14242f, "None"), ContinentId.Expansion01),
@@ -248,35 +249,74 @@ public class FlightMasterDB
         return null;
     }
 
-    public static void SetFlightMasterToKnown(string flightMasterName)
+    public static bool SetFlightMasterToKnown(string flightMasterName)
     {
         if (!WFMSettings.CurrentSettings.KnownFlightsList.Contains(flightMasterName))
         {
             Logger.Log($"Adding {flightMasterName} to known flights list");
             WFMSettings.CurrentSettings.KnownFlightsList.Add(flightMasterName);
             WFMSettings.CurrentSettings.Save();
+            return true;
         }
+        return false;
     }
 
-    public static void SetFlightMasterToKnown(int flightMasterID)
+    public static bool SetFlightMasterToKnown(int flightMasterID)
     {
         FlightMaster flightMaster = GetFlightMasterById(flightMasterID);
-        SetFlightMasterToKnown(flightMaster.Name);
+        return SetFlightMasterToKnown(flightMaster.Name);
     }
 
-    public static void SetFlightMasterToUnknown(string flightMasterName)
+    public static bool SetFlightMasterToUnknown(string flightMasterName)
     {
         if (WFMSettings.CurrentSettings.KnownFlightsList.Contains(flightMasterName))
         {
             Logger.Log($"Removing {flightMasterName} from known flights list");
             WFMSettings.CurrentSettings.KnownFlightsList.Remove(flightMasterName);
             WFMSettings.CurrentSettings.Save();
+            return true;
         }
+        return false;
     }
 
     public static void SetFlightMasterToUnknown(int flightMasterID)
     {
         FlightMaster flightMaster = GetFlightMasterById(flightMasterID);
         SetFlightMasterToUnknown(flightMaster.Name);
+    }
+
+    public static bool UpdateKnownFMs()
+    {
+        Logger.Log("Updating known FlightMasters");
+        // 3 attempts to discover flights
+        bool allInvalid = true;
+        bool modificationWasMade = false;
+        for (int j = 0; j < 3; j++)
+        {
+            // Loop through nodes
+            for (int i = 0; i < 30; i++)
+            {
+                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+                if (nodeName != "INVALID")
+                {
+                    allInvalid = false;
+                    if (SetFlightMasterToKnown(nodeName) && modificationWasMade == false)
+                        modificationWasMade = true;
+                }
+                else
+                {
+                    if (SetFlightMasterToUnknown(nodeName) && modificationWasMade == false)
+                        modificationWasMade = true;
+                }
+            }
+
+            if (allInvalid)
+            {
+                Logger.Log($"All flight nodes are invalid, retrying ({j + 1})");
+                Thread.Sleep(500);
+                ToolBox.PausePlugin("Couldn't find a valid flight node");
+            }
+        }
+        return modificationWasMade;
     }
 }

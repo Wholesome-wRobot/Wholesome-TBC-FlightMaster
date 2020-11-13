@@ -11,20 +11,23 @@ public class WFMSettings : Settings
     public WFMSettings()
     {
         TaxiTriggerDistance = 600;
-        DetectTaxiDistance = 400;
+        DetectTaxiDistance = 500;
         MinimumDistanceSaving = 500;
-        SkipIfFollowPath = true;
-        SkipIfFollowPathDistance = 5000f;
+        SkipIfFollowPathDistance = 2000f;
         PauseLengthInSeconds = 600;
         TakeUndiscoveredTaxi = false;
-        //PauseSearingGorge = true;
 
         KnownFlightsList = new List<string>();
-        DisabledFlightsList = new string[] { };
+        DisabledFlightsList = new string[] {
+            "The Stormspire, Netherstorm"
+        };
 
         ConfigWinForm(new System.Drawing.Point(400, 400), "Wholesome FlightMaster Settings");
     }
 
+    [DefaultValue(new string[] {
+            "The Stormspire, Netherstorm"
+        })]
     [Category("Lists")]
     [DisplayName("Discovered nodes")]
     [Description("List of already known nodes. You cannot modify this list.")]
@@ -50,10 +53,10 @@ public class WFMSettings : Settings
     [DefaultValue(600)]
     [Category("Settings")]
     [DisplayName("Trigger Distance")]
-    [Description("Sets the minimum walking distance to your destination to trigger use of taxi")]
+    [Description("Sets the minimum walking distance to your destination to check for flights")]
     public int TaxiTriggerDistance { get; set; }
 
-    [DefaultValue(400)]
+    [DefaultValue(500)]
     [Category("Settings")]
     [DisplayName("Discover Distance")]
     [Description("Maximum distance to discover a taxi node")]
@@ -65,25 +68,11 @@ public class WFMSettings : Settings
     [Description("Sets how much shorter a path has to be for a flight to be taken")]
     public int MinimumDistanceSaving { get; set; }
 
-    [DefaultValue(true)]
-    [Category("Follow Path")]
-    [DisplayName("Disable if Follow Path / Boat step")]
-    [Description("Disable flights if currently executing a Follow Path or Boat Quester step")]
-    public bool SkipIfFollowPath { get; set; }
-
-    [DefaultValue(5000f)]
+    [DefaultValue(2000f)]
     [Category("Follow Path")]
     [DisplayName("Minimum Follow Path distance")]
-    [Description("Minimum Follow Path distance to be considered for a flight")]
+    [Description("Minimum Follow Path distance to be considered for a flight.")]
     public float SkipIfFollowPathDistance { get; set; }
-
-    /*
-    [DefaultValue(true)]
-    [Category("2 - Useful")]
-    [DisplayName("Stop bot at Searing Gorge gate")]
-    [Description("Stops the bot, to prevent it from running into the Searing Gorge gate from Loch Modan and getting stuck over and over again")]
-    public bool PauseSearingGorge { get; set; }
-    */
 
     public static WFMSettings CurrentSettings { get; set; }
 

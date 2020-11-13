@@ -56,6 +56,14 @@ public class TakeTaxiState : State
             if (!ToolBox.OpenTaxiMapSuccess(flightmasterFrom))
                 return;
 
+            if (FlightMasterDB.UpdateKnownFMs())
+            {
+                Logger.Log("Flightmaster list has changed. Trying to find a new path.");
+                Main.to = null;
+                Main.shouldTakeFlight = false;
+                return;
+            }
+
             List<string> reachableTaxis = new List<string>();
             // Look for current To and record reachables in case we don't find him
             for (int i = 0; i < 30; i++)

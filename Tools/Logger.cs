@@ -7,6 +7,10 @@ public class Logger
     {
         Logging.Write($"[Wholesome TBC-WotlK FlightMaster] {s}", Logging.LogType.Normal, Color.DarkCyan);
     }
+    public static void LogDebug(string s)
+    {
+        Logging.WriteDebug($"[Wholesome TBC-WotlK FlightMaster] {s}");
+    }
     public static void LogError(string s)
     {
         Logging.WriteError($"[Wholesome TBC-WotlK FlightMaster] {s}");

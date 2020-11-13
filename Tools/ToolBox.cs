@@ -1,4 +1,5 @@
 ﻿using robotManager.FiniteStateMachine;
+using robotManager.Helpful;
 using robotManager.Products;
 using System;
 using System.Collections.Generic;
@@ -8,9 +9,13 @@ using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
+using static wManager.Wow.Helpers.PathFinder;
 
 public class ToolBox
 {
+    // BANNED points
+    static Vector3 TBCenter = new Vector3(-1190.982f, 6.03807f, 165.4799f, "None");
+
     public static void AddState(Engine engine, State state, string replace)
     {
         bool statedAdded = engine.States.Exists(s => s.DisplayName == state.DisplayName);
@@ -132,6 +137,13 @@ public class ToolBox
             wManagerSetting.CurrentSetting.Save();
             SoftRestart();
         }
+    }
+
+    public static void SetBlacklistedZones()
+    {
+        // Avoid Orgrimmar Braseros
+        wManagerSetting.AddBlackListZone(new Vector3(1731.702, -4423.403, 36.86293, "None"), 5.00f, true);
+        wManagerSetting.AddBlackListZone(new Vector3(1669.99, -4359.609, 29.23425, "None"), 5.00f, true);
     }
 
     public static void RestoreWRobotSettings()
@@ -307,7 +319,6 @@ public class ToolBox
                 }
                 else
                 {
-                    UpdateKnownFMs();
                     return true;
                 }
             }
@@ -334,41 +345,30 @@ public class ToolBox
         return Lua.LuaDoString<string>("v, b, d, t = GetBuildInfo(); return v");
     }
 
-    public static void UpdateKnownFMs()
-    {
-        Logger.Log("Updating known FlightMasters");
-        // 3 attempts to discover flights
-        bool allInvalid = true;
-        for (int j = 0; j < 3; j++)
-        {
-            // Loop through nodes
-            for (int i = 0; i < 30; i++)
-            {
-                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
-                if (nodeName != "INVALID")
-                {
-                    allInvalid = false;
-                    FlightMasterDB.SetFlightMasterToKnown(nodeName);
-                }
-                else
-                {
-                    FlightMasterDB.SetFlightMasterToUnknown(nodeName);
-                }
-            }
-
-            if (allInvalid)
-            {
-                Logger.Log($"All flight nodes are invalid, retrying ({j + 1})");
-                Thread.Sleep(500);
-                PausePlugin("Couldn't find a valid flight node");
-                return;
-            }
-        }
-    }
-
     // Count the amount of the specified item stacks in your bags
     public static int CountItemStacks(string itemName)
     {
         return Lua.LuaDoString<int>("local count = GetItemCount('" + itemName + "'); return count");
+    }
+
+    // Calculate real walking distance
+    public static float CalculatePathTotalDistance(Vector3 from, Vector3 to)
+    {
+        float distance = 0.0f;
+        List<Vector3> path = FindPath(from, to, false);
+
+        for (int i = 0; i < path.Count - 1; ++i)
+        {
+            distance += path[i].DistanceTo2D(path[i + 1]);
+            
+            // FIX FOR TB JUMP OFF
+            if (path[i].DistanceTo(TBCenter) < 400 && path[i + 1].DistanceTo(path[i]) > 200)
+            {
+                Logger.Log($"Jump off Thunder Bluff detected {path[i]} to {path[i + 1]}, Trying to find an alternative. Please wait.");
+                return 100000;
+            }
+        }
+
+        return distance;
     }
 }

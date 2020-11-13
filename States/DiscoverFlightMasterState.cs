@@ -62,6 +62,7 @@ public class DiscoverFlightMasterState : State
                 }
                 return;
             }
+            FlightMasterDB.UpdateKnownFMs();
         }
     }
 }
