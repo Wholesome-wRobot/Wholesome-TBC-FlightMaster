@@ -365,4 +365,10 @@ public class ToolBox
             }
         }
     }
+
+    // Count the amount of the specified item stacks in your bags
+    public static int CountItemStacks(string itemName)
+    {
+        return Lua.LuaDoString<int>("local count = GetItemCount('" + itemName + "'); return count");
+    }
 }

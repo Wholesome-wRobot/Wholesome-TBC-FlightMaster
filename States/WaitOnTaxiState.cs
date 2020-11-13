@@ -13,7 +13,8 @@ public class WaitOnTaxiState : State
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
-                && ObjectManager.Me.IsOnTaxi)
+                && ObjectManager.Me.IsOnTaxi
+                && ToolBox.CountItemStacks("Seaforium PU-36 Explosive Nether Modulator") < 1)
             {
                 return true;
             }
