@@ -20,6 +20,7 @@ public class TakeTaxiState : State
                 && Main.shouldTakeFlight
                 && Main.to != null
                 && Main.from != null
+                && !ObjectManager.Me.InTransport
                 && !Main.from.IsDisabledByPlugin()
                 && ToolBox.ExceptionConditionsAreMet(Main.from)
                 && !ObjectManager.Me.IsOnTaxi)

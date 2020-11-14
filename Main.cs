@@ -19,6 +19,7 @@ public class Main : IPlugin
     public static bool isLaunched;
     private readonly BackgroundWorker detectionPulse = new BackgroundWorker();
     public static FlightMaster nearestFlightMaster = null;
+    public static FlightMaster flightMasterToDiscover = null;
     public static Vector3 destinationVector = null;
     private static State currentState = null;
 
@@ -33,7 +34,7 @@ public class Main : IPlugin
     public static bool clickNodeError = false;
     public static bool isHorde;
 
-    public static string version = "0.0.221"; // Must match version in Version.txt
+    public static string version = "0.0.222"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -154,6 +155,13 @@ public class Main : IPlugin
                     && ObjectManager.Me.IsAlive)
                 {
                     nearestFlightMaster = GetNearestFlightMaster();
+
+                    // Mark flightmaster as To be discovered
+                    if (nearestFlightMaster != null
+                        && !nearestFlightMaster.IsDisabledByPlugin()
+                        && ToolBox.ExceptionConditionsAreMet(nearestFlightMaster)
+                        && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(nearestFlightMaster.Name))
+                        flightMasterToDiscover = nearestFlightMaster;
 
                     // Hook for HMP states locks and others
                     if (discoverFlightMasterState.NeedToRun && currentState?.Priority < discoverFlightMasterState.Priority)

@@ -14,17 +14,11 @@ public class DiscoverFlightMasterState : State
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
-                && Main.nearestFlightMaster != null
-                && !Main.nearestFlightMaster.IsDisabledByPlugin()
-                && ToolBox.ExceptionConditionsAreMet(Main.nearestFlightMaster)
-                && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(Main.nearestFlightMaster.Name))
-            {
+                && Main.flightMasterToDiscover != null
+                && !ObjectManager.Me.InTransport)
                 return true;
-            }
             else
-            {
                 return false;
-            }
         }
     }
 
@@ -32,11 +26,11 @@ public class DiscoverFlightMasterState : State
     {
         MovementManager.StopMoveNewThread();
         MovementManager.StopMoveToNewThread();
-        FlightMaster flightMaster = Main.nearestFlightMaster;
-        Logger.Log($"Discovering flight master {flightMaster.Name}");
+        FlightMaster flightMasterToDiscover = Main.flightMasterToDiscover;
+        Logger.Log($"Discovering flight master {flightMasterToDiscover.Name}");
 
         // We go to the position
-        if (GoToTask.ToPositionAndIntecractWithNpc(flightMaster.Position, flightMaster.NPCId))
+        if (GoToTask.ToPositionAndIntecractWithNpc(flightMasterToDiscover.Position, flightMasterToDiscover.NPCId))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
@@ -50,19 +44,21 @@ public class DiscoverFlightMasterState : State
 
             Usefuls.SelectGossipOption(GossipOptionsType.taxi);
 
-            FlightMasterDB.SetFlightMasterToKnown(flightMaster.NPCId);
+            FlightMasterDB.SetFlightMasterToKnown(flightMasterToDiscover.NPCId);
+            Main.flightMasterToDiscover = null;
             ToolBox.UnPausePlugin();
             Main.shouldTakeFlight = false;
 
-            FlightMasterDB.UpdateKnownFMs(flightMaster);
+            FlightMasterDB.UpdateKnownFMs(flightMasterToDiscover);
             MovementManager.StopMove(); // reset path
         }
 
         // Check if FM is here or dead
-        if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
+        if (!ToolBox.FMIsNearbyAndAlive(flightMasterToDiscover))
         {
             Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-            flightMaster.Disable();
+            flightMasterToDiscover.Disable();
+            Main.flightMasterToDiscover = null;
             return;
         }
     }
