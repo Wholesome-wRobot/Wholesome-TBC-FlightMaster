@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.216"; // Must match version in Version.txt
+    public static string version = "0.0.217"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -266,12 +266,13 @@ public class Main : IPlugin
 
     private static void MovementEventsOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
+        /*
         if (points.First() == points.Last() && MovementManager.InMovementLoop)
         {
             Logger.Log("In grind loop, ignoring");
             return;
         }
-
+        */
         if (shouldTakeFlight 
             && points.Last() == destinationVector 
             && !inPause)
