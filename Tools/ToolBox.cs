@@ -186,7 +186,7 @@ public class ToolBox
             
             if (eventName == "TAXIMAP_OPENED")
             {
-                //Logger.Log("Taxi map opened");
+                Logger.LogDebug("Taxi map open (LUA event)");
                 Main.isTaxiMapOpened = true;
             }
             if (eventName == "TAXIMAP_CLOSED")
@@ -194,15 +194,17 @@ public class ToolBox
                 //Logger.Log("Taxi map closed");
                 Main.isTaxiMapOpened = false;
             }
-            /*
+            
             if (eventName == "GOSSIP_SHOW")
             {
-                Logger.Log("Gossip show");
+                Main.isGossipShown = true;
+                Logger.LogDebug("Gossip show");
             }
             if (eventName == "GOSSIP_CLOSED")
             {
-                Logger.Log("Gossip closed");
-            }*/
+                Main.isGossipShown = false;
+                Logger.LogDebug("Gossip closed");
+            }
         }
     }
 
@@ -297,14 +299,12 @@ public class ToolBox
     public static bool OpenTaxiMapSuccess(FlightMaster fm)
     {
         // 3 attempts to open map
-        for (int i = 1; i <= 3; i++)
+        for (int i = 1; i <= 30; i++)
         {
             // interract with FM
             if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
             {
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-
-                Thread.Sleep(1000);
 
                 int limit = 0;
                 while (!Main.isTaxiMapOpened && limit < 3000)
@@ -315,11 +315,17 @@ public class ToolBox
 
                 if (limit >= 3000) 
                 {
-                    Lua.LuaDoString("CloseTaxiMap()");
                     Logger.Log($"Couldn't open taxi map. Retrying ({i})");
+                    if (Main.isGossipShown)
+                    {
+                        Keyboard.PressKey(wManager.Wow.Memory.WowMemory.Memory.WindowHandle, System.Windows.Forms.Keys.Escape);
+                        Lua.LuaDoString("CloseGossip()");
+                    }
+                    GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId);
                 }
                 else
                 {
+                    Logger.LogDebug("Taxi map is open");
                     return true;
                 }
             }

@@ -32,9 +32,10 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
     public static bool isTaxiMapOpened = false;
+    public static bool isGossipShown = false;
     public static bool isHorde;
 
-    public static string version = "0.0.217"; // Must match version in Version.txt
+    public static string version = "0.0.218"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -292,7 +293,7 @@ public class Main : IPlugin
             // If the path is shorter than setting, we skip
         if (totalWalkingDistance < (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
-            //Logger.Log($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
+            Logger.LogDebug($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
             return;
         }
 

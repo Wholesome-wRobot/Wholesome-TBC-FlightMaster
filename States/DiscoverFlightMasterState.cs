@@ -63,6 +63,7 @@ public class DiscoverFlightMasterState : State
                 return;
             }
             FlightMasterDB.UpdateKnownFMs();
+            MovementManager.StopMove(); // reset path
         }
     }
 }
