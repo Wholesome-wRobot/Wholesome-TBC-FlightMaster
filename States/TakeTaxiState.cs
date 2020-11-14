@@ -118,10 +118,12 @@ public class TakeTaxiState : State
                 break;
             else
             {
+                Logger.Log($"Taking taxi failed. Retrying ({i})");
+                Lua.LuaDoString($"CloseTaxiMap(); CloseGossip();");
                 Main.clickNodeError = false;
-                Logger.Log($"Taking taxi failed, retrying ({i})");
-                GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId);
                 Thread.Sleep(500);
+                if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
+                    Thread.Sleep(500);
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
                 Thread.Sleep(500);
                 Lua.LuaDoString(clickNodeLua, false);
@@ -137,5 +139,9 @@ public class TakeTaxiState : State
         Thread.Sleep(Usefuls.Latency + 500);
         Main.shouldTakeFlight = false;
         Main.clickNodeError = false;
+        Thread.Sleep(Usefuls.Latency + 500);
+
+        if (!ObjectManager.Me.IsOnTaxi)
+            ToolBox.PausePlugin("Taking taxi failed");
     }
 }
