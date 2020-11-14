@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool isTaxiMapOpened = false;
     public static bool isHorde;
 
-    public static string version = "0.0.215"; // Must match version in Version.txt
+    public static string version = "0.0.216"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -201,7 +201,7 @@ public class Main : IPlugin
             if (flightMaster.Position.DistanceTo(ObjectManager.Me.Position) < maxRadius)
             {
                 float realDist = ToolBox.CalculatePathTotalDistance(ObjectManager.Me.Position, flightMaster.Position);
-                Logger.Log($"[FROM] Me to {flightMaster.Name} is {Math.Round(realDist)} yards");
+                Logger.Log($"[FROM] {flightMaster.Name} is {Math.Round(realDist)} yards away");
                 if (realDist < maxRadius)
                 {
                     maxRadius = realDist;
@@ -226,7 +226,7 @@ public class Main : IPlugin
             if (flightMaster.Position.DistanceTo(destinationVector) < maxRadius)
             {
                 float realDist = ToolBox.CalculatePathTotalDistance(flightMaster.Position, destinationVector);
-                Logger.Log($"[TO] {flightMaster.Name} to destination is {Math.Round(realDist)} yards");
+                Logger.Log($"[TO] {flightMaster.Name} is {Math.Round(realDist)} yards away from destination");
                 if (realDist < maxRadius)
                 {
                     maxRadius = realDist;
@@ -253,7 +253,7 @@ public class Main : IPlugin
             if (flightMaster.Position.DistanceTo(destinationVector) < num)
             {
                 float realDist = ToolBox.CalculatePathTotalDistance(flightMaster.Position, destinationVector);
-                Logger.Log($"[TO2] {flightMaster.Name} to destination is {Math.Round(realDist)} yards");
+                Logger.Log($"[TO2] {flightMaster.Name} is {Math.Round(realDist)} yards away from destination");
                 if (realDist < num)
                 {
                     num = realDist;
@@ -291,9 +291,12 @@ public class Main : IPlugin
             // If the path is shorter than setting, we skip
         if (totalWalkingDistance < (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
-            Logger.Log($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
+            //Logger.Log($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
             return;
         }
+
+        Logger.Log($"{Math.Round(totalWalkingDistance)} yards path is longer than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. " +
+            $"Searching for flights.");
 
         if (Logging.Status.Contains("Follow Path")
             && !Logging.Status.Contains("Resurrect")
@@ -318,8 +321,8 @@ public class Main : IPlugin
 
         to = GetClosestFlightMasterTo(from.Position.DistanceTo(destinationVector));
 
-        Logger.Log($"Best FROM is {from?.Name}");
-        Logger.Log($"Best TO is {to?.Name}");
+        //Logger.Log($"Best FROM is {from?.Name}");
+        //Logger.Log($"Best TO is {to?.Name}");
 
         if (from.Equals(to))
             to = null;
@@ -327,10 +330,10 @@ public class Main : IPlugin
         // Calculate total real distance FROM/TO
         // if no TO found, we set the total distance back to walking distance
         double processedDistance;
-        if (to != null)
-            processedDistance = departureDistance + ToolBox.CalculatePathTotalDistance(to.Position, destinationVector);
-        else
+        if (to == null)
             processedDistance = totalWalkingDistance;
+        else
+            processedDistance = departureDistance + ToolBox.CalculatePathTotalDistance(to.Position, destinationVector);
 
         //Logger.Log($"Walking distance is {Math.Round(totalWalkingDistance)}");
         //Logger.Log($"Processed distance is {Math.Round(processedDistance)}");
@@ -339,7 +342,12 @@ public class Main : IPlugin
         if (processedDistance >= totalWalkingDistance
             || to == null)
         {
-            Logger.Log($"No direct flight path, trying to find an alternative, please wait");
+            if (to == null)
+                Logger.Log($"No direct flight path, trying to find an alternative, please wait");
+            else
+                Logger.Log($"Flight from {from.Name} to {to.Name} would save {Math.Round(totalWalkingDistance - processedDistance + WFMSettings.CurrentSettings.MinimumDistanceSaving)} yards. " +
+                    $"You set a minimum of {WFMSettings.CurrentSettings.MinimumDistanceSaving} yards. Trying to find an alternative.");
+
             // Pre order the list
             List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
                 .FindAll(fm => fm.IsDiscovered && fm.NPCId != from.NPCId && ToolBox.FMIsOnMyContinent(fm))
@@ -367,17 +375,18 @@ public class Main : IPlugin
             && !from.Equals(to)
             && processedDistance <= totalWalkingDistance)
         {
-            Logger.Log($"Flight found for {Math.Round(totalWalkingDistance)} yards path, processed distance is {Math.Round(processedDistance - WFMSettings.CurrentSettings.MinimumDistanceSaving)} yards, taking Taxi from " + from.Name + " to " + to.Name);
+            double realProcessedDistance = Math.Round(processedDistance - WFMSettings.CurrentSettings.MinimumDistanceSaving);
+            Logger.Log($"Flight found for {Math.Round(totalWalkingDistance)} yards path. Processed distance is {realProcessedDistance} yards." +
+                $" Taking Taxi from {from.Name} to {to.Name}. (You will save {Math.Round(totalWalkingDistance) - realProcessedDistance} yards)");
             MovementManager.StopMoveNewThread();
             MovementManager.StopMoveToNewThread();
             cancelable.Cancel = true;
             shouldTakeFlight = true;
-            Logger.Log($"Process time : {(DateTime.Now.Ticks - dateBegin.Ticks)/10000} ms");
         }
         else
         {
             Logger.Log($"No relevant flight found for {Math.Round(totalWalkingDistance)} yards path");
-            Logger.Log($"Process time : {(DateTime.Now.Ticks - dateBegin.Ticks)/10000} ms");
         }
+        Logger.Log($"Process time : {(DateTime.Now.Ticks - dateBegin.Ticks) / 10000} ms");
     }
 }

@@ -183,17 +183,18 @@ public class ToolBox
                 if (args[0] == "You don't have enough money!")
                     PausePlugin("Not enough money");
             }
-
+            
             if (eventName == "TAXIMAP_OPENED")
             {
-                Logger.Log("Taxi map opened");
+                //Logger.Log("Taxi map opened");
                 Main.isTaxiMapOpened = true;
             }
             if (eventName == "TAXIMAP_CLOSED")
             {
-                Logger.Log("Taxi map closed");
+                //Logger.Log("Taxi map closed");
                 Main.isTaxiMapOpened = false;
             }
+            /*
             if (eventName == "GOSSIP_SHOW")
             {
                 Logger.Log("Gossip show");
@@ -201,7 +202,7 @@ public class ToolBox
             if (eventName == "GOSSIP_CLOSED")
             {
                 Logger.Log("Gossip closed");
-            }
+            }*/
         }
     }
 
