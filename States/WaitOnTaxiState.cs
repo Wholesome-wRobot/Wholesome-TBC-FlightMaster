@@ -28,8 +28,7 @@ public class WaitOnTaxiState : State
 
     public override void Run()
     {
-        MovementManager.StopMoveNewThread();
-        MovementManager.StopMoveToNewThread();
         Thread.Sleep(1000);
+        MovementManager.StopMove();
     }
 }

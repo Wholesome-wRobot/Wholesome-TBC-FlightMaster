@@ -12,7 +12,6 @@ using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
-using wManager;
 using Math = System.Math;
 
 public class Main : IPlugin
@@ -35,7 +34,7 @@ public class Main : IPlugin
     public static bool isGossipShown = false;
     public static bool isHorde;
 
-    public static string version = "0.0.218"; // Must match version in Version.txt
+    public static string version = "0.0.219"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -163,6 +162,17 @@ public class Main : IPlugin
                         Logger.Log("Stop on tracks to ensure discovery");
                         MovementManager.StopMove();
                     }
+
+                    /*
+                    Logger.Log("-----------------------------------");
+                    // Loop through nodes
+                    for (int i = 0; i < 30; i++)
+                    {
+                        string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+                        Logger.Log(nodeName);
+                    }
+                    Logger.Log("-----------------------------------");
+                    */
                 }
             }
             catch (Exception arg)
