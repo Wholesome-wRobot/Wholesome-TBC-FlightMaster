@@ -54,30 +54,16 @@ public class DiscoverFlightMasterState : State
             ToolBox.UnPausePlugin();
             Main.shouldTakeFlight = false;
 
-
-            // Check if FM is here or dead
-            if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
-            {
-                Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-                flightMaster.Disable();
-                return;
-            }
-            return;
-
-            /*
-            if (!ToolBox.OpenTaxiMapSuccess(flightMaster))
-            {
-                // Check if FM is here or dead
-                if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
-                {
-                    Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-                    flightMaster.Disable();
-                    return;
-                }
-                return;
-            }*/
-            FlightMasterDB.UpdateKnownFMs();
+            FlightMasterDB.UpdateKnownFMs(flightMaster);
             MovementManager.StopMove(); // reset path
+        }
+
+        // Check if FM is here or dead
+        if (!ToolBox.FMIsNearbyAndAlive(flightMaster))
+        {
+            Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
+            flightMaster.Disable();
+            return;
         }
     }
 }

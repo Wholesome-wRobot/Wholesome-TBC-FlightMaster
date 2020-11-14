@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using wManager;
-using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
@@ -182,28 +181,8 @@ public class ToolBox
                     PausePlugin("Unconnected flight");
                 if (args[0] == "You don't have enough money!")
                     PausePlugin("Not enough money");
-            }
-            
-            if (eventName == "TAXIMAP_OPENED")
-            {
-                Logger.LogDebug("Taxi map open (LUA event)");
-                Main.isTaxiMapOpened = true;
-            }
-            if (eventName == "TAXIMAP_CLOSED")
-            {
-                //Logger.Log("Taxi map closed");
-                Main.isTaxiMapOpened = false;
-            }
-            
-            if (eventName == "GOSSIP_SHOW")
-            {
-                Main.isGossipShown = true;
-                Logger.LogDebug("Gossip show");
-            }
-            if (eventName == "GOSSIP_CLOSED")
-            {
-                Main.isGossipShown = false;
-                Logger.LogDebug("Gossip closed");
+                if (args[0] == "You are too far away from the taxi stand!")
+                    Main.clickNodeError = true;
             }
         }
     }
@@ -294,47 +273,6 @@ public class ToolBox
             && (fm.NPCId != 37888 || GetWoWVersion().Equals("3.3.5")) // Thondoril River, Western Plaguelands
             && (fm.NPCId != 29480 || ObjectManager.Me.WowClass == WoWClass.DeathKnight) // Acherus: The Ebon Hold
             );
-    }
-
-    public static bool OpenTaxiMapSuccess(FlightMaster fm)
-    {
-        // 3 attempts to open map
-        for (int i = 1; i <= 30; i++)
-        {
-            // interract with FM
-            if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
-            {
-                Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-
-                int limit = 0;
-                while (!Main.isTaxiMapOpened && limit < 3000)
-                {
-                    limit += 200;
-                    Thread.Sleep(200);
-                }
-
-                if (limit >= 3000) 
-                {
-                    Logger.Log($"Couldn't open taxi map. Retrying ({i})");
-                    if (Main.isGossipShown)
-                    {
-                        Keyboard.PressKey(wManager.Wow.Memory.WowMemory.Memory.WindowHandle, System.Windows.Forms.Keys.Escape);
-                        Lua.LuaDoString("CloseGossip()");
-                    }
-                    GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId);
-                }
-                else
-                {
-                    Logger.LogDebug("Taxi map is open");
-                    return true;
-                }
-            }
-        }
-
-        if (ObjectManager.Me.Position.DistanceTo(fm.Position) < 10)
-            PausePlugin("Couldn't open FM map");
-
-        return false;
     }
 
     private static int GetReputation(string faction)

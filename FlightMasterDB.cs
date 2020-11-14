@@ -1,6 +1,7 @@
 ﻿using robotManager.Helpful;
 using System.Collections.Generic;
 using System.Threading;
+using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 
@@ -285,14 +286,16 @@ public class FlightMasterDB
         SetFlightMasterToUnknown(flightMaster.Name);
     }
 
-    public static bool UpdateKnownFMs()
+    public static bool UpdateKnownFMs(FlightMaster FMWithMapOpen)
     {
         Logger.Log("Updating known FlightMasters");
         // 3 attempts to discover flights
         bool allInvalid = true;
         bool modificationWasMade = false;
-        for (int j = 0; j < 3; j++)
+        for (int j = 1; j <= 3; j++)
         {
+            GoToTask.ToPositionAndIntecractWithNpc(FMWithMapOpen.Position, FMWithMapOpen.NPCId);
+            Usefuls.SelectGossipOption(GossipOptionsType.taxi);
             // Loop through nodes
             for (int i = 0; i < 30; i++)
             {
@@ -312,11 +315,15 @@ public class FlightMasterDB
 
             if (allInvalid)
             {
-                Logger.Log($"All flight nodes are invalid, retrying ({j + 1})");
+                Lua.LuaDoString("CloseGossip()");
+                Logger.Log($"All flight nodes are invalid, retrying ({j})");
                 Thread.Sleep(500);
-                ToolBox.PausePlugin("Couldn't find a valid flight node");
             }
         }
+
+        if (allInvalid)
+            ToolBox.PausePlugin("Couldn't find a valid flight node");
+
         return modificationWasMade;
     }
 }

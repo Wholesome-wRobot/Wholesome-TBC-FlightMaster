@@ -30,11 +30,10 @@ public class Main : IPlugin
     public static FlightMaster from = null;
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
-    public static bool isTaxiMapOpened = false;
-    public static bool isGossipShown = false;
+    public static bool clickNodeError = false;
     public static bool isHorde;
 
-    public static string version = "0.0.219"; // Must match version in Version.txt
+    public static string version = "0.0.220"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -42,9 +41,9 @@ public class Main : IPlugin
     public static float saveFlightMasterDiscoverRange = 1;
 
     // Custom states
-    private State discoverFlightMasterState = new DiscoverFlightMasterState();
-    private State takeTaxiState = new TakeTaxiState();
-    private State waitOnTaxiState = new WaitOnTaxiState();
+    public static State discoverFlightMasterState = new DiscoverFlightMasterState();
+    public static State takeTaxiState = new TakeTaxiState();
+    public static State waitOnTaxiState = new WaitOnTaxiState();
 
     public void Initialize()
     {
@@ -161,18 +160,8 @@ public class Main : IPlugin
                     {
                         Logger.Log("Stop on tracks to ensure discovery");
                         MovementManager.StopMove();
+                        MovementManager.StopMoveTo();
                     }
-
-                    /*
-                    Logger.Log("-----------------------------------");
-                    // Loop through nodes
-                    for (int i = 0; i < 30; i++)
-                    {
-                        string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
-                        Logger.Log(nodeName);
-                    }
-                    Logger.Log("-----------------------------------");
-                    */
                 }
             }
             catch (Exception arg)

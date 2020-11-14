@@ -41,77 +41,59 @@ public class TakeTaxiState : State
         FlightMaster flightmasterFrom = Main.from;
         FlightMaster flightmasterTo = Main.to;
 
-        // We go to the position - 3 tries
-        for (int t = 1; t <= 3; t++)
+        if (GoToTask.ToPositionAndIntecractWithNpc(flightmasterFrom.Position, flightmasterFrom.NPCId))
         {
-            if (GoToTask.ToPositionAndIntecractWithNpc(flightmasterFrom.Position, flightmasterFrom.NPCId))
+            // Dismount
+            if (ObjectManager.Me.IsMounted)
+                MountTask.DismountMount();
+
+            if (ObjectManager.Me.InCombatFlagOnly)
             {
-                // Dismount
-                if (ObjectManager.Me.IsMounted)
-                    MountTask.DismountMount();
+                Logger.Log("You are in combat");
+                return;
+            }
 
-                if (ObjectManager.Me.InCombatFlagOnly)
+            Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+
+            if (FlightMasterDB.UpdateKnownFMs(flightmasterFrom))
+            {
+                Logger.Log("Flightmaster list has changed. Trying to find a new path.");
+                Main.to = null;
+                Main.shouldTakeFlight = false;
+                return;
+            }
+
+            List<string> reachableTaxis = new List<string>();
+            // Look for current To and record reachables in case we can't find it
+            for (int i = 0; i < 50; i++)
+            {
+                string nodeStatus = Lua.LuaDoString<string>($"return TaxiNodeGetType({i})");
+                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+
+                if (nodeStatus == "REACHABLE")
                 {
-                    Logger.Log("You are in combat");
-                    return;
-                }
-
-                Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-
-                /*
-                if (!ToolBox.OpenTaxiMapSuccess(flightmasterFrom))
-                    return;
-                */
-                if (FlightMasterDB.UpdateKnownFMs())
-                {
-                    Logger.Log("Flightmaster list has changed. Trying to find a new path.");
-                    Main.to = null;
-                    Main.shouldTakeFlight = false;
-                    return;
-                }
-
-                List<string> reachableTaxis = new List<string>();
-                bool allInvalid = true;
-                // Look for current To and record reachables in case we don't find him
-                for (int i = 0; i < 50; i++)
-                {
-                    string nodeStatus = Lua.LuaDoString<string>($"return TaxiNodeGetType({i})");
-                    string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
-
-                    if (nodeStatus != "INVALID")
-                        allInvalid = false;
-
-                    if (nodeStatus == "REACHABLE")
+                    if (nodeName == flightmasterTo.Name)
                     {
-                        if (nodeName == flightmasterTo.Name)
-                        {
-                            TakeTaxi(nodeName);
-                            return;
-                        }
-                        reachableTaxis.Add(nodeName);
+                        TakeTaxi(flightmasterFrom, nodeName);
+                        return;
                     }
+                    reachableTaxis.Add(nodeName);
                 }
+            }
 
-                // Retry if all invalid
-                if (allInvalid)
-                {
-                    Logger.Log($"All nodes invalid, retrying ({t})");
-                    continue;
-                }
-
-                // Find an alternative
-                Logger.Log($"{flightmasterTo.Name} is unreachable, trying to find an alternative");
-                FlightMaster alternativeFm = Main.GetBestAlternativeTo(reachableTaxis);
-                if (alternativeFm != null)
-                {
-                    Logger.Log($"Found an alternative flight : {alternativeFm.Name}");
-                    TakeTaxi(alternativeFm.Name);
-                }
-                else
-                {
-                    Main.shouldTakeFlight = false;
-                    ToolBox.PausePlugin("Couldn't find an alternative flight");
-                }
+            // Find an alternative
+            Logger.Log($"{flightmasterTo.Name} is unreachable, trying to find an alternative");
+            FlightMaster alternativeFm = Main.GetBestAlternativeTo(reachableTaxis);
+            if (alternativeFm != null)
+            {
+                Logger.Log($"Found an alternative flight : {alternativeFm.Name}");
+                TakeTaxi(flightmasterFrom, alternativeFm.Name);
+                return;
+            }
+            else
+            {
+                Main.shouldTakeFlight = false;
+                ToolBox.PausePlugin("Couldn't find an alternative flight");
             }
         }
 
@@ -123,11 +105,37 @@ public class TakeTaxiState : State
         }
     }
 
-    private void TakeTaxi(string taxiNodeName)
+    private void TakeTaxi(FlightMaster fm, string taxiNodeName)
     {
-        Lua.LuaDoString("TakeTaxiNode(" + Lua.LuaDoString<int>("for i=0,30 do if string.find(TaxiNodeName(i),'" + taxiNodeName.Replace("'", "\\'") + "') then return i end end", "").ToString() + ")", false);
-        Logger.Log("Flying to " + taxiNodeName);
+        string clickNodeLua = "TakeTaxiNode(" + Lua.LuaDoString<int>("for i=0,30 do if string.find(TaxiNodeName(i),'" + taxiNodeName.Replace("'", "\\'") + "') then return i end end", "").ToString() + ")";
+        Lua.LuaDoString(clickNodeLua, false);
+        Thread.Sleep(500);
+
+        // 3 tries to click on node if it failed
+        for (int i = 1; i <= 3; i++)
+        {
+            if (!Main.clickNodeError)
+                break;
+            else
+            {
+                Main.clickNodeError = false;
+                Logger.Log($"Taking taxi failed, retrying ({i})");
+                GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId);
+                Thread.Sleep(500);
+                Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+                Thread.Sleep(500);
+                Lua.LuaDoString(clickNodeLua, false);
+                Thread.Sleep(500);
+            }
+        }
+
+        if (Main.clickNodeError)
+            ToolBox.PausePlugin("Taking taxi failed");
+        else
+            Logger.Log($"Flying to {taxiNodeName}");
+
         Thread.Sleep(Usefuls.Latency + 500);
         Main.shouldTakeFlight = false;
+        Main.clickNodeError = false;
     }
 }
