@@ -15,6 +15,7 @@ public class DiscoverFlightMasterState : State
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 && Main.isLaunched
                 && Main.flightMasterToDiscover != null
+                && !Main.flightMasterToDiscover.IsDisabledByPlugin()
                 && !ObjectManager.Me.InTransport)
                 return true;
             else
@@ -56,8 +57,7 @@ public class DiscoverFlightMasterState : State
         // Check if FM is here or dead
         if (!ToolBox.FMIsNearbyAndAlive(flightMasterToDiscover))
         {
-            Logger.Log($"FlightMaster is absent or dead. Disabling it for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds");
-            flightMasterToDiscover.Disable();
+            flightMasterToDiscover.Disable("FlightMaster is absent or dead.");
             Main.flightMasterToDiscover = null;
             return;
         }

@@ -34,7 +34,10 @@ public class Main : IPlugin
     public static bool clickNodeError = false;
     public static bool isHorde;
 
-    public static string version = "0.0.225"; // Must match version in Version.txt
+    private int stuckCount = 0;
+    private DateTime lastStuck = DateTime.Now;
+
+    public static string version = "0.1.0"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -80,6 +83,7 @@ public class Main : IPlugin
 
         FiniteStateMachineEvents.OnRunState += StateEventHandler;
         MovementEvents.OnMovementPulse += MovementEventsOnMovementPulse;
+        MovementEvents.OnSeemStuck += SeemStuckHandler;
         EventsLuaWithArgs.OnEventsLuaWithArgs += ToolBox.MessageHandler;
     }
 
@@ -94,6 +98,32 @@ public class Main : IPlugin
         Logger.Log("Disposed");
         stateAddDelayer.Stop();
         isLaunched = false;
+    }
+
+    private void SeemStuckHandler()
+    {
+        if (DateTime.Now.Ticks / 10000000 - lastStuck.Ticks / 10000000 < 5)
+        {
+            stuckCount++;
+            Logger.Log($"You're stuck ({stuckCount}/10)");
+            if (stuckCount > 9)
+            {
+                if (currentState == discoverFlightMasterState)
+                {
+                    MovementManager.StopMove();
+                    nearestFlightMaster.Disable("Unreachable");
+                }
+                if (currentState == takeTaxiState)
+                {
+                    MovementManager.StopMove();
+                    from?.Disable("Unreachable");
+                }
+            }
+        }
+        else
+            stuckCount = 0;
+
+        lastStuck = DateTime.Now;
     }
 
     private void StateEventHandler(Engine engine, State state, CancelEventArgs canc)

@@ -34,8 +34,9 @@ public class FlightMaster
         return isDisabled;
     }
 
-    public void Disable()
+    public void Disable(string reason)
     {
+        Logger.Log($"Disabling {Name} for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds. ({reason})");
         disableTimer.Restart();
     }
 }
