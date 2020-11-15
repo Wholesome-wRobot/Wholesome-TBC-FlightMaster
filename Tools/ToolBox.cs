@@ -225,11 +225,6 @@ public class ToolBox
             184330,
             ContinentId.Expansion01,
             "Stormspire elevator DOWN");
-
-        foreach (OffMeshConnection om in OffMeshConnections.MeshConnection)
-        {
-            Logger.Log(om.Name);
-        }
     }
 
     public static void RestoreWRobotSettings()
@@ -245,6 +240,7 @@ public class ToolBox
         new Thread(() =>
         {
             Products.ProductStop();
+            Thread.Sleep(2000);
             Products.ProductStart();
         }).Start();
     }

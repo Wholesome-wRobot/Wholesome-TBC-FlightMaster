@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool clickNodeError = false;
     public static bool isHorde;
 
-    public static string version = "0.0.223"; // Must match version in Version.txt
+    public static string version = "0.0.224"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
