@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool clickNodeError = false;
     public static bool isHorde;
 
-    public static string version = "0.0.224"; // Must match version in Version.txt
+    public static string version = "0.0.225"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -186,7 +186,7 @@ public class Main : IPlugin
             .FindAll(fm => ObjectManager.Me.Position.DistanceTo(fm.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance && ToolBox.FMIsOnMyContinent(fm))
             .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position)).ToList();
 
-        return orderedFMList.First();
+        return orderedFMList.Count > 0 ? orderedFMList.First() : null;
     }
 
     public static FlightMaster GetClosestFlightMasterFrom(float maxRadius)
