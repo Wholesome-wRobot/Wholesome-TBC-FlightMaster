@@ -37,7 +37,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "0.1.0"; // Must match version in Version.txt
+    public static string version = "0.1.01"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -102,10 +102,12 @@ public class Main : IPlugin
 
     private void SeemStuckHandler()
     {
-        if (DateTime.Now.Ticks / 10000000 - lastStuck.Ticks / 10000000 < 5)
+        if (DateTime.Now.Ticks / 10000000 - lastStuck.Ticks / 10000000 < 5
+            && (currentState == discoverFlightMasterState || currentState == takeTaxiState))
         {
             stuckCount++;
             Logger.Log($"You're stuck ({stuckCount}/10)");
+
             if (stuckCount > 9)
             {
                 if (currentState == discoverFlightMasterState)
