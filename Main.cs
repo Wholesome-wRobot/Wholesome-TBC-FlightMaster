@@ -34,7 +34,7 @@ public class Main : IPlugin
     public static bool clickNodeError = false;
     public static bool isHorde;
 
-    public static string version = "0.0.222"; // Must match version in Version.txt
+    public static string version = "0.0.223"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -72,7 +72,7 @@ public class Main : IPlugin
         MovementManager.StopMoveToNewThread();
 
         FlightMasterDB.Initialize();
-        ToolBox.SetBlacklistedZones();
+        ToolBox.SetBlacklistedZonesAndOffMeshConnections();
         ToolBox.DiscoverDefaultNodes();
 
         detectionPulse.DoWork += BackGroundPulse;
@@ -182,17 +182,11 @@ public class Main : IPlugin
 
     private FlightMaster GetNearestFlightMaster()
     {
-        FlightMaster nearest = null;
-        foreach (FlightMaster flightMaster in FlightMasterDB.FlightMasterList)
-        {
-            if (ToolBox.FMIsOnMyContinent(flightMaster)
-            && ObjectManager.Me.Position.DistanceTo(flightMaster.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance
-            && (nearest == null || nearest.Position.DistanceTo(ObjectManager.Me.Position) > flightMaster.Position.DistanceTo(ObjectManager.Me.Position)))
-            {
-                nearest = flightMaster;
-            }
-        }
-        return nearest;
+        List<FlightMaster> orderedFMList = FlightMasterDB.FlightMasterList
+            .FindAll(fm => ObjectManager.Me.Position.DistanceTo(fm.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance && ToolBox.FMIsOnMyContinent(fm))
+            .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position)).ToList();
+
+        return orderedFMList.First();
     }
 
     public static FlightMaster GetClosestFlightMasterFrom(float maxRadius)

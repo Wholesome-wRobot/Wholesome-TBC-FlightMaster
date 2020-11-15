@@ -19,14 +19,12 @@ public class WFMSettings : Settings
 
         KnownFlightsList = new List<string>();
         DisabledFlightsList = new string[] {
-            "The Stormspire, Netherstorm"
         };
 
         ConfigWinForm(new System.Drawing.Point(400, 400), "Wholesome FlightMaster Settings");
     }
 
     [DefaultValue(new string[] {
-            "The Stormspire, Netherstorm"
         })]
     [Category("Lists")]
     [DisplayName("Discovered nodes")]
