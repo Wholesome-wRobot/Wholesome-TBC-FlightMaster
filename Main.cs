@@ -37,7 +37,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "0.1.01"; // Must match version in Version.txt
+    public static string version = "1.0.0"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -192,7 +192,8 @@ public class Main : IPlugin
                     if (nearestFlightMaster != null
                         && !nearestFlightMaster.IsDisabledByPlugin()
                         && ToolBox.ExceptionConditionsAreMet(nearestFlightMaster)
-                        && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(nearestFlightMaster.Name))
+                        && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(nearestFlightMaster.Name)
+                        && ToolBox.CalculatePathTotalDistance(ObjectManager.Me.Position, nearestFlightMaster.Position) < WFMSettings.CurrentSettings.DetectTaxiDistance * 1.2)
                         flightMasterToDiscover = nearestFlightMaster;
 
                     // Hook for HMP states locks and others
@@ -326,7 +327,7 @@ public class Main : IPlugin
             // If the path is shorter than setting, we skip
         if (totalWalkingDistance < (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
-            Logger.LogDebug($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
+            //Logger.LogDebug($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
             return;
         }
 

@@ -11,7 +11,7 @@ public class WFMSettings : Settings
     public WFMSettings()
     {
         TaxiTriggerDistance = 600;
-        DetectTaxiDistance = 500;
+        DetectTaxiDistance = 400;
         MinimumDistanceSaving = 500;
         SkipIfFollowPathDistance = 2000f;
         PauseLengthInSeconds = 600;
@@ -54,7 +54,7 @@ public class WFMSettings : Settings
     [Description("Sets the minimum walking distance to your destination to check for flights")]
     public int TaxiTriggerDistance { get; set; }
 
-    [DefaultValue(500)]
+    [DefaultValue(400)]
     [Category("Settings")]
     [DisplayName("Discover Distance")]
     [Description("Maximum distance to discover a taxi node")]
