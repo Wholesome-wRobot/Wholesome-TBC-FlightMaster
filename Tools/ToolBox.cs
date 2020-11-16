@@ -267,6 +267,10 @@ public class ToolBox
                 if (args[0] == "You are too far away from the taxi stand!")
                     Main.clickNodeError = true;
             }
+            if (eventName == "TAXIMAP_OPENED")
+                Logger.LogDebug("TAXIMAP_OPENED (args)");
+            if (eventName == "TAXIMAP_CLOSED")
+                Logger.LogDebug("TAXIMAP_CLOSED (args)");
         }
     }
 

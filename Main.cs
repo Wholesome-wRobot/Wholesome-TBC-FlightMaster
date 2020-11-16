@@ -37,7 +37,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.0.02"; // Must match version in Version.txt
+    public static string version = "1.0.03"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -86,8 +86,8 @@ public class Main : IPlugin
         MovementEvents.OnSeemStuck += SeemStuckHandler;
         EventsLuaWithArgs.OnEventsLuaWithArgs += ToolBox.MessageHandler;
 
-        EventsLua.AttachEventLua("TAXIMAP_OPENED", (e) => Logger.LogDebug("Taxi map opened"));
-        EventsLua.AttachEventLua("TAXIMAP_CLOSED", (e) => Logger.LogDebug("Taxi map closed"));
+        EventsLua.AttachEventLua("TAXIMAP_OPENED", (e) => Logger.LogDebug("Taxi map opened(noarg)"));
+        EventsLua.AttachEventLua("TAXIMAP_CLOSED", (e) => Logger.LogDebug("Taxi map closed (noarg)"));
     }
 
     public void Dispose()
