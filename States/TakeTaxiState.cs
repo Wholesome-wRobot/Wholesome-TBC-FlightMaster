@@ -115,6 +115,7 @@ public class TakeTaxiState : State
         // 3 tries to click on node if it failed
         for (int i = 1; i <= 3; i++)
         {
+            Usefuls.WaitIsCasting();
             if (!Main.clickNodeError)
                 break;
             else

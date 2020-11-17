@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using wManager.Events;
 using wManager.Plugin;
+using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 using Math = System.Math;
@@ -37,7 +38,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.0.03"; // Must match version in Version.txt
+    public static string version = "1.0.04"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -86,8 +87,8 @@ public class Main : IPlugin
         MovementEvents.OnSeemStuck += SeemStuckHandler;
         EventsLuaWithArgs.OnEventsLuaWithArgs += ToolBox.MessageHandler;
 
-        EventsLua.AttachEventLua("TAXIMAP_OPENED", (e) => Logger.LogDebug("Taxi map opened(noarg)"));
-        EventsLua.AttachEventLua("TAXIMAP_CLOSED", (e) => Logger.LogDebug("Taxi map closed (noarg)"));
+        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_OPENED"), (e) => Logger.LogDebug("TAXIMAP_OPENED (noarg)"));
+        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_CLOSED"), (e) => Logger.LogDebug("TAXIMAP_CLOSED (noarg)"));
     }
 
     public void Dispose()

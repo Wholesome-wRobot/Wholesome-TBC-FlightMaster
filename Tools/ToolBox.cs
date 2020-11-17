@@ -255,18 +255,18 @@ public class ToolBox
     public static void MessageHandler(LuaEventsId id, List<string> args)
     {
         if (Main.isLaunched)
-        {
+        { 
             string eventName = id.ToString();
-            //Logger.Log(eventName);
             if (eventName == "UI_INFO_MESSAGE")
             {
                 if (args[0] == "There is no direct path to that destination!")
                     PausePlugin("Unconnected flight");
-                if (args[0] == "You don't have enough money!")
+                else if (args[0] == "You don't have enough money!")
                     PausePlugin("Not enough money");
-                if (args[0] == "You are too far away from the taxi stand!")
+                else if (args[0] == "You are too far away from the taxi stand!")
                     Main.clickNodeError = true;
             }
+
             if (eventName == "TAXIMAP_OPENED")
                 Logger.LogDebug("TAXIMAP_OPENED (args)");
             if (eventName == "TAXIMAP_CLOSED")
