@@ -267,9 +267,9 @@ public class ToolBox
                     Main.clickNodeError = true;
             }
 
-            if (eventName == "TAXIMAP_OPENED")
+            if (id == (LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_OPENED"))
                 Logger.LogDebug("TAXIMAP_OPENED (args)");
-            if (eventName == "TAXIMAP_CLOSED")
+            if (id == (LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_CLOSED"))
                 Logger.LogDebug("TAXIMAP_CLOSED (args)");
         }
     }
