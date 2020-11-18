@@ -35,11 +35,11 @@ public class Main : IPlugin
     public static bool isHorde;
 
     // Errors handling
-    public static bool clickNodeError = false;
+    public static bool errorTooFarAwayFromTaxiStand = false;
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.0.05"; // Must match version in Version.txt
+    public static string version = "1.0.06"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;

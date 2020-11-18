@@ -112,17 +112,24 @@ public class TakeTaxiState : State
         Lua.LuaDoString(clickNodeLua, false);
         Thread.Sleep(500);
 
-        // 3 tries to click on node if it failed
-        for (int i = 1; i <= 3; i++)
+        // 5 tries to click on node if it failed
+        for (int i = 1; i <= 5; i++)
         {
-            Usefuls.WaitIsCasting();
-            if (!Main.clickNodeError)
+            if (ObjectManager.Me.IsCast)
+            {
+                Usefuls.WaitIsCasting();
+                i = 1;
+                Logger.Log("You're casting, wait");
+                continue;
+            }
+
+            if (ObjectManager.Me.IsOnTaxi)
                 break;
             else
             {
-                Logger.Log($"Taking taxi failed. Retrying ({i})");
+                Logger.Log($"Taking taxi failed. Retrying ({i}/5)");
                 Lua.LuaDoString($"CloseTaxiMap(); CloseGossip();");
-                Main.clickNodeError = false;
+                Main.errorTooFarAwayFromTaxiStand = false;
                 Thread.Sleep(500);
                 if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
                     Thread.Sleep(500);
@@ -133,14 +140,14 @@ public class TakeTaxiState : State
             }
         }
 
-        if (Main.clickNodeError)
-            ToolBox.PausePlugin("Taking taxi failed");
+        if (Main.errorTooFarAwayFromTaxiStand)
+            ToolBox.PausePlugin("Taking taxi failed (error clicking node)");
         else
             Logger.Log($"Flying to {taxiNodeName}");
 
         Thread.Sleep(Usefuls.Latency + 500);
         Main.shouldTakeFlight = false;
-        Main.clickNodeError = false;
+        Main.errorTooFarAwayFromTaxiStand = false;
         Thread.Sleep(Usefuls.Latency + 500);
 
         if (!ObjectManager.Me.IsOnTaxi)

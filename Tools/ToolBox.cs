@@ -264,13 +264,25 @@ public class ToolBox
                 else if (args[0] == "You don't have enough money!")
                     PausePlugin("Not enough money");
                 else if (args[0] == "You are too far away from the taxi stand!")
-                    Main.clickNodeError = true;
+                    Main.errorTooFarAwayFromTaxiStand = true;
             }
 
             if (id == (LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_OPENED"))
+            {
                 Logger.LogDebug("TAXIMAP_OPENED (args)");
+                foreach (string arg in args)
+                {
+                    Logger.Log(arg);
+                }
+            }
             if (id == (LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_CLOSED"))
+            {
                 Logger.LogDebug("TAXIMAP_CLOSED (args)");
+                foreach (string arg in args)
+                {
+                    Logger.Log(arg);
+                }
+            }
         }
     }
 
