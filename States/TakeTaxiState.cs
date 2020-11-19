@@ -104,6 +104,12 @@ public class TakeTaxiState : State
             ToolBox.PausePlugin("FlightMaster is absent or dead");
             return;
         }
+
+        if (!ToolBox.FMIsNearbyAndInteractedWith(flightmasterFrom))
+        {
+            ToolBox.PausePlugin("Unable to interact with NPC");
+            return;
+        }
     }
 
     private void TakeTaxi(FlightMaster fm, string taxiNodeName)

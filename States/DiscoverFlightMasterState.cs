@@ -1,4 +1,5 @@
 ﻿using robotManager.FiniteStateMachine;
+using System.Threading;
 using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
@@ -31,7 +32,7 @@ public class DiscoverFlightMasterState : State
         Logger.Log($"Discovering flight master {flightMasterToDiscover.Name}");
 
         // We go to the position
-        if (GoToTask.ToPositionAndIntecractWithNpc(flightMasterToDiscover.Position, flightMasterToDiscover.NPCId))
+        if (GoToTask.ToPositionAndIntecractWithNpc(flightMasterToDiscover.Position, flightMasterToDiscover.NPCId, (int)GossipOptionsType.taxi))
         {
             // Dismount
             if (ObjectManager.Me.IsMounted)
@@ -58,6 +59,13 @@ public class DiscoverFlightMasterState : State
         if (!ToolBox.FMIsNearbyAndAlive(flightMasterToDiscover))
         {
             flightMasterToDiscover.Disable("FlightMaster is absent or dead.");
+            Main.flightMasterToDiscover = null;
+            return;
+        }
+
+        if (!ToolBox.FMIsNearbyAndInteractedWith(flightMasterToDiscover))
+        {
+            flightMasterToDiscover.Disable("Unable to interact with NPC");
             Main.flightMasterToDiscover = null;
             return;
         }

@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using wManager;
+using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
@@ -291,6 +292,8 @@ public class ToolBox
         Logger.Log($"Pausing plugin for {WFMSettings.CurrentSettings.PauseLengthInSeconds} seconds ({reason})");
         Main.pauseTimer.Restart();
         Main.inPause = true;
+        Main.shouldTakeFlight = false;
+        Main.flightMasterToDiscover = null;
     }
 
     public static void UnPausePlugin()
@@ -354,6 +357,25 @@ public class ToolBox
                 return true;
             else
                 Thread.Sleep(1000);
+        }
+        return false;
+    }
+
+    public static bool FMIsNearbyAndInteractedWith(FlightMaster fm)
+    {
+        if (ObjectManager.Me.Position.DistanceTo(fm.Position) < 10)
+        {
+            for (int i = 1; i <= 5; i++)
+            {
+                if (ObjectManager.Target.Entry != fm.NPCId)
+                {
+                    Logger.Log($"Failed to interact with NPC, retrying ({i}/5)");
+                    GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId, (int)GossipOptionsType.taxi);
+                    Thread.Sleep(500);
+                }
+                else
+                    return true;
+            }
         }
         return false;
     }
