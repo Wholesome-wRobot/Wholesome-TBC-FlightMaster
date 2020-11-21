@@ -33,13 +33,15 @@ public class Main : IPlugin
     public static FlightMaster to = null;
     public static bool shouldTakeFlight = false;
     public static bool isHorde;
+    public static bool isFMMapOpen;
+    public static bool isGossipOpen;
 
     // Errors handling
     public static bool errorTooFarAwayFromTaxiStand = false;
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.0.07"; // Must match version in Version.txt
+    public static string version = "1.1.0"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -77,8 +79,8 @@ public class Main : IPlugin
         MovementManager.StopMoveToNewThread();
 
         FlightMasterDB.Initialize();
-        ToolBox.SetBlacklistedZonesAndOffMeshConnections();
-        ToolBox.DiscoverDefaultNodes();
+        WFMSetup.SetBlacklistedZonesAndOffMeshConnections();
+        WFMSetup.DiscoverDefaultNodes();
 
         detectionPulse.DoWork += BackGroundPulse;
         detectionPulse.RunWorkerAsync();
@@ -88,8 +90,10 @@ public class Main : IPlugin
         MovementEvents.OnSeemStuck += SeemStuckHandler;
         EventsLuaWithArgs.OnEventsLuaWithArgs += ToolBox.MessageHandler;
 
-        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_OPENED"), (e) => Logger.LogDebug("TAXIMAP_OPENED (noarg)"));
-        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_CLOSED"), (e) => Logger.LogDebug("TAXIMAP_CLOSED (noarg)"));
+        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_OPENED"), (e) => isFMMapOpen = true);
+        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_CLOSED"), (e) => isFMMapOpen = false);
+        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "GOSSIP_SHOW"), (e) => isGossipOpen = true);
+        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "GOSSIP_CLOSED"), (e) => isGossipOpen = false);
     }
 
     public void Dispose()
@@ -98,7 +102,7 @@ public class Main : IPlugin
         EventsLuaWithArgs.OnEventsLuaWithArgs -= ToolBox.MessageHandler;
         detectionPulse.DoWork -= BackGroundPulse;
 
-        ToolBox.RestoreWRobotSettings();
+        WFMSetup.RestoreWRobotSettings();
         detectionPulse.Dispose();
         Logger.Log("Disposed");
         stateAddDelayer.Stop();
@@ -148,12 +152,12 @@ public class Main : IPlugin
         {
             stateAddDelayer.Restart();
 
-            ToolBox.AddState(engine, takeTaxiState, "FlightMaster: Take taxi");
-            ToolBox.AddState(engine, discoverFlightMasterState, "FlightMaster: Take taxi");
-            ToolBox.AddState(engine, waitOnTaxiState, "FlightMaster: Take taxi");
+            WFMSetup.AddState(engine, takeTaxiState, "FlightMaster: Take taxi");
+            WFMSetup.AddState(engine, discoverFlightMasterState, "FlightMaster: Take taxi");
+            WFMSetup.AddState(engine, waitOnTaxiState, "FlightMaster: Take taxi");
 
             // Double check because some profiles modify WRobot settings
-            ToolBox.SetWRobotSettings();
+            WFMSetup.SetWRobotSettings();
             /*
             Logger.Log($"****************************");
             foreach (State s in engine.States)
@@ -233,7 +237,9 @@ public class Main : IPlugin
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-            .FindAll(fm => (fm.IsDiscovered || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi) && ToolBox.FMIsOnMyContinent(fm))
+            .FindAll(fm => (fm.IsDiscovered || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi) 
+                && ToolBox.FMIsOnMyContinent(fm)
+                && !fm.IsDisabledByPlugin())
             .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position)).ToList();
 
         foreach (FlightMaster flightMaster in orderedListFM)
@@ -306,13 +312,6 @@ public class Main : IPlugin
 
     private static void MovementEventsOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
-        /*
-        if (points.First() == points.Last() && MovementManager.InMovementLoop)
-        {
-            Logger.Log("In grind loop, ignoring");
-            return;
-        }
-        */
         if (shouldTakeFlight 
             && points.Last() == destinationVector 
             && !inPause)

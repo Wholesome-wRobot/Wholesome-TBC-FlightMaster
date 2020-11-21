@@ -1,0 +1,120 @@
+﻿using robotManager.Helpful;
+using System.Linq;
+using System.Threading;
+using wManager.Wow.Bot.Tasks;
+using wManager.Wow.Enums;
+using wManager.Wow.Helpers;
+using wManager.Wow.ObjectManager;
+
+public class WFMMoveInteract
+{
+    private static void ResetFlags()
+    {
+        Main.from = null;
+        Main.to = null;
+        Main.flightMasterToDiscover = null;
+        Main.shouldTakeFlight = false;
+    }
+
+    public static bool GoInteractwithFM(Vector3 vector, FlightMaster fm, bool openMapRequired = false)
+    {
+        if (GoToTask.ToPosition(vector))
+        {
+            // We have reached the FM
+            if (ObjectManager.Me.IsMounted)
+                MountTask.DismountMount();
+
+            if (ObjectManager.Me.InCombatFlagOnly)
+            {
+                Logger.Log("You are in combat");
+                return false;
+            }
+
+            // Check if FM is here or dead
+            if (!FMIsNearbyAndAlive(fm))
+            {
+                fm.Disable("FlightMaster is absent or dead.");
+                ResetFlags();
+                return false;
+            }
+
+            Interact.InteractGameObject(ObjectManager.GetWoWUnitByEntry(fm.NPCId).First().GetBaseAddress);
+
+            // Check if interaction successful
+            if (!InteractWithFm(fm))
+            {
+                fm.Disable("Unable to interact with NPC");
+                ResetFlags();
+                return false;
+            }
+
+            Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+
+            // Check if map open
+            if (openMapRequired && !FmMapIsOpen(fm))
+            {
+                fm.Disable("Unable to open FM map");
+                ResetFlags();
+                return false;
+            }
+
+            return true;
+        }
+        // We haven't reach the FM yet
+        return false;
+    }
+
+    private static bool FmMapIsOpen(FlightMaster fm)
+    {
+        Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+        for (int i = 1; i <= 5; i++)
+        {
+            if (!Main.isFMMapOpen)
+            {
+                Logger.LogDebug($"Failed to open FM map, retrying ({i}/5)");
+                Lua.LuaDoString("CloseGossip()");
+                Thread.Sleep(500);
+                if (InteractWithFm(fm))
+                {
+                    Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+                    Thread.Sleep(500);
+                }
+            }
+            else
+                return true;
+        }
+        return false;
+    }
+
+    private static bool InteractWithFm(FlightMaster fm)
+    {
+        Interact.InteractGameObject(ObjectManager.GetWoWUnitByEntry(fm.NPCId).First().GetBaseAddress);
+        for (int i = 1; i <= 5; i++)
+        {
+            if (ObjectManager.Target.Entry != fm.NPCId)
+            {
+                Logger.Log($"Failed to interact with NPC, retrying ({i}/5)");
+                Interact.InteractGameObject(ObjectManager.GetWoWUnitByEntry(fm.NPCId).First().GetBaseAddress);
+                Thread.Sleep(500);
+            }
+            else
+                return true;
+        }
+        return false;
+    }
+
+    private static bool FMIsNearbyAndAlive(FlightMaster fm)
+    {
+        for (int i = 1; i <= 3; i++)
+        {
+            if (ObjectManager.GetObjectWoWUnit().Exists(unit => unit.Entry == fm.NPCId && unit.IsAlive))
+                return true;
+            else
+            {
+                Logger.Log($"FM detection failed, retrying ({i}/5)");
+                Thread.Sleep(1000);
+            }
+        }
+        return false;
+    }
+}

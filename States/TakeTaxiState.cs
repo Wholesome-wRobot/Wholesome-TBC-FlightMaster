@@ -1,7 +1,6 @@
 ﻿using robotManager.FiniteStateMachine;
 using System.Collections.Generic;
 using System.Threading;
-using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
@@ -42,20 +41,8 @@ public class TakeTaxiState : State
         FlightMaster flightmasterFrom = Main.from;
         FlightMaster flightmasterTo = Main.to;
 
-        if (GoToTask.ToPositionAndIntecractWithNpc(flightmasterFrom.Position, flightmasterFrom.NPCId))
+        if (WFMMoveInteract.GoInteractwithFM(flightmasterFrom.Position, flightmasterFrom, true))
         {
-            // Dismount
-            if (ObjectManager.Me.IsMounted)
-                MountTask.DismountMount();
-
-            if (ObjectManager.Me.InCombatFlagOnly)
-            {
-                Logger.Log("You are in combat");
-                return;
-            }
-
-            Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-
             if (FlightMasterDB.UpdateKnownFMs(flightmasterFrom))
             {
                 Logger.Log("Flightmaster list has changed. Trying to find a new path.");
@@ -97,19 +84,6 @@ public class TakeTaxiState : State
                 ToolBox.PausePlugin("Couldn't find an alternative flight");
             }
         }
-
-        // Check if FM is here or dead
-        if (!ToolBox.FMIsNearbyAndAlive(flightmasterFrom))
-        {
-            ToolBox.PausePlugin("FlightMaster is absent or dead");
-            return;
-        }
-
-        if (!ToolBox.FMIsNearbyAndInteractedWith(flightmasterFrom))
-        {
-            ToolBox.PausePlugin("Unable to interact with NPC");
-            return;
-        }
     }
 
     private void TakeTaxi(FlightMaster fm, string taxiNodeName)
@@ -129,7 +103,7 @@ public class TakeTaxiState : State
                 continue;
             }
 
-            if (ObjectManager.Me.IsOnTaxi)
+            if (ObjectManager.Me.IsOnTaxi || Main.inPause)
                 break;
             else
             {
@@ -137,7 +111,7 @@ public class TakeTaxiState : State
                 Lua.LuaDoString($"CloseTaxiMap(); CloseGossip();");
                 Main.errorTooFarAwayFromTaxiStand = false;
                 Thread.Sleep(500);
-                if (GoToTask.ToPositionAndIntecractWithNpc(fm.Position, fm.NPCId))
+                if (WFMMoveInteract.GoInteractwithFM(fm.Position, fm))
                     Thread.Sleep(500);
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
                 Thread.Sleep(500);
@@ -145,6 +119,9 @@ public class TakeTaxiState : State
                 Thread.Sleep(500);
             }
         }
+
+        if (Main.inPause)
+            return;
 
         if (Main.errorTooFarAwayFromTaxiStand)
             ToolBox.PausePlugin("Taking taxi failed (error clicking node)");

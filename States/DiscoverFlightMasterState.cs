@@ -1,7 +1,4 @@
 ﻿using robotManager.FiniteStateMachine;
-using System.Threading;
-using wManager.Wow.Bot.Tasks;
-using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 
@@ -28,46 +25,19 @@ public class DiscoverFlightMasterState : State
     {
         MovementManager.StopMoveNewThread();
         MovementManager.StopMoveToNewThread();
-        FlightMaster flightMasterToDiscover = Main.flightMasterToDiscover;
-        Logger.Log($"Discovering flight master {flightMasterToDiscover.Name}");
+        FlightMaster fmToDiscover = Main.flightMasterToDiscover;
+        Logger.Log($"Discovering flight master {fmToDiscover.Name}");
 
         // We go to the position
-        if (GoToTask.ToPositionAndIntecractWithNpc(flightMasterToDiscover.Position, flightMasterToDiscover.NPCId, (int)GossipOptionsType.taxi))
+        if (WFMMoveInteract.GoInteractwithFM(fmToDiscover.Position, fmToDiscover))
         {
-            // Dismount
-            if (ObjectManager.Me.IsMounted)
-                MountTask.DismountMount();
-
-            if (ObjectManager.Me.InCombatFlagOnly)
-            {
-                Logger.Log("You are in combat");
-                return;
-            }
-
-            Usefuls.SelectGossipOption(GossipOptionsType.taxi);
-
-            FlightMasterDB.SetFlightMasterToKnown(flightMasterToDiscover.NPCId);
+            FlightMasterDB.SetFlightMasterToKnown(fmToDiscover.NPCId);
             Main.flightMasterToDiscover = null;
             ToolBox.UnPausePlugin();
             Main.shouldTakeFlight = false;
 
-            FlightMasterDB.UpdateKnownFMs(flightMasterToDiscover);
+            FlightMasterDB.UpdateKnownFMs(fmToDiscover);
             MovementManager.StopMove(); // reset path
-        }
-
-        // Check if FM is here or dead
-        if (!ToolBox.FMIsNearbyAndAlive(flightMasterToDiscover))
-        {
-            flightMasterToDiscover.Disable("FlightMaster is absent or dead.");
-            Main.flightMasterToDiscover = null;
-            return;
-        }
-
-        if (!ToolBox.FMIsNearbyAndInteractedWith(flightMasterToDiscover))
-        {
-            flightMasterToDiscover.Disable("Unable to interact with NPC");
-            Main.flightMasterToDiscover = null;
-            return;
         }
     }
 }

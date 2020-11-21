@@ -64,6 +64,8 @@
     <Compile Include="Settings\WFMDeepSettings.cs" />
     <Compile Include="FlightMaster.cs" />
     <Compile Include="FlightMasterDB.cs" />
+    <Compile Include="Tools\WFMMoveInteract.cs" />
+    <Compile Include="Tools\WFMSetup.cs" />
     <Compile Include="Tools\Logger.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Tools\OldMain.cs" />

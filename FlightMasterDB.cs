@@ -294,8 +294,7 @@ public class FlightMasterDB
         bool modificationWasMade = false;
         for (int j = 1; j <= 3; j++)
         {
-            GoToTask.ToPositionAndIntecractWithNpc(FMWithMapOpen.Position, FMWithMapOpen.NPCId);
-            Usefuls.SelectGossipOption(GossipOptionsType.taxi);
+            WFMMoveInteract.GoInteractwithFM(FMWithMapOpen.Position, FMWithMapOpen);
             // Loop through nodes
             for (int i = 0; i < 30; i++)
             {
@@ -316,7 +315,7 @@ public class FlightMasterDB
             if (allInvalid)
             {
                 Lua.LuaDoString("CloseGossip()");
-                Logger.Log($"All flight nodes are invalid, retrying ({j})");
+                Logger.LogDebug($"All flight nodes are invalid, retrying ({j}/3)");
                 Thread.Sleep(500);
             }
         }
