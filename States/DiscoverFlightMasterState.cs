@@ -29,7 +29,7 @@ public class DiscoverFlightMasterState : State
         Logger.Log($"Discovering flight master {fmToDiscover.Name}");
 
         // We go to the position
-        if (WFMMoveInteract.GoInteractwithFM(fmToDiscover.Position, fmToDiscover))
+        if (WFMMoveInteract.GoInteractwithFM(fmToDiscover))
         {
             FlightMasterDB.SetFlightMasterToKnown(fmToDiscover.NPCId);
             Main.flightMasterToDiscover = null;

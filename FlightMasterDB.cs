@@ -294,7 +294,7 @@ public class FlightMasterDB
         bool modificationWasMade = false;
         for (int j = 1; j <= 3; j++)
         {
-            WFMMoveInteract.GoInteractwithFM(FMWithMapOpen.Position, FMWithMapOpen);
+            WFMMoveInteract.GoInteractwithFM(FMWithMapOpen);
             // Loop through nodes
             for (int i = 0; i < 30; i++)
             {

@@ -41,7 +41,7 @@ public class TakeTaxiState : State
         FlightMaster flightmasterFrom = Main.from;
         FlightMaster flightmasterTo = Main.to;
 
-        if (WFMMoveInteract.GoInteractwithFM(flightmasterFrom.Position, flightmasterFrom, true))
+        if (WFMMoveInteract.GoInteractwithFM(flightmasterFrom, true))
         {
             if (FlightMasterDB.UpdateKnownFMs(flightmasterFrom))
             {
@@ -111,7 +111,7 @@ public class TakeTaxiState : State
                 Lua.LuaDoString($"CloseTaxiMap(); CloseGossip();");
                 Main.errorTooFarAwayFromTaxiStand = false;
                 Thread.Sleep(500);
-                if (WFMMoveInteract.GoInteractwithFM(fm.Position, fm))
+                if (WFMMoveInteract.GoInteractwithFM(fm))
                     Thread.Sleep(500);
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
                 Thread.Sleep(500);

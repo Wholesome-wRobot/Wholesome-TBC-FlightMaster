@@ -16,19 +16,19 @@ public class WFMMoveInteract
         Main.shouldTakeFlight = false;
     }
 
-    public static bool GoInteractwithFM(Vector3 vector, FlightMaster fm, bool openMapRequired = false)
+    public static bool GoInteractwithFM(FlightMaster fm, bool openMapRequired = false)
     {
-        if (GoToTask.ToPosition(vector))
+        if (GoToTask.ToPosition(fm.Position))
         {
+            if (!Main.isLaunched 
+                || !Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
+                || ObjectManager.Me.InCombatFlagOnly
+                || ObjectManager.Me.Position.DistanceTo(fm.Position) > 10)
+                return false;
+
             // We have reached the FM
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
-
-            if (ObjectManager.Me.InCombatFlagOnly)
-            {
-                Logger.Log("You are in combat");
-                return false;
-            }
 
             // Check if FM is here or dead
             if (!FMIsNearbyAndAlive(fm))
@@ -111,7 +111,7 @@ public class WFMMoveInteract
                 return true;
             else
             {
-                Logger.Log($"FM detection failed, retrying ({i}/5)");
+                Logger.Log($"FM detection failed, retrying ({i}/3)");
                 Thread.Sleep(1000);
             }
         }
