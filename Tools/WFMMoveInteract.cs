@@ -18,26 +18,31 @@ public class WFMMoveInteract
 
     public static bool GoInteractwithFM(FlightMaster fm, bool openMapRequired = false)
     {
-        if (GoToTask.ToPosition(fm.Position, 0.1f))
+        if (GoToTask.ToPosition(fm.Position, 5f))
         {
             if (!Main.isLaunched 
                 || !Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
                 || ObjectManager.Me.InCombatFlagOnly
-                || ObjectManager.Me.Position.DistanceTo(fm.Position) > 10)
+                || ObjectManager.Me.Position.DistanceTo(fm.Position) > 10f)
                 return false;
 
             // We have reached the FM
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
+            WoWUnit nearbyFM = FindNearbyAliveFM(fm);
             // Check if FM is here or dead
-            if (!FMIsNearbyAndAlive(fm))
+            if (nearbyFM == null)
             {
                 fm.Disable("FlightMaster is absent or dead.");
                 ResetFlags();
                 return false;
             }
 
+            // Approach FM
+            if (!GoToTask.ToPosition(nearbyFM.Position, 1f))
+                return false;
+                
             Interact.InteractGameObject(ObjectManager.GetWoWUnitByEntry(fm.NPCId).First().GetBaseAddress);
 
             // Check if interaction successful
@@ -103,18 +108,19 @@ public class WFMMoveInteract
         return false;
     }
 
-    private static bool FMIsNearbyAndAlive(FlightMaster fm)
+    private static WoWUnit FindNearbyAliveFM(FlightMaster fm)
     {
         for (int i = 1; i <= 3; i++)
         {
-            if (ObjectManager.GetObjectWoWUnit().Exists(unit => unit.Entry == fm.NPCId && unit.IsAlive))
-                return true;
+            WoWUnit nearbyFm = ObjectManager.GetObjectWoWUnit().Find(unit => unit.Entry == fm.NPCId && unit.IsAlive);
+            if (nearbyFm != null)
+                return nearbyFm;
             else
             {
                 Logger.Log($"FM detection failed, retrying ({i}/3)");
                 Thread.Sleep(1000);
             }
         }
-        return false;
+        return null;
     }
 }
