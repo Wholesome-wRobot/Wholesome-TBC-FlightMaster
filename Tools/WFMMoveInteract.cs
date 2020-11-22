@@ -18,7 +18,7 @@ public class WFMMoveInteract
 
     public static bool GoInteractwithFM(FlightMaster fm, bool openMapRequired = false)
     {
-        if (GoToTask.ToPosition(fm.Position))
+        if (GoToTask.ToPosition(fm.Position, 0.1f))
         {
             if (!Main.isLaunched 
                 || !Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause

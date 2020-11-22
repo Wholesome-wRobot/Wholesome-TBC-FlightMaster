@@ -41,7 +41,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.01"; // Must match version in Version.txt
+    public static string version = "1.1.02"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
