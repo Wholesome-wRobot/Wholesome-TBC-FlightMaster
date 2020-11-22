@@ -1,5 +1,4 @@
-﻿using robotManager.Helpful;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading;
 using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
@@ -22,16 +21,23 @@ public class WFMMoveInteract
         {
             if (!Main.isLaunched 
                 || !Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
-                || ObjectManager.Me.InCombatFlagOnly
                 || ObjectManager.Me.Position.DistanceTo(fm.Position) > 10f)
                 return false;
+
+            // We're in fight (possibly on mount)
+            if (ObjectManager.Me.InCombatFlagOnly)
+            {
+                if (ObjectManager.Me.IsMounted)
+                    MountTask.DismountMount();
+                return false;
+            }
 
             // We have reached the FM
             if (ObjectManager.Me.IsMounted)
                 MountTask.DismountMount();
 
-            WoWUnit nearbyFM = FindNearbyAliveFM(fm);
             // Check if FM is here or dead
+            WoWUnit nearbyFM = FindNearbyAliveFM(fm);
             if (nearbyFM == null)
             {
                 fm.Disable("FlightMaster is absent or dead.");
