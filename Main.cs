@@ -41,7 +41,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.04"; // Must match version in Version.txt
+    public static string version = "1.1.05"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -226,7 +226,8 @@ public class Main : IPlugin
     {
         List<FlightMaster> orderedFMList = FlightMasterDB.FlightMasterList
             .FindAll(fm => ObjectManager.Me.Position.DistanceTo(fm.Position) < (double)WFMSettings.CurrentSettings.DetectTaxiDistance && ToolBox.FMIsOnMyContinent(fm))
-            .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position)).ToList();
+            .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position))
+            .ToList();
 
         return orderedFMList.Count > 0 ? orderedFMList.First() : null;
     }

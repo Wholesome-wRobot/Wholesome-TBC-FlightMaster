@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>D:\WoW\WoW TBC\WRobot\WRobot\Plugins\</OutputPath>
+    <OutputPath>F:\WoW\WoW TBC\WRobot\WRobot\Plugins\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,14 +34,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MemoryRobot">
-      <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\MemoryRobot.dll</HintPath>
+      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\MemoryRobot.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RDManaged">
-      <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\RDManaged.dll</HintPath>
+      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\RDManaged.dll</HintPath>
     </Reference>
     <Reference Include="robotManager">
-      <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\robotManager.dll</HintPath>
+      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\robotManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -55,7 +55,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="wManager">
-      <HintPath>D:\WoW\WoW TBC\WRobot\WRobot\Bin\wManager.dll</HintPath>
+      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\wManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -85,6 +85,6 @@
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"
 copy /Y "$(TargetDir)\$(ProjectName).dll" "C:\Users\Nico\Desktop\$(ProjectName).dll"
-copy /Y "$(TargetDir)\$(ProjectName).dll" "D:\WoW\WoW Wotlk\WRobot WOTLK\Plugins\$(ProjectName).dll"</PostBuildEvent>
+copy /Y "$(TargetDir)\$(ProjectName).dll" "F:\WoW\WoW Wotlk\WRobot WOTLK\Plugins\$(ProjectName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
