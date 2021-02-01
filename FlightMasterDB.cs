@@ -295,7 +295,7 @@ public class FlightMasterDB
         {
             WFMMoveInteract.GoInteractwithFM(FMWithMapOpen);
             // Loop through nodes
-            for (int i = 0; i < 60; i++)
+            for (int i = 0; i < 120; i++)
             {
                 string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
                 if (nodeName != "INVALID")
