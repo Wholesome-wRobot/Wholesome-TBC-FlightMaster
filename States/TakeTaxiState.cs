@@ -53,7 +53,7 @@ public class TakeTaxiState : State
 
             List<string> reachableTaxis = new List<string>();
             // Look for current To and record reachables in case we can't find it
-            for (int i = 0; i < 50; i++)
+            for (int i = 0; i < 120; i++)
             {
                 string nodeStatus = Lua.LuaDoString<string>($"return TaxiNodeGetType({i})");
                 string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
@@ -89,6 +89,7 @@ public class TakeTaxiState : State
     private void TakeTaxi(FlightMaster fm, string taxiNodeName)
     {
         string clickNodeLua = "TakeTaxiNode(" + Lua.LuaDoString<int>("for i=0,120 do if string.find(TaxiNodeName(i),'" + taxiNodeName.Replace("'", "\\'") + "') then return i end end", "").ToString() + ")";
+        Logger.Log(clickNodeLua);
         Lua.LuaDoString(clickNodeLua, false);
         Thread.Sleep(500);
 
