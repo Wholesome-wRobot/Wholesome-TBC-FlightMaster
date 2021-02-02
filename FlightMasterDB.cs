@@ -8,6 +8,11 @@ public class FlightMasterDB
 {
     public static List<FlightMaster> FlightMasterList { get; private set; }
 
+    private static bool azerothNodesUpdated = false;
+    private static bool kalimdorNodesUpdated = false;
+    private static bool outlandNodesUpdated = false;
+    private static bool northrendNodesUpdated = false;
+
     private static readonly List<FlightMaster> hordeFlightMasters = new List<FlightMaster>()
     {
         // EK
@@ -287,41 +292,76 @@ public class FlightMasterDB
 
     public static bool UpdateKnownFMs(FlightMaster FMWithMapOpen)
     {
-        Logger.Log("Updating known FlightMasters");
-        // 3 attempts to discover flights
-        bool allInvalid = true;
-        bool modificationWasMade = false;
-        for (int j = 1; j <= 3; j++)
+        if ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth && !azerothNodesUpdated
+            || (ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor && !kalimdorNodesUpdated
+            || (ContinentId)Usefuls.ContinentId == ContinentId.Expansion01 && !outlandNodesUpdated
+            || (ContinentId)Usefuls.ContinentId == ContinentId.Northrend && !northrendNodesUpdated)
         {
-            WFMMoveInteract.GoInteractwithFM(FMWithMapOpen);
-            // Loop through nodes
-            for (int i = 0; i < 120; i++)
+            Logger.Log($"Updating known FlightMasters on {Usefuls.ContinentNameMpq} for this session");
+
+            bool allInvalid = true;
+            bool latNodeWasInvalid = false;
+            bool modificationWasMade = false;
+            bool endOfListReached = false;
+
+            // 3 attempts to discover flights
+            for (int j = 1; j <= 3; j++)
             {
-                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
-                if (nodeName != "INVALID")
+                if (endOfListReached)
                 {
-                    allInvalid = false;
-                    if (SetFlightMasterToKnown(nodeName) && modificationWasMade == false)
-                        modificationWasMade = true;
+                    if ((ContinentId)Usefuls.ContinentId == ContinentId.Azeroth)
+                        azerothNodesUpdated = true;
+                    else if ((ContinentId)Usefuls.ContinentId == ContinentId.Kalimdor)
+                        kalimdorNodesUpdated = true;
+                    else if ((ContinentId)Usefuls.ContinentId == ContinentId.Expansion01)
+                        outlandNodesUpdated = true;
+                    else if ((ContinentId)Usefuls.ContinentId == ContinentId.Northrend)
+                        northrendNodesUpdated = true;
+
+                    break;
                 }
-                else
+
+                WFMMoveInteract.GoInteractwithFM(FMWithMapOpen);
+                // Loop through nodes
+                for (int i = 0; i < 120; i++)
                 {
-                    if (SetFlightMasterToUnknown(nodeName) && modificationWasMade == false)
-                        modificationWasMade = true;
+                    string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+                    if (nodeName != "INVALID")
+                    {
+                        allInvalid = false;
+                        latNodeWasInvalid = false;
+                        if (SetFlightMasterToKnown(nodeName) && modificationWasMade == false)
+                            modificationWasMade = true;
+                    }
+                    else
+                    {
+                        // we hit 2 invalids in a row - means this is the end of the list
+                        if (latNodeWasInvalid)
+                        {
+                            endOfListReached = true;
+                            break;
+                        }
+
+                        latNodeWasInvalid = true;
+                        if (SetFlightMasterToUnknown(nodeName) && modificationWasMade == false)
+                            modificationWasMade = true;
+                    }
+                }
+
+                if (allInvalid)
+                {
+                    Lua.LuaDoString("CloseGossip()");
+                    Logger.LogDebug($"All flight nodes are invalid, retrying ({j}/3)");
+                    Thread.Sleep(500);
                 }
             }
 
             if (allInvalid)
-            {
-                Lua.LuaDoString("CloseGossip()");
-                Logger.LogDebug($"All flight nodes are invalid, retrying ({j}/3)");
-                Thread.Sleep(500);
-            }
+                ToolBox.PausePlugin("Couldn't find a valid flight node");
+
+            return modificationWasMade;
         }
 
-        if (allInvalid)
-            ToolBox.PausePlugin("Couldn't find a valid flight node");
-
-        return modificationWasMade;
+        return false;
     }
 }

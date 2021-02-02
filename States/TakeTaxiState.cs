@@ -89,7 +89,7 @@ public class TakeTaxiState : State
     private void TakeTaxi(FlightMaster fm, string taxiNodeName)
     {
         string clickNodeLua = "TakeTaxiNode(" + Lua.LuaDoString<int>("for i=0,120 do if string.find(TaxiNodeName(i),'" + taxiNodeName.Replace("'", "\\'") + "') then return i end end", "").ToString() + ")";
-        Logger.Log(clickNodeLua);
+        Logger.LogDebug(clickNodeLua);
         Lua.LuaDoString(clickNodeLua, false);
         Thread.Sleep(500);
 
