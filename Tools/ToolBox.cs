@@ -50,7 +50,7 @@ public class ToolBox
         Products.InPause = false;
     }
 
-    public static void MessageHandler(LuaEventsId id, List<string> args)
+    public static void MessageHandler(string id, List<string> args)
     {
         if (Main.isLaunched)
         { 
@@ -127,17 +127,17 @@ public class ToolBox
     public static bool ExceptionConditionsAreMet(FlightMaster fm)
     {
         return (fm != null
-            && (fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100)) // Shatter Point, Hellfire Peninsula
+            && (fm.NPCId != 20234 || fm.Position.DistanceTo(ObjectManager.Me.Position) < 100) // Shatter Point, Hellfire Peninsula
             && (fm.NPCId != 19581 || GetReputation("The Aldor") > 0) // Altar of Sha'tar, Shadowmoon Valley
             && (fm.NPCId != 21766 || GetReputation("The Scryers") > 0) // Sanctum of the Stars, Shadowmoon Valley
-            && (fm.NPCId != 30314 || Quest.GetLogQuestIsComplete(12896) || Quest.GetLogQuestIsComplete(12897) // The Shadow Vault, Icecrown
+            && (fm.NPCId != 30314 || Quest.GetLogQuestIsComplete(12896) || Quest.GetLogQuestIsComplete(12897)) // The Shadow Vault, Icecrown
             && (fm.NPCId != 28037 || Quest.GetLogQuestIsComplete(12523)) // Nesingwary Base Camp, Sholazar Basin
             && (fm.NPCId != 31069 || Quest.GetLogQuestIsComplete(13141)) // Crusaders' Pinnacle, Icecrown
             && (fm.NPCId != 32571 || Quest.GetLogQuestIsComplete(12956)) // Dun Nifflelem, The Storm Peaks
             && (fm.NPCId != 37915 || GetWoWVersion().Equals("3.3.5")) // The Bulwark, Tirisfal
             && (fm.NPCId != 37888 || GetWoWVersion().Equals("3.3.5")) // Thondoril River, Western Plaguelands
             && (fm.NPCId != 29480 || ObjectManager.Me.WowClass == WoWClass.DeathKnight) // Acherus: The Ebon Hold
-            );
+        );
     }
 
     private static int GetReputation(string faction)

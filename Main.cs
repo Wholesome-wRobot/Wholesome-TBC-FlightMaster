@@ -10,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using wManager.Events;
 using wManager.Plugin;
-using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
 using Math = System.Math;
@@ -41,7 +40,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.1"; // Must match version in Version.txt
+    public static string version = "1.1.2"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -69,7 +68,7 @@ public class Main : IPlugin
 
         if (AutoUpdater.CheckUpdate(version))
         {
-            Logger.LogWarning("New version downloaded, restarting WRobot, please wait");
+            Logger.LogWarning("New version downloaded, restarting plugin, please wait");
             ToolBox.Restart();
             return;
         }
@@ -88,18 +87,18 @@ public class Main : IPlugin
         FiniteStateMachineEvents.OnRunState += StateEventHandler;
         MovementEvents.OnMovementPulse += MovementEventsOnMovementPulse;
         MovementEvents.OnSeemStuck += SeemStuckHandler;
-        EventsLuaWithArgs.OnEventsLuaWithArgs += ToolBox.MessageHandler;
+        EventsLuaWithArgs.OnEventsLuaStringWithArgs += ToolBox.MessageHandler;
 
-        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_OPENED"), (e) => isFMMapOpen = true);
-        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "TAXIMAP_CLOSED"), (e) => isFMMapOpen = false);
-        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "GOSSIP_SHOW"), (e) => isGossipOpen = true);
-        EventsLua.AttachEventLua((LuaEventsId)Enum.Parse(typeof(LuaEventsId), "GOSSIP_CLOSED"), (e) => isGossipOpen = false);
+        EventsLua.AttachEventLua("TAXIMAP_OPENED", (e) => isFMMapOpen = true);
+        EventsLua.AttachEventLua("TAXIMAP_CLOSED", (e) => isFMMapOpen = false);
+        EventsLua.AttachEventLua("GOSSIP_SHOW", (e) => isGossipOpen = true);
+        EventsLua.AttachEventLua("GOSSIP_CLOSED", (e) => isGossipOpen = false);
     }
 
     public void Dispose()
     {
         MovementEvents.OnMovementPulse -= MovementEventsOnMovementPulse;
-        EventsLuaWithArgs.OnEventsLuaWithArgs -= ToolBox.MessageHandler;
+        EventsLuaWithArgs.OnEventsLuaStringWithArgs -= ToolBox.MessageHandler;
         detectionPulse.DoWork -= BackGroundPulse;
 
         WFMSetup.RestoreWRobotSettings();
