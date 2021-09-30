@@ -34,14 +34,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MemoryRobot">
-      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\MemoryRobot.dll</HintPath>
+      <HintPath>Dependencies\MemoryRobot.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="RDManaged">
-      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\RDManaged.dll</HintPath>
+      <HintPath>Dependencies\RDManaged.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="robotManager">
-      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\robotManager.dll</HintPath>
+      <HintPath>Dependencies\robotManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -55,7 +56,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="wManager">
-      <HintPath>F:\WoW\WoW TBC\WRobot\WRobot\Bin\wManager.dll</HintPath>
+      <HintPath>Dependencies\wManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

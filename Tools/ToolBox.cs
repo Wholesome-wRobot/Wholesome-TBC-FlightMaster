@@ -1,11 +1,7 @@
-﻿using robotManager.FiniteStateMachine;
-using robotManager.Helpful;
+﻿using robotManager.Helpful;
 using robotManager.Products;
-using System;
 using System.Collections.Generic;
 using System.Threading;
-using wManager;
-using wManager.Wow.Bot.Tasks;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;

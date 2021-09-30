@@ -52,12 +52,22 @@ public class Main : IPlugin
     public static State takeTaxiState = new TakeTaxiState();
     public static State waitOnTaxiState = new WaitOnTaxiState();
 
+    private List<string> _listCompatibleProducts = new List<string>()
+    {
+        "Quester",
+        "Grinder",
+        "Wholesome Professions WotLK",
+        "Wholesome_Auto_Quester"
+    };
+
     public void Initialize()
     {
-        if (!Products.ProductName.Equals("Quester") 
-            && !Products.ProductName.Equals("Grinder")
-            && !Products.ProductName.Equals("Wholesome Professions WotLK"))
+        if (!_listCompatibleProducts.Contains(Products.ProductName))
+        {
+            Logger.LogError("Wholesome Flightmaster is only compatible with the following products:");
+            _listCompatibleProducts.ForEach(cp => Logger.LogError(cp));
             return;
+        }
 
         isLaunched = true;
 
