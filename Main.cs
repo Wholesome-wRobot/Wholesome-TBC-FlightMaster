@@ -40,7 +40,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.2"; // Must match version in Version.txt
+    public static string version = "1.1.3"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -110,6 +110,7 @@ public class Main : IPlugin
         MovementEvents.OnMovementPulse -= MovementEventsOnMovementPulse;
         EventsLuaWithArgs.OnEventsLuaStringWithArgs -= ToolBox.MessageHandler;
         detectionPulse.DoWork -= BackGroundPulse;
+        MovementEvents.OnSeemStuck -= SeemStuckHandler;
 
         WFMSetup.RestoreWRobotSettings();
         detectionPulse.Dispose();
@@ -220,6 +221,7 @@ public class Main : IPlugin
                         Logger.Log("Stop on tracks to ensure discovery");
                         MovementManager.StopMove();
                         MovementManager.StopMoveTo();
+                        MovementManager.StopMoveNewThread();
                     }
                 }
             }
