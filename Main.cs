@@ -40,7 +40,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.3"; // Must match version in Version.txt
+    public static string version = "1.1.4"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -209,6 +209,7 @@ public class Main : IPlugin
 
                     // Mark flightmaster as To be discovered
                     if (nearestFlightMaster != null
+                        && !ObjectManager.Me.InTransport
                         && !nearestFlightMaster.IsDisabledByPlugin()
                         && ToolBox.ExceptionConditionsAreMet(nearestFlightMaster)
                         && !WFMSettings.CurrentSettings.KnownFlightsList.Contains(nearestFlightMaster.Name)
