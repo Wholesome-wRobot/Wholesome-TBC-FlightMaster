@@ -13,6 +13,18 @@ public class FlightMasterDB
     private static bool outlandNodesUpdated = false;
     private static bool northrendNodesUpdated = false;
 
+    public static List<FlightMaster> AllFlightMasters
+    {
+        get
+        {
+            List<FlightMaster> result = new List<FlightMaster>();
+            result.AddRange(hordeFlightMasters);
+            result.AddRange(allianceFlightMasters);
+            result.AddRange(neutralFlightMasters);
+            return result;
+        }
+    }
+
     private static readonly List<FlightMaster> hordeFlightMasters = new List<FlightMaster>()
     {
         // EK

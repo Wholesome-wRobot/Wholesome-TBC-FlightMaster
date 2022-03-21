@@ -40,7 +40,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.4"; // Must match version in Version.txt
+    public static string version = "1.1.05"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -121,7 +121,7 @@ public class Main : IPlugin
 
     private void SeemStuckHandler()
     {
-        if (DateTime.Now.Ticks / 10000000 - lastStuck.Ticks / 10000000 < 5
+        if (DateTime.Now.Ticks / 10000000 - lastStuck.Ticks / 10000000 < 10
             && (currentState == discoverFlightMasterState || currentState == takeTaxiState))
         {
             stuckCount++;
@@ -325,6 +325,11 @@ public class Main : IPlugin
 
     private static void MovementEventsOnMovementPulse(List<Vector3> points, CancelEventArgs cancelable)
     {
+        if (points.Count <= 0)
+        {
+            return;
+        }
+
         if (shouldTakeFlight 
             && points.Last() == destinationVector 
             && !inPause)
@@ -334,17 +339,18 @@ public class Main : IPlugin
         }
 
         if (!ObjectManager.Me.IsAlive || ObjectManager.Me.IsOnTaxi || shouldTakeFlight || !isLaunched || inPause)
+        {
             return;
+        }
 
         DateTime dateBegin = DateTime.Now;
 
         // If we have detected a potential FP travel
         float totalWalkingDistance = ToolBox.CalculatePathTotalDistance(ObjectManager.Me.Position, points.Last());
 
-            // If the path is shorter than setting, we skip
+        // If the path is shorter than setting, we skip
         if (totalWalkingDistance < (double)WFMSettings.CurrentSettings.TaxiTriggerDistance)
         {
-            //Logger.LogDebug($"Path ({Math.Round(totalWalkingDistance)} yards) is shorter than trigger setting {WFMSettings.CurrentSettings.TaxiTriggerDistance}. Let's walk.");
             return;
         }
 
@@ -374,32 +380,35 @@ public class Main : IPlugin
 
         to = GetClosestFlightMasterTo(from.Position.DistanceTo(destinationVector));
 
-        //Logger.Log($"Best FROM is {from?.Name}");
-        //Logger.Log($"Best TO is {to?.Name}");
-
         if (from.Equals(to))
+        {
             to = null;
+        }
 
         // Calculate total real distance FROM/TO
         // if no TO found, we set the total distance back to walking distance
         double processedDistance;
         if (to == null)
+        {
             processedDistance = totalWalkingDistance;
+        }
         else
+        {
             processedDistance = departureDistance + ToolBox.CalculatePathTotalDistance(to.Position, destinationVector);
-
-        //Logger.Log($"Walking distance is {Math.Round(totalWalkingDistance)}");
-        //Logger.Log($"Processed distance is {Math.Round(processedDistance)}");
+        }
 
         // If total real distance does not save any distance or is longer, try to find alternative
-        if (processedDistance >= totalWalkingDistance
-            || to == null)
+        if (processedDistance >= totalWalkingDistance|| to == null)
         {
             if (to == null)
+            {
                 Logger.Log($"No direct flight path, trying to find an alternative, please wait");
+            }
             else
+            {
                 Logger.Log($"Flight from {from.Name} to {to.Name} would save {Math.Round(totalWalkingDistance - processedDistance + WFMSettings.CurrentSettings.MinimumDistanceSaving)} yards. " +
                     $"You set a minimum of {WFMSettings.CurrentSettings.MinimumDistanceSaving} yards. Trying to find an alternative.");
+            }
 
             // Pre order the list
             List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList

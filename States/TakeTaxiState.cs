@@ -105,7 +105,9 @@ public class TakeTaxiState : State
             }
 
             if (ObjectManager.Me.IsOnTaxi || Main.inPause)
+            {
                 break;
+            }
             else
             {
                 Logger.Log($"Taking taxi failed. Retrying ({i}/5)");
@@ -113,7 +115,9 @@ public class TakeTaxiState : State
                 Main.errorTooFarAwayFromTaxiStand = false;
                 Thread.Sleep(500);
                 if (WFMMoveInteract.GoInteractwithFM(fm))
+                {
                     Thread.Sleep(500);
+                }
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
                 Thread.Sleep(500);
                 Lua.LuaDoString(clickNodeLua, false);
@@ -122,12 +126,18 @@ public class TakeTaxiState : State
         }
 
         if (Main.inPause)
+        {
             return;
+        }
 
         if (Main.errorTooFarAwayFromTaxiStand)
+        {
             ToolBox.PausePlugin("Taking taxi failed (error clicking node)");
+        }
         else
+        {
             Logger.Log($"Flying to {taxiNodeName}");
+        }
 
         Thread.Sleep(Usefuls.Latency + 500);
         Main.shouldTakeFlight = false;
@@ -135,6 +145,8 @@ public class TakeTaxiState : State
         Thread.Sleep(Usefuls.Latency + 500);
 
         if (!ObjectManager.Me.IsOnTaxi)
+        {
             ToolBox.PausePlugin("Taking taxi failed");
+        }
     }
 }

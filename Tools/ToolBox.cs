@@ -138,12 +138,13 @@ public class ToolBox
 
     private static int GetReputation(string faction)
     {
-        return Lua.LuaDoString<int>($@"for i=1, 25 do 
-                                local name, _, _, _, _, earnedValue, _, _, _, _, _, _, _ = GetFactionInfo(i);
-                                    if name == '{faction}' then
-                                        return earnedValue
-                                end
-                            end");
+        return Lua.LuaDoString<int>($@"
+            for i=1, 25 do 
+                local name, _, _, _, _, earnedValue, _, _, _, _, _, _, _ = GetFactionInfo(i);
+                    if name == '{faction}' then
+                        return earnedValue
+                end
+            end");
     }
 
     public static string GetWoWVersion()
