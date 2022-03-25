@@ -40,7 +40,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.06"; // Must match version in Version.txt
+    public static string version = "1.1.07"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -337,6 +337,10 @@ public class Main : IPlugin
             && points.Last() == destinationVector
             && !inPause)
         {
+            if (shouldTakeFlight && (from.IsDisabledByPlugin() || to.IsDisabledByPlugin()))
+            {
+                shouldTakeFlight = false;
+            }
             Logger.Log("Cancelled move to " + destinationVector);
             cancelable.Cancel = true;
         }
