@@ -14,8 +14,6 @@ public class TakeTaxiState : State
         get
         {
             if (Conditions.InGameAndConnectedAndAliveAndProductStartedNotInPause
-                && Main.isLaunched
-                && !Main.inPause
                 && Main.shouldTakeFlight
                 && Main.to != null
                 && Main.from != null

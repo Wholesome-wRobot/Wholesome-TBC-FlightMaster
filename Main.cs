@@ -40,7 +40,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.05"; // Must match version in Version.txt
+    public static string version = "1.1.06"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -200,9 +200,9 @@ public class Main : IPlugin
                     MovementManager.StopMoveToNewThread();
                 }
 
-                if (Conditions.InGameAndConnectedAndProductStartedNotInPause 
+                if (Conditions.InGameAndConnectedAndProductStartedNotInPause
                     && !ObjectManager.Me.InCombatFlagOnly
-                    && !ObjectManager.Me.IsOnTaxi 
+                    && !ObjectManager.Me.IsOnTaxi
                     && ObjectManager.Me.IsAlive)
                 {
                     nearestFlightMaster = GetNearestFlightMaster();
@@ -250,8 +250,9 @@ public class Main : IPlugin
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-            .FindAll(fm => (fm.IsDiscovered || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi) 
+            .FindAll(fm => (fm.IsDiscovered || WFMSettings.CurrentSettings.TakeUndiscoveredTaxi)
                 && ToolBox.FMIsOnMyContinent(fm)
+                && ToolBox.ExceptionConditionsAreMet(fm)
                 && !fm.IsDisabledByPlugin())
             .OrderBy(fm => fm.Position.DistanceTo(ObjectManager.Me.Position)).ToList();
 
@@ -277,7 +278,9 @@ public class Main : IPlugin
 
         // Pre order the list
         List<FlightMaster> orderedListFM = FlightMasterDB.FlightMasterList
-            .FindAll(fm => fm.IsDiscovered && fm.NPCId != from.NPCId && ToolBox.FMIsOnMyContinent(fm))
+            .FindAll(fm => fm.IsDiscovered
+                && fm.NPCId != from.NPCId
+                && ToolBox.FMIsOnMyContinent(fm))
             .OrderBy(fm => fm.Position.DistanceTo(destinationVector)).ToList();
 
         foreach (FlightMaster flightMaster in orderedListFM)
@@ -330,8 +333,8 @@ public class Main : IPlugin
             return;
         }
 
-        if (shouldTakeFlight 
-            && points.Last() == destinationVector 
+        if (shouldTakeFlight
+            && points.Last() == destinationVector
             && !inPause)
         {
             Logger.Log("Cancelled move to " + destinationVector);
@@ -398,7 +401,7 @@ public class Main : IPlugin
         }
 
         // If total real distance does not save any distance or is longer, try to find alternative
-        if (processedDistance >= totalWalkingDistance|| to == null)
+        if (processedDistance >= totalWalkingDistance || to == null)
         {
             if (to == null)
             {
