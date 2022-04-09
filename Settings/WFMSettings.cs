@@ -16,6 +16,7 @@ public class WFMSettings : Settings
         SkipIfFollowPathDistance = 2000f;
         PauseLengthInSeconds = 600;
         TakeUndiscoveredTaxi = false;
+        LastUpdateDate = 0;
 
         KnownFlightsList = new List<string>();
         DisabledFlightsList = new string[] {
@@ -23,6 +24,7 @@ public class WFMSettings : Settings
 
         ConfigWinForm(new System.Drawing.Point(400, 400), "Wholesome FlightMaster Settings");
     }
+    public double LastUpdateDate { get; set; }
 
     [DefaultValue(new string[] {
         })]

@@ -22,7 +22,7 @@ public static class AutoUpdater
         long elapsedTicks = currentDate.Ticks - dateBegin.Ticks;
         elapsedTicks /= 10000000;
 
-        double timeSinceLastUpdate = elapsedTicks - WFMDeepSettings.CurrentSettings.LastUpdateDate;
+        double timeSinceLastUpdate = elapsedTicks - WFMSettings.CurrentSettings.LastUpdateDate;
 
         // If last update try was < 10 seconds ago, we exit to avoid looping
         if (timeSinceLastUpdate < 30)
@@ -33,8 +33,8 @@ public static class AutoUpdater
 
         try
         {
-            WFMDeepSettings.CurrentSettings.LastUpdateDate = elapsedTicks;
-            WFMDeepSettings.CurrentSettings.Save();
+            WFMSettings.CurrentSettings.LastUpdateDate = elapsedTicks;
+            WFMSettings.CurrentSettings.Save();
 
             string onlineFile = "https://github.com/Wholesome-wRobot/Wholesome-TBC-FlightMaster/raw/master/Compiled/Wholesome_TBC_WotlK_FlightMaster.dll";
 

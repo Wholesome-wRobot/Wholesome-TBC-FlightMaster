@@ -4,6 +4,7 @@ using System.Threading;
 using wManager.Wow.Enums;
 using wManager.Wow.Helpers;
 using wManager.Wow.ObjectManager;
+using WholesomeToolbox;
 
 public class TakeTaxiState : State
 {
@@ -53,8 +54,8 @@ public class TakeTaxiState : State
             // Look for current To and record reachables in case we can't find it
             for (int i = 0; i < 120; i++)
             {
-                string nodeStatus = Lua.LuaDoString<string>($"return TaxiNodeGetType({i})");
-                string nodeName = Lua.LuaDoString<string>($"return TaxiNodeName({i})");
+                string nodeStatus = WTTaxi.GetTaxiNodeType(i);
+                string nodeName = WTTaxi.GetTaxiNodeName(i);
 
                 if (nodeStatus == "REACHABLE")
                 {
@@ -86,9 +87,7 @@ public class TakeTaxiState : State
 
     private void TakeTaxi(FlightMaster fm, string taxiNodeName)
     {
-        string clickNodeLua = "TakeTaxiNode(" + Lua.LuaDoString<int>("for i=0,120 do if string.find(TaxiNodeName(i),'" + taxiNodeName.Replace("'", "\\'") + "') then return i end end", "").ToString() + ")";
-        Logger.LogDebug(clickNodeLua);
-        Lua.LuaDoString(clickNodeLua, false);
+        WTTaxi.TakeTaxi(taxiNodeName);
         Thread.Sleep(500);
 
         // 5 tries to click on node if it failed
@@ -118,7 +117,7 @@ public class TakeTaxiState : State
                 }
                 Usefuls.SelectGossipOption(GossipOptionsType.taxi);
                 Thread.Sleep(500);
-                Lua.LuaDoString(clickNodeLua, false);
+                WTTaxi.TakeTaxi(taxiNodeName);
                 Thread.Sleep(500);
             }
         }

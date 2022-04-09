@@ -244,17 +244,6 @@ public class FlightMasterDB
         }
     }
 
-    public static FlightMaster GetFlightMasterByName(string name)
-    {
-        foreach (FlightMaster fm in FlightMasterList)
-        {
-            if (fm.Name == name)
-                return fm;
-        }
-        Logger.LogError($"Couldn't find Flight Master {name} in the DB");
-        return null;
-    }
-
     public static FlightMaster GetFlightMasterById(int npcId)
     {
         foreach (FlightMaster fm in FlightMasterList)
@@ -294,12 +283,6 @@ public class FlightMasterDB
             return true;
         }
         return false;
-    }
-
-    public static void SetFlightMasterToUnknown(int flightMasterID)
-    {
-        FlightMaster flightMaster = GetFlightMasterById(flightMasterID);
-        SetFlightMasterToUnknown(flightMaster.Name);
     }
 
     public static bool UpdateKnownFMs(FlightMaster FMWithMapOpen)

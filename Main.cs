@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using WholesomeToolbox;
 using wManager.Events;
 using wManager.Plugin;
 using wManager.Wow.Helpers;
@@ -40,7 +41,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.07"; // Must match version in Version.txt
+    public static string version = "1.1.08"; // Must match version in Version.txt
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -74,7 +75,6 @@ public class Main : IPlugin
         isHorde = ToolBox.GetIsHorde();
 
         WFMSettings.Load();
-        WFMDeepSettings.Load();
 
         if (AutoUpdater.CheckUpdate(version))
         {
@@ -162,9 +162,9 @@ public class Main : IPlugin
         {
             stateAddDelayer.Restart();
 
-            WFMSetup.AddState(engine, takeTaxiState, "FlightMaster: Take taxi");
-            WFMSetup.AddState(engine, discoverFlightMasterState, "FlightMaster: Take taxi");
-            WFMSetup.AddState(engine, waitOnTaxiState, "FlightMaster: Take taxi");
+            WTState.AddState(engine, takeTaxiState, "FlightMaster: Take taxi");
+            WTState.AddState(engine, discoverFlightMasterState, "FlightMaster: Take taxi");
+            WTState.AddState(engine, waitOnTaxiState, "FlightMaster: Take taxi");
 
             // Double check because some profiles modify WRobot settings
             WFMSetup.SetWRobotSettings();
