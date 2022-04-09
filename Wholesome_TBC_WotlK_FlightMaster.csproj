@@ -83,31 +83,6 @@
   <ItemGroup>
     <Content Include="Compiled\Version.txt" />
     <Content Include="Compiled\Wholesome_TBC_WotlK_FlightMaster.dll" />
-    <Content Include="Dependencies\authManager.dll" />
-    <Content Include="Dependencies\ControlzEx.dll" />
-    <Content Include="Dependencies\FlXHelperApp.exe" />
-    <Content Include="Dependencies\ICSharpCode.SharpZipLib.dll" />
-    <Content Include="Dependencies\MahApps.Metro.dll" />
-    <Content Include="Dependencies\MahApps.Metro.IconPacks.Material.dll" />
-    <Content Include="Dependencies\MarsSettingsGUI.dll" />
-    <Content Include="Dependencies\MemoryRobot.dll" />
-    <Content Include="Dependencies\Neo.Lua.dll" />
-    <Content Include="Dependencies\Newtonsoft.Json.dll" />
-    <Content Include="Dependencies\RDManaged.dll" />
-    <Content Include="Dependencies\robotManager.dll" />
-    <Content Include="Dependencies\rStyle.dll" />
-    <Content Include="Dependencies\ScintillaNET.dll" />
-    <Content Include="Dependencies\ScintillaNET.WPF.dll" />
-    <Content Include="Dependencies\SlimDX.dll" />
-    <Content Include="Dependencies\SmoothMove.dll" />
-    <Content Include="Dependencies\System.Windows.Interactivity.dll" />
-    <Content Include="Dependencies\UpdateManager.dll" />
-    <Content Include="Dependencies\WholesomeToolbox.dll" />
-    <Content Include="Dependencies\WholesomeToolbox.pdb" />
-    <Content Include="Dependencies\WholesomeToolbox.xml" />
-    <Content Include="Dependencies\wManager.dll" />
-    <Content Include="Dependencies\wResources.dll" />
-    <Content Include="Dependencies\ZetaIpc.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
