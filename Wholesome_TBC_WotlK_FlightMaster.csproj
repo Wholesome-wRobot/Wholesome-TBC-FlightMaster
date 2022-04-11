@@ -55,10 +55,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WholesomeToolbox">
-      <HintPath>Dependencies\WholesomeToolbox.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="wManager">
       <HintPath>Dependencies\wManager.dll</HintPath>
       <Private>False</Private>
@@ -78,11 +74,34 @@
     <Compile Include="States\WaitOnTaxiState.cs" />
     <Compile Include="Tools\ToolBox.cs" />
     <Compile Include="Settings\WFMSettings.cs" />
+    <Compile Include="Wholesome-Toolbox\WTEffects.cs" />
+    <Compile Include="Wholesome-Toolbox\WTFile.cs" />
+    <Compile Include="Wholesome-Toolbox\WTGear.cs" />
+    <Compile Include="Wholesome-Toolbox\WTGossip.cs" />
+    <Compile Include="Wholesome-Toolbox\WTItem.cs" />
+    <Compile Include="Wholesome-Toolbox\WTLocation.cs" />
+    <Compile Include="Wholesome-Toolbox\WTLogger.cs" />
+    <Compile Include="Wholesome-Toolbox\WTLua.cs" />
+    <Compile Include="Wholesome-Toolbox\WTPathFinder.cs" />
+    <Compile Include="Wholesome-Toolbox\WTPlayer.cs" />
+    <Compile Include="Wholesome-Toolbox\WTQuestLog.cs" />
+    <Compile Include="Wholesome-Toolbox\WTSettings.cs" />
+    <Compile Include="Wholesome-Toolbox\WTState.cs" />
+    <Compile Include="Wholesome-Toolbox\WTTalent.cs" />
+    <Compile Include="Wholesome-Toolbox\WTTaxi.cs" />
+    <Compile Include="Wholesome-Toolbox\WTTransport.cs" />
+    <Compile Include="Wholesome-Toolbox\WTTravel.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Wholesome-Toolbox\Wholesome_Toolbox.projitems" />
+    <None Include="Wholesome-Toolbox\Wholesome_Toolbox.shproj" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Compiled\Version.txt" />
     <Content Include="Compiled\Wholesome_TBC_WotlK_FlightMaster.dll" />
+    <Content Include="Wholesome-Toolbox\.gitignore" />
+    <Content Include="Wholesome-Toolbox\Wholesome_Toolbox.shproj.user" />
+    <Content Include="Wholesome-Toolbox\Wholesome_Toolbox.sln" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
