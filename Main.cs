@@ -41,7 +41,7 @@ public class Main : IPlugin
     private int stuckCount = 0;
     private DateTime lastStuck = DateTime.Now;
 
-    public static string version = "1.1.10"; // Must match version in Version.txt
+    public static string version = FileVersionInfo.GetVersionInfo(Others.GetCurrentDirectory + @"\Plugins\Wholesome_TBC_WotlK_FlightMaster.dll").FileVersion;
 
     // Saved settings
     public static bool saveFlightMasterTaxiUse = false;
@@ -78,7 +78,7 @@ public class Main : IPlugin
 
         if (AutoUpdater.CheckUpdate(version))
         {
-            Logger.LogWarning("New version downloaded, restarting plugin, please wait");
+            Logger.Log("New version downloaded, restarting, please wait");
             ToolBox.Restart();
             return;
         }
