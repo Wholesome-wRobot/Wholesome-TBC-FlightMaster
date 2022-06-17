@@ -39,7 +39,7 @@ public static class AutoUpdater
             WFMSettings.CurrentSettings.Save();
 
             string onlineDllLink = "https://github.com/Wholesome-wRobot/Wholesome-TBC-FlightMaster/raw/master/Compiled/Wholesome_TBC_WotlK_FlightMaster.dll";
-            string onlineVersionLink = "https://raw.githubusercontent.com/Wholesome-wRobot/Wholesome-TBC-FlightMaster/master/Compiled/Version.txt";
+            string onlineVersionLink = "https://raw.githubusercontent.com/Wholesome-wRobot/Wholesome-TBC-FlightMaster/master/Compiled/Auto_Version.txt";
 
             var onlineVersionTxt = new WebClient { Encoding = Encoding.UTF8 }.DownloadString(onlineVersionLink);
             Version onlineVersion = new Version(onlineVersionTxt);

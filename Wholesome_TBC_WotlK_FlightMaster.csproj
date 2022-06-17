@@ -97,6 +97,7 @@
     <None Include="Wholesome-Toolbox\Wholesome_Toolbox.shproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Compiled\Auto_Version.txt" />
     <Content Include="Compiled\Version.txt" />
     <Content Include="Compiled\Wholesome_TBC_WotlK_FlightMaster.dll" />
     <Content Include="Wholesome-Toolbox\.gitignore" />
@@ -104,25 +105,23 @@
     <Content Include="Wholesome-Toolbox\Wholesome_Toolbox.sln" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-	<Target Name="PostBuildMacros">
-		<GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
-			<Output TaskParameter="Assemblies" ItemName="Targets" />
-		</GetAssemblyIdentity>
-		<ItemGroup>
-			<VersionNumber Include="@(Targets->'%(Version)')" />
-		</ItemGroup>
-	</Target>
-	<PropertyGroup>
-		<PostBuildEventDependsOn>
+  <Target Name="PostBuildMacros">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="Targets" />
+    </GetAssemblyIdentity>
+    <ItemGroup>
+      <VersionNumber Include="@(Targets->'%(Version)')" />
+    </ItemGroup>
+  </Target>
+  <PropertyGroup>
+    <PostBuildEventDependsOn>
 			$(PostBuildEventDependsOn);
 			PostBuildMacros;
 		</PostBuildEventDependsOn>
-		<PostBuildEvent>
-			copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"
-			copy /Y "$(TargetDir)\$(ProjectName).dll" "C:\Users\Nico\Desktop\$(ProjectName).dll"
-			copy /Y "$(TargetDir)\$(ProjectName).dll" "F:\WoW\WoW Wotlk\WRobot WOTLK\Plugins\$(ProjectName).dll"
-			echo Writing assembly version in Version.txt: @(VersionNumber)
-			echo @(VersionNumber) &gt; $(ProjectDir)\Compiled\Version.txt
-		</PostBuildEvent>
-	</PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetDir)\$(ProjectName).dll" "$(SolutionDir)\Compiled\$(ProjectName).dll"
+copy /Y "$(TargetDir)\$(ProjectName).dll" "C:\Users\Nico\Desktop\$(ProjectName).dll"
+copy /Y "$(TargetDir)\$(ProjectName).dll" "F:\WoW\WoW Wotlk\WRobot WOTLK\Plugins\$(ProjectName).dll"
+echo Writing assembly version in Auto_Version.txt: @(VersionNumber)
+echo @(VersionNumber) &gt; $(ProjectDir)\Compiled\Auto_Version.txt</PostBuildEvent>
+  </PropertyGroup>
 </Project>
